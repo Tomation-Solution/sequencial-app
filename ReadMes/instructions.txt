@@ -1,0 +1,13 @@
+pls keep file names in lowercases thats the theme for this app 
+
+maintain a nice folder structure
+
+do not leave redundant, commented code in your PRs 
+
+pls write clean standard code at all times, industr standard 
+
+keep respinsiveness in mind while writting 
+
+never merge PRs untill after review 
+
+do not use static values pls use the responsive package in pakages files as stated

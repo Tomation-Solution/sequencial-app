@@ -1,0 +1,7 @@
+for fonts:
+    https://github.com/expo/google-fonts
+    https://fonts.google.com/specimen/Ubuntu?query=ubun
+
+
+respoonsiveness 
+    https://www.npmjs.com/package/react-native-size-matters
