@@ -1,13 +1,23 @@
-pls keep file names in lowercases thats the theme for this app 
+pls (
+    keep file names in PascalScale thats the theme for this app 
 
-maintain a nice folder structure
+    maintain a nice folder structure
 
-do not leave redundant, commented code in your PRs 
+    do not leave redundant, commented code in your PRs 
 
-pls write clean standard code at all times, industr standard 
+    write clean standard code at all times, industr standard 
 
-keep respinsiveness in mind while writting 
+    keep respinsiveness in mind while writting 
 
-never merge PRs untill after review 
+    never merge PRs untill after review 
 
-do not use static values pls use the responsive package in pakages files as stated
+    do not use static values pls use the responsive package in pakages files as stated
+
+    be descriptive in your commit message
+
+    before installing any package pls reach out
+
+    make use of expo icons only
+
+    make use of the custom Text component from Typography
+)

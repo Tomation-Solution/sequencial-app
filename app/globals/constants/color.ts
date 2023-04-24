@@ -9,7 +9,7 @@ export const COLORS = {
   light_red: "#FF8A8A",
   deep_yellow: "#FCBE2B",
   light_yellow: "#FFDF8CB2",
-  deep_blue: "#245EF2 ",
+  deep_blue: "#245EF2",
   light_blue: "#24CDE2",
   gray: "#D9D9D9",
 };

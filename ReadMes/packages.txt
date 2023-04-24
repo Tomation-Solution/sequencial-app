@@ -5,3 +5,7 @@ for fonts:
 
 respoonsiveness 
     https://www.npmjs.com/package/react-native-size-matters
+
+
+icons 
+    https://icons.expo.fyi/
