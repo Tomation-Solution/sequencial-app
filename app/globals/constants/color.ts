@@ -12,4 +12,5 @@ export const COLORS = {
   deep_blue: "#245EF2",
   light_blue: "#24CDE2",
   gray: "#D9D9D9",
+  light_gray: "#F2EEFCAB",
 };

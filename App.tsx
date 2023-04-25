@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { NativeWindStyleSheet } from "nativewind";
-import { Text } from "./app/globals/Typography";
+import { Text } from "./app/components/ui";
 import StackNavigations from "./app/navigations/StackNavigations";
 import DrawerNavigations from "./app/navigations/DrawerNavigation";
 

@@ -8,11 +8,11 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import { Text } from "../../globals/Typography";
-import { COLORS } from "../../globals/constants/color";
+
 import { scale, verticalScale } from "react-native-size-matters";
 import { useNavigation } from "@react-navigation/native";
-import { images } from "../../assets";
+import { images } from "../../../assets";
+import { COLORS } from "../../../globals/constants/color";
 
 type HeaderProps = {
   navigation: any;

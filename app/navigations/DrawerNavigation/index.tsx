@@ -14,7 +14,6 @@ import Interview_Management from "../../screens/Interview_Management/Interview_M
 import Documentation_Management from "../../screens/Documentation_Management/Documentation_Management";
 import Calender from "../../screens/Calender/Calender";
 import Settings from "../../screens/Settings/Settings";
-import Header from "../../components/Header/Header";
 import { COLORS } from "../../globals/constants/color";
 import {
   Ionicons,
@@ -28,6 +27,7 @@ import { scale, verticalScale } from "react-native-size-matters";
 
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
 import BottomNavigations from "../BottomNavgations";
+import Header from "../../components/app/Header/Header";
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = (props: any) => {
