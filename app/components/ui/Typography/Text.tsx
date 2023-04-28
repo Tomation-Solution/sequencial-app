@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useContext } from "react";
+import { Text } from "react-native";
 
-import * as SplashScreen from "expo-splash-screen";
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
 import { scale } from "react-native-size-matters";
+import themeContext from "../../../config/theme/themeContext";
 
 type Props = {
   children: React.ReactNode;
@@ -12,6 +12,8 @@ type Props = {
 
 // react functional compnent type with props
 const CustomText: React.FC<Props> = ({ children, style }) => {
+  const theme = useContext(themeContext);
+
   const [fontsLoaded] = useFonts({
     Ubuntu_400Regular,
   });
@@ -25,7 +27,7 @@ const CustomText: React.FC<Props> = ({ children, style }) => {
       style={{
         fontFamily: "Ubuntu_400Regular",
         fontSize: scale(16),
-        color: "#000",
+        color: theme.text,
         ...style,
       }}
     >

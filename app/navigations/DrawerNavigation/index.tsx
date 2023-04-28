@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   DrawerContentScrollView,
@@ -28,9 +28,12 @@ import { scale, verticalScale } from "react-native-size-matters";
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
 import BottomNavigations from "../BottomNavgations";
 import Header from "../../components/app/Header/Header";
+import { EventRegister } from "react-native-event-listeners";
+import themeContext from "../../config/theme/themeContext";
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = (props: any) => {
+  const [mode, setMode] = React.useState<"light" | "dark">("light");
   return (
     <View style={styles.drawerContainer}>
       <View style={styles.drawerHeader}>
@@ -46,7 +49,10 @@ const CustomDrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <TouchableOpacity
-        onPress={() => console.log("logout button pressed")}
+        onPress={() => {
+          setMode(mode === "light" ? "dark" : "light");
+          EventRegister.emit("changeMode", mode);
+        }}
         style={styles.logoutButton}
       >
         <Text style={styles.logoutText}>Logout</Text>
@@ -59,10 +65,12 @@ const DrawerNavigations = () => {
   const [fontsLoaded] = useFonts({
     Ubuntu_400Regular,
   });
+  const theme = useContext(themeContext);
 
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <>
       <Drawer.Navigator
@@ -71,14 +79,14 @@ const DrawerNavigations = () => {
           header: (props) => <Header {...props} />,
           drawerPosition: "right",
           drawerStyle: {
-            backgroundColor: COLORS.secondary,
+            backgroundColor: theme.background,
           },
 
           drawerLabelStyle: {
-            color: "white",
+            color: theme.text,
           },
 
-          drawerActiveBackgroundColor: COLORS.primary,
+          drawerActiveBackgroundColor: theme.primary,
         }}
         initialRouteName="dashboard"
       >
@@ -86,42 +94,42 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Dashboard",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <MaterialIcons name="dashboard" size={24} color={"white"} />
+              <MaterialIcons name="dashboard" size={24} color={theme.text} />
             ),
           }}
           name="Dashboard"
           component={BottomNavigations}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           options={{
             drawerLabel: "Jobs",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <MaterialIcons name="work" size={24} color={"white"} />
+              <MaterialIcons name="work" size={24} color={theme.text} />
             ),
           }}
           name="Jobs"
           component={Jobs}
-        />
+        /> */}
         <Drawer.Screen
           options={{
             drawerLabel: "CV Management",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <MaterialIcons name="description" size={24} color={"white"} />
+              <MaterialIcons name="description" size={24} color={theme.text} />
             ),
           }}
           name="CV Management"
@@ -131,12 +139,12 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Test Management",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <MaterialIcons name="description" size={24} color={"white"} />
+              <MaterialIcons name="description" size={24} color={theme.text} />
             ),
           }}
           name="Test Managemet"
@@ -146,12 +154,12 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Interview Management",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <MaterialIcons name="description" size={24} color={"white"} />
+              <MaterialIcons name="description" size={24} color={theme.text} />
             ),
           }}
           name="Interview Management"
@@ -161,7 +169,7 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Documentation Management",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
@@ -169,7 +177,7 @@ const DrawerNavigations = () => {
               <MaterialCommunityIcons
                 name="store-edit"
                 size={24}
-                color={"white"}
+                color={theme.text}
               />
             ),
           }}
@@ -180,12 +188,12 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Calender",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <FontAwesome5 name="calendar-day" size={24} color={"white"} />
+              <FontAwesome5 name="calendar-day" size={24} color={theme.text} />
             ),
           }}
           name="Calendar"
@@ -195,13 +203,13 @@ const DrawerNavigations = () => {
           options={{
             drawerLabel: "Settings",
             drawerLabelStyle: {
-              color: "white",
+              color: theme.text,
 
               fontSize: scale(14),
               fontFamily: "Ubuntu_400Regular",
             },
             drawerIcon: () => (
-              <Ionicons name="settings" size={24} color={"white"} />
+              <Ionicons name="settings" size={24} color={theme.text} />
             ),
           }}
           name="Settings"

@@ -1,9 +1,13 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { memo, useContext } from "react";
 import Text from "../Typography/Text";
 import { scale } from "react-native-size-matters";
 import { COLORS } from "../../../globals/constants/color";
 import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Image } from "react-native";
+import { placeholders } from "../../../assets/placeholders";
+import { useTheme } from "react-native-paper";
+import themeContext from "../../../config/theme/themeContext";
 
 type Props = {
   jobTitle: string;
@@ -26,11 +30,12 @@ const JobDetailsCard: React.FC<Props> = ({
   isHiringMultiple,
   whenPosted,
 }) => {
+  const theme = useContext(themeContext);
   return (
     <View
       style={{
-        backgroundColor: "#fff",
-        padding: scale(20),
+        backgroundColor: theme.background,
+        padding: scale(10),
         borderRadius: 8,
         shadowColor: "#000",
         position: "relative",
@@ -41,7 +46,7 @@ const JobDetailsCard: React.FC<Props> = ({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        marginBottom: scale(20),
+        marginBottom: scale(10),
         overflow: "hidden",
       }}
     >
@@ -49,46 +54,77 @@ const JobDetailsCard: React.FC<Props> = ({
         onPress={() => {}}
         style={{
           position: "absolute",
-          top: scale(10),
-          right: scale(10),
+          top: scale(5),
+          right: scale(5),
         }}
       >
-        <Ionicons name="heart-outline" size={24} color={COLORS.secondary} />
+        <Ionicons name="heart-outline" size={24} color={theme.text} />
       </Pressable>
       <View
         style={{
-          marginTop: scale(10),
+          marginTop: scale(12),
         }}
       >
         <Text
           style={{
-            fontSize: scale(15),
-            fontWeight: "bold",
-          }}
-        >
-          {companyName}
-        </Text>
-        <Text
-          style={{
             fontSize: scale(16),
-            backgroundColor: COLORS.secondary,
-            color: "#fff",
+            // backgroundColor: theme.colors.primary,
+            // borderBottomColor: COLORS.secondary,
+            // borderBottomWidth: 1,
+            color: theme.text,
             width: "100%",
-            padding: scale(5),
+            padding: scale(2),
             borderRadius: scale(5),
             marginTop: scale(5),
           }}
         >
           {jobTitle}
         </Text>
-        <Text
+
+        <View
           style={{
-            fontSize: scale(12),
-            fontWeight: "bold",
+            flexDirection: "row",
+            alignItems: "flex-end",
+            marginTop: scale(4),
           }}
         >
-          {location}
-        </Text>
+          <View
+            style={{
+              width: scale(28),
+              height: scale(28),
+              borderRadius: scale(4),
+              backgroundColor: theme.disabled,
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: scale(5),
+              overflow: "hidden",
+              opacity: 0.8,
+            }}
+          >
+            <Image
+              source={placeholders.company}
+              style={{ width: scale(28), height: scale(28) }}
+            />
+          </View>
+          <View>
+            <Text
+              style={{
+                fontSize: scale(15),
+                fontWeight: "bold",
+              }}
+            >
+              {companyName}
+            </Text>
+            <Text
+              style={{
+                fontSize: scale(12),
+                // fontWeight: "bold",
+              }}
+            >
+              {location}
+            </Text>
+          </View>
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -101,13 +137,13 @@ const JobDetailsCard: React.FC<Props> = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "flex-start",
-              backgroundColor: COLORS.light_gray,
+              backgroundColor: theme.disabled,
               padding: scale(5),
               borderRadius: scale(5),
               marginRight: scale(10),
             }}
           >
-            <Entypo name="suitcase" size={scale(12)} color={COLORS.secondary} />
+            <Entypo name="suitcase" size={scale(12)} color={theme.secondary} />
             <Text
               style={{
                 fontSize: scale(10),
@@ -123,7 +159,7 @@ const JobDetailsCard: React.FC<Props> = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "flex-start",
-              backgroundColor: COLORS.light_gray,
+              backgroundColor: theme.disabled,
               padding: scale(5),
               borderRadius: scale(5),
             }}
@@ -131,7 +167,7 @@ const JobDetailsCard: React.FC<Props> = ({
             <FontAwesome5
               name="money-bill-wave"
               size={scale(10)}
-              color={COLORS.secondary}
+              color={theme.secondary}
             />
             <Text
               style={{
@@ -149,54 +185,57 @@ const JobDetailsCard: React.FC<Props> = ({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "flex-start",
-
-            borderRadius: scale(5),
           }}
         >
-          <FontAwesome5
-            name="paper-plane"
-            size={scale(11)}
-            color={COLORS.light_blue}
-          />
-          <Text
+          <View
             style={{
-              fontSize: scale(12),
-              fontWeight: "bold",
-              marginBottom: scale(5),
-              marginLeft: scale(5),
+              flexDirection: "row",
+              // alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {canApplyFromPhone
-              ? "Apply from your phone"
-              : "Apply on the company's site"}
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-
-            borderRadius: scale(5),
-          }}
-        >
-          <Ionicons
-            name="md-person-circle-outline"
-            size={scale(13)}
-            color={COLORS.light_blue}
-          />
-          <Text
+            <FontAwesome5
+              name="paper-plane"
+              size={scale(11)}
+              color={theme.primary}
+            />
+            <Text
+              style={{
+                fontSize: scale(12),
+                fontWeight: "bold",
+                marginLeft: scale(5),
+              }}
+            >
+              {canApplyFromPhone
+                ? "Apply from your phone"
+                : "Apply on the company's site"}
+            </Text>
+          </View>
+          <View
             style={{
-              fontSize: scale(12),
-              fontWeight: "bold",
-              marginBottom: scale(5),
-              marginLeft: scale(5),
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              marginLeft: scale(10),
             }}
           >
-            {isHiringMultiple
-              ? "Hiring Multiple candidates"
-              : "Not Hiring Multiple candidates"}
-          </Text>
+            <Ionicons
+              name="md-person-circle-outline"
+              size={scale(13)}
+              color={theme.primary}
+            />
+            <Text
+              style={{
+                fontSize: scale(12),
+                fontWeight: "bold",
+                marginLeft: scale(5),
+              }}
+            >
+              {isHiringMultiple
+                ? "Hiring Multiple candidates"
+                : "Not Hiring Multiple candidates"}
+            </Text>
+          </View>
         </View>
       </View>
       <View
@@ -215,7 +254,7 @@ const JobDetailsCard: React.FC<Props> = ({
             color: "white",
             paddingHorizontal: scale(5),
             paddingVertical: scale(2),
-            backgroundColor: COLORS.light_blue,
+            backgroundColor: theme.primary,
             borderBottomRightRadius: scale(6),
           }}
         >
@@ -226,6 +265,6 @@ const JobDetailsCard: React.FC<Props> = ({
   );
 };
 
-export default JobDetailsCard;
+export default memo(JobDetailsCard);
 
 const styles = StyleSheet.create({});
