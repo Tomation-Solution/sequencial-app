@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../../globals/constants/color";
 import { scale } from "react-native-size-matters";
 
-const AuthHeader = ({ navigation }: any) => {
+const AuthHeader = ({ navigation }: { navigation: any }) => {
   return (
     <View
       style={{
@@ -19,11 +19,21 @@ const AuthHeader = ({ navigation }: any) => {
     >
       <Pressable
         // disabled={!canGoback}
+        style={{
+          height: scale(26),
+          width: scale(26),
+          borderRadius: 10,
+          backgroundColor: "white",
+        }}
         onPress={() => {
           navigation.goBack();
         }}
       >
-        <Ionicons name="chevron-back" size={24} color={COLORS.secondary} />
+        <Ionicons
+          name="chevron-back"
+          size={scale(23)}
+          color={COLORS.secondary}
+        />
       </Pressable>
     </View>
   );

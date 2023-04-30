@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Text } from "react-native";
+import { Text, TextStyle } from "react-native";
 
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
 import { scale } from "react-native-size-matters";
@@ -7,7 +7,7 @@ import themeContext from "../../../config/theme/themeContext";
 
 type Props = {
   children: React.ReactNode;
-  style?: any;
+  style?: TextStyle;
 };
 
 // react functional compnent type with props

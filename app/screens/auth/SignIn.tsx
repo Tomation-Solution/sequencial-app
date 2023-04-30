@@ -1,20 +1,18 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import React, { useContext } from "react";
-import AuthHeader from "../../components/app/Header/AuthHeader";
-import { images } from "../../assets";
-import { scale } from "react-native-size-matters";
+import Container from "./Container";
+import { auth_assets } from "./assets";
 import { Button, Input, Text } from "../../components/ui";
-import themeContext from "../../config/theme/themeContext";
-import { Formik } from "formik";
 import * as Yup from "yup";
-import { Seperator } from "../../components/ui/_helpers";
+import { Formik } from "formik";
+import { scale } from "react-native-size-matters";
+import themeContext from "../../config/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { Seperator } from "../../components/ui/_helpers";
 
 const SignInSchema = Yup.object().shape({
-  phone: Yup.string()
-    .required("Phone number is required")
-    .min(10, "Phone number should be at least 10 characters")
-    .max(11, "Phone number should be at most 11 characters"),
+  email: Yup.string().required("Email is required").email("Invalid email"),
+
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password should be at least 6 characters"),
@@ -24,202 +22,200 @@ const SignIn = ({ navigation }: { navigation: any }) => {
   const theme = useContext(themeContext);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        backgroundColor: "#fff",
-      }}
-    >
-      <Formik
-        initialValues={{ phone: "", password: "" }}
-        onSubmit={(values) => console.log(values)}
-        validationSchema={SignInSchema}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          <View
+    <View>
+      <Container image={auth_assets.login_pic}>
+        <View>
+          <Text
             style={{
-              flex: 1,
-              width: "100%",
-              marginTop: scale(40),
+              fontSize: 30,
+              textAlign: "center",
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                paddingHorizontal: scale(16),
-                height: scale(42),
-                marginTop: scale(35),
-                marginBottom: scale(50),
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                source={images.logo}
-                style={{ width: scale(160), height: scale(80) }}
-                resizeMode="contain"
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingHorizontal: scale(20),
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <Text
-                style={{
-                  color: theme.success,
-                  fontWeight: "bold",
-                  fontSize: scale(20),
-                }}
-              >
-                Get Started
-              </Text>
+            Login
+          </Text>
 
-              <Button onPress={() => navigation.navigate("signup")}>
-                Create an account
-              </Button>
-            </View>
-
-            <View
-              style={{
-                marginTop: scale(20),
-                paddingHorizontal: scale(20),
-              }}
-            >
-              <Input
-                label="Phone Number"
-                placeholder="Enter your phone number"
-                onChangeText={handleChange("phone")}
-                onBlur={handleBlur("phone")}
-                value={values.phone}
-                keyboardType="phone-pad"
-              />
-              {errors.phone && touched.phone && (
-                <Text
-                  style={{
-                    color: theme.error,
-                    fontSize: scale(12),
-                  }}
-                >
-                  {errors.phone}
-                </Text>
-              )}
-
-              <Input
-                label="Password"
-                secureTextEntry={true}
-                placeholder="Enter your password"
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-                value={values.password}
-              />
-              {errors.password && touched.password && (
-                <Text
-                  style={{
-                    color: theme.error,
-                    fontSize: scale(12),
-                  }}
-                >
-                  {errors.password}
-                </Text>
-              )}
-              <Seperator height={scale(20)} />
-              <Button onPress={() => handleSubmit()} disabled={!isValid}>
-                Sign In
-              </Button>
-
-              <Seperator height={scale(20)} />
-              <Pressable onPress={() => navigation.navigate("forgotpassword")}>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: scale(14),
-                    color: "#0000004D",
-                  }}
-                >
-                  Forgot Password?
-                </Text>
-              </Pressable>
-            </View>
-
-            <View>
-              <Seperator height={scale(20)} />
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: scale(14),
-                  color: "#0000004D",
-                }}
-              >
-                Or Sign In with
-              </Text>
-              <Seperator height={scale(20)} />
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            onSubmit={(values) => console.log(values)}
+            validationSchema={SignInSchema}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isValid,
+            }) => (
               <View
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center",
+                  // flex: 1,
                   width: "100%",
                 }}
               >
-                <Pressable
-                  onPress={() => console.log("Sign in with google")}
+                <View
                   style={{
-                    width: scale(50),
-                    height: scale(50),
-                    borderRadius: scale(25),
-                    backgroundColor: "#0000004D",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    marginTop: scale(20),
                   }}
                 >
-                  <Ionicons name="logo-google" size={scale(30)} />
+                  <Input
+                    placeholder="Email Address"
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    value={values.email}
+                    keyboardType="email-address"
+                  />
+                  {errors.email && touched.email && (
+                    <Text
+                      style={{
+                        color: theme.error,
+                        fontSize: scale(12),
+                      }}
+                    >
+                      {errors.email}
+                    </Text>
+                  )}
+
+                  <Input
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    onChangeText={handleChange("password")}
+                    onBlur={handleBlur("password")}
+                    value={values.password}
+                  />
+                  {errors.password && touched.password && (
+                    <Text
+                      style={{
+                        color: theme.error,
+                        fontSize: scale(12),
+                      }}
+                    >
+                      {errors.password}
+                    </Text>
+                  )}
+
+                  <Seperator height={20} />
+                  <Button
+                    styles={{
+                      paddingVertical: scale(13),
+                    }}
+                    onPress={() => handleSubmit()}
+                    disabled={!isValid}
+                  >
+                    Continue
+                  </Button>
+
+                  <Seperator height={20} />
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          height: scale(14),
+                          width: scale(14),
+                          borderRadius: scale(2),
+                          borderColor: theme.text,
+                          borderWidth: 1,
+                          marginRight: scale(7),
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: scale(14),
+                          color: theme.text,
+                        }}
+                      >
+                        Remember me
+                      </Text>
+                    </View>
+                    <Pressable
+                      onPress={() => navigation.navigate("forgotpassword")}
+                    >
+                      <Text
+                        style={{
+                          fontSize: scale(14),
+                          color: theme.primary,
+                        }}
+                      >
+                        Forgot Password?
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                <Seperator height={50} />
+
+                <Pressable onPress={() => navigation.navigate("signin")}>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: scale(14),
+                      color: theme.text,
+                    }}
+                  >
+                    Already have an account?{" "}
+                    <Text
+                      style={{
+                        fontSize: scale(14),
+                        color: theme.primary,
+                      }}
+                    >
+                      Sign In
+                    </Text>
+                  </Text>
                 </Pressable>
-                <Pressable
-                  onPress={() => console.log("Sign in with google")}
+                <Seperator height={20} />
+
+                <View
                   style={{
-                    width: scale(50),
-                    height: scale(50),
-                    borderRadius: scale(25),
-                    backgroundColor: "#0000004D",
-                    justifyContent: "center",
+                    flexDirection: "row",
+                    justifyContent: "space-around",
                     alignItems: "center",
+                    width: "100%",
                   }}
                 >
-                  <Ionicons name="logo-linkedin" size={scale(30)} />
-                </Pressable>
-                <Pressable
-                  onPress={() => console.log("Sign in with google")}
-                  style={{
-                    width: scale(50),
-                    height: scale(50),
-                    borderRadius: scale(25),
-                    backgroundColor: "#0000004D",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="logo-apple" size={scale(30)} />
-                </Pressable>
+                  <Pressable
+                    onPress={() => console.log("Sign in with google")}
+                    style={{}}
+                  >
+                    <Ionicons
+                      color={theme.secondary}
+                      name="logo-google"
+                      size={scale(30)}
+                    />
+                  </Pressable>
+                  <Pressable onPress={() => console.log("Sign in with google")}>
+                    <Ionicons
+                      color={theme.secondary}
+                      name="logo-linkedin"
+                      size={scale(30)}
+                    />
+                  </Pressable>
+                  <Pressable onPress={() => console.log("Sign in with google")}>
+                    <Ionicons
+                      color={theme.secondary}
+                      name="logo-apple"
+                      size={scale(30)}
+                    />
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          </View>
-        )}
-      </Formik>
+            )}
+          </Formik>
+        </View>
+      </Container>
     </View>
   );
 };

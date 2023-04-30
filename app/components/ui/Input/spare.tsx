@@ -26,10 +26,6 @@ const Input: React.FC<InputProps> = ({
   const theme = useContext(themeContext);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const toggleShowPassword = () => {
-    setShowPassword((prevState) => !prevState);
-  };
-
   return (
     <View style={{ marginTop: scale(18) }}>
       {label && (
@@ -72,7 +68,7 @@ const Input: React.FC<InputProps> = ({
               right: scale(10),
               //   top: scale(10),
             }}
-            onPress={toggleShowPassword}
+            onPress={() => setShowPassword(!showPassword)}
           >
             <Ionicons
               name={showPassword ? "eye-off" : "eye"}
@@ -87,3 +83,5 @@ const Input: React.FC<InputProps> = ({
 };
 
 export default Input;
+
+const styles = StyleSheet.create({});

@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPassword, SignIn } from "../../screens/auth";
 import SignUpNavigations from "./signup";
 import OTP from "../../screens/auth/OTP";
+import ForgotPasswordNavigations from "./forgotPassword";
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,10 @@ const AuthNavigations = () => {
       >
         <Stack.Screen name="signin" component={SignIn} />
         <Stack.Screen name="signup" component={SignUpNavigations} />
-        <Stack.Screen name="forgotpassword" component={ForgotPassword} />
+        <Stack.Screen
+          name="forgotpassword"
+          component={ForgotPasswordNavigations}
+        />
         <Stack.Screen name="otp" component={OTP} />
       </Stack.Navigator>
     </>
