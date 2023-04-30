@@ -1,21 +1,12 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 
-import { NativeWindStyleSheet } from "nativewind";
-import DrawerNavigations from "./app/navigations/DrawerNavigation";
-import { Provider as PaperProvider } from "react-native-paper";
-import { darkTheme, lightTheme } from "./app/globals/constants/color";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { EventRegister } from "react-native-event-listeners";
 import themeContext from "./app/config/theme/themeContext";
 import theme from "./app/config/theme/color_theme";
 import Onboarding from "./app/screens/Onboarding/Onboarding";
-
-NativeWindStyleSheet.setOutput({
-  default: "native",
-});
-
-const ThemeProvider = createContext({});
+import AuthNavigations from "./app/navigations/AuthNavigation";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState("light");
@@ -37,7 +28,9 @@ export default function App() {
       >
         {/* <DrawerNavigations /> */}
 
-        <Onboarding />
+        {/* <Onboarding /> */}
+
+        <AuthNavigations />
       </themeContext.Provider>
     </NavigationContainer>
   );

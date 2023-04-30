@@ -9,7 +9,6 @@ import Interview_Management from "../../screens/Interview_Management/Interview_M
 import Documentation_Management from "../../screens/Documentation_Management/Documentation_Management";
 import Calender from "../../screens/Calender/Calender";
 import Settings from "../../screens/Settings/Settings";
-import Header from "../../components/Header/Header";
 
 const Stack = createStackNavigator();
 

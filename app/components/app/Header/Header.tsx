@@ -10,7 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { scale, verticalScale } from "react-native-size-matters";
-import { useNavigation } from "@react-navigation/native";
 import { images } from "../../../assets";
 import { COLORS } from "../../../globals/constants/color";
 

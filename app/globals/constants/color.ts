@@ -19,6 +19,8 @@ export const COLORS = {
 const SHARED_COLORS = {
   primary: "#24CDE2",
   secondary: "#000022",
+  light_blue: "#4FDE9D",
+  accent_white: "#F2EEFC63",
 };
 
 const lightTheme = {

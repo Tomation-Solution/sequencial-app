@@ -1,6 +1,8 @@
 const SHARED_COLORS = {
   primary: "#24CDE2",
   secondary: "#000022",
+  light_blue: "#E9FAFC",
+  accent_white: "#F2EEFC63",
 };
 
 const theme = {

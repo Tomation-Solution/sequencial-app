@@ -3,6 +3,8 @@ import { createContext } from "react";
 type Theme = {
   primary: string;
   secondary: string;
+  light_blue: string;
+  accent_white: string;
   accent: string;
   background: string;
   text: string;
@@ -16,6 +18,8 @@ type Theme = {
 const themeContext = createContext<Theme>({
   primary: "",
   secondary: "",
+  accent_white: "",
+  light_blue: "",
   accent: "",
   background: "",
   text: "",
