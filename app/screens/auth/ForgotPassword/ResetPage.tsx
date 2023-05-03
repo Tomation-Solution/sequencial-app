@@ -21,7 +21,7 @@ const confirm_password = Yup.object().shape({
     .oneOf([Yup.ref("password")], "Passwords must match"),
 });
 
-const SignIn = ({ navigation, route }: any) => {
+const ResetPage = ({ navigation, route }: any) => {
   const theme = useContext(themeContext);
 
   const { values } = route.params;
@@ -122,6 +122,6 @@ const SignIn = ({ navigation, route }: any) => {
   );
 };
 
-export default SignIn;
+export default ResetPage;
 
 const styles = StyleSheet.create({});

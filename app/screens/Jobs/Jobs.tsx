@@ -1,58 +1,24 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import JobDetailsCard from "../../components/ui/JobDetails/JobDetailsCard";
+import { useNotifications } from "../../hooks/useNotification";
+import { Button } from "../../components/ui";
 
 const Jobs = () => {
+  const { showNotification } = useNotifications();
+
+  const handleButtonPress = () => {
+    showNotification({
+      id: Date.now(),
+      title: "New message",
+      message: "You have a new message from John",
+      action: "View",
+    });
+  };
+
   return (
     <View>
-      <Text>Jobs</Text>
-      <View
-        style={{
-          marginTop: 20,
-          padding: 10,
-        }}
-      >
-        <JobDetailsCard
-          canApplyFromPhone={true}
-          companyName="Google Inc."
-          jobType="Full Time"
-          jobTitle="Software Engineer"
-          isHiringMultiple={true}
-          location="Bangalore, India"
-          salary="97, 000/year"
-          whenPosted="2 days ago"
-        />
-        <JobDetailsCard
-          canApplyFromPhone={true}
-          companyName="Google Inc."
-          jobType="Full Time"
-          jobTitle="Software Engineer"
-          isHiringMultiple={true}
-          location="Bangalore, India"
-          salary="97, 000/year"
-          whenPosted="2 days ago"
-        />
-        <JobDetailsCard
-          canApplyFromPhone={true}
-          companyName="Google Inc."
-          jobType="Full Time"
-          jobTitle="Software Engineer"
-          isHiringMultiple={true}
-          location="Bangalore, India"
-          salary="97, 000/year"
-          whenPosted="2 days ago"
-        />
-        <JobDetailsCard
-          canApplyFromPhone={true}
-          companyName="Google Inc."
-          jobType="Full Time"
-          jobTitle="Software Engineer"
-          isHiringMultiple={true}
-          location="Bangalore, India"
-          salary="97, 000/year"
-          whenPosted="2 days ago"
-        />
-      </View>
+      <Text>Welcome to my app!</Text>
+      <Button onPress={handleButtonPress}>Show</Button>
     </View>
   );
 };

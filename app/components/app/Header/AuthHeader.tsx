@@ -10,9 +10,9 @@ const AuthHeader = ({ navigation }: { navigation: any }) => {
       style={{
         flexDirection: "row",
         width: "100%",
-        paddingHorizontal: scale(16),
-        height: scale(42),
-        marginTop: scale(35),
+        paddingHorizontal: scale(10),
+        height: scale(40),
+        marginTop: scale(28),
         justifyContent: "space-between",
         alignItems: "center",
       }}

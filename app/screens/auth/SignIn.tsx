@@ -156,8 +156,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                 </View>
 
                 <Seperator height={50} />
-
-                <Pressable onPress={() => navigation.navigate("signin")}>
+                <Pressable onPress={() => navigation.navigate("signup")}>
                   <Text
                     style={{
                       textAlign: "center",
@@ -165,14 +164,14 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                       color: theme.text,
                     }}
                   >
-                    Already have an account?{" "}
+                    Dont have an account?{" "}
                     <Text
                       style={{
                         fontSize: scale(14),
                         color: theme.primary,
                       }}
                     >
-                      Sign In
+                      Sign Up
                     </Text>
                   </Text>
                 </Pressable>

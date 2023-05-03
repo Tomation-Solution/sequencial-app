@@ -32,3 +32,6 @@ const theme = {
 };
 
 export default theme;
+
+// #E0E0E0;
+// #828282

@@ -1,5 +1,12 @@
 import React, { useContext } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -88,7 +95,7 @@ const DrawerNavigations = () => {
 
           drawerActiveBackgroundColor: theme.primary,
         }}
-        initialRouteName="dashboard"
+        initialRouteName="Homescreen"
       >
         <Drawer.Screen
           options={{

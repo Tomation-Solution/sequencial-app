@@ -10,8 +10,8 @@ type Props = {
 
 const { width, height } = Dimensions.get("window");
 
-const IMAGE_HEIGHT = height * 0.4;
-const CONTENT_HEIGHT = height * 0.7;
+const IMAGE_HEIGHT = height * 0.35;
+const CONTENT_HEIGHT = height * 0.8;
 
 const Container: React.FC<Props> = ({
   image,

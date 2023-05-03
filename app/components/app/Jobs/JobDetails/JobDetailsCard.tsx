@@ -1,13 +1,14 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { memo, useContext } from "react";
-import Text from "../Typography/Text";
+import Text from "../../../ui/Typography/Text";
 import { scale } from "react-native-size-matters";
-import { COLORS } from "../../../globals/constants/color";
+import { COLORS } from "../../../../globals/constants/color";
 import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
-import { placeholders } from "../../../assets/placeholders";
-import { useTheme } from "react-native-paper";
-import themeContext from "../../../config/theme/themeContext";
+import { placeholders } from "../../../../assets/placeholders";
+import themeContext from "../../../../config/theme/themeContext";
+import ImageComponent from "../../../ui/Image/ImageComponent";
+import { useNavigation } from "@react-navigation/native";
 
 type Props = {
   jobTitle: string;
@@ -18,6 +19,8 @@ type Props = {
   canApplyFromPhone: boolean;
   isHiringMultiple: boolean;
   whenPosted: string;
+  image: string;
+  navigation: any;
 };
 
 const JobDetailsCard: React.FC<Props> = ({
@@ -29,15 +32,20 @@ const JobDetailsCard: React.FC<Props> = ({
   canApplyFromPhone,
   isHiringMultiple,
   whenPosted,
+  image,
+  navigation,
 }) => {
   const theme = useContext(themeContext);
+
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.6}
+      onPress={() => navigation.navigate("Jobs")}
       style={{
         backgroundColor: theme.background,
         padding: scale(10),
         borderRadius: 8,
-        shadowColor: "#000",
+        shadowColor: theme.text,
         position: "relative",
         shadowOffset: {
           width: 0,
@@ -101,8 +109,13 @@ const JobDetailsCard: React.FC<Props> = ({
               opacity: 0.8,
             }}
           >
-            <Image
-              source={placeholders.company}
+            {/* <Image
+              source={image ? { uri: image } : placeholders.company}
+              style={{ width: scale(28), height: scale(28) }}
+            /> */}
+
+            <ImageComponent
+              imageUrl={image}
               style={{ width: scale(28), height: scale(28) }}
             />
           </View>
@@ -261,7 +274,7 @@ const JobDetailsCard: React.FC<Props> = ({
           {whenPosted}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

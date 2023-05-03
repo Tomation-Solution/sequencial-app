@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Image,
   Pressable,
@@ -11,7 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { scale, verticalScale } from "react-native-size-matters";
 import { images } from "../../../assets";
-import { COLORS } from "../../../globals/constants/color";
+import { HeaderContext } from "../../../providers/header";
+import { Text } from "../../ui";
+import themeContext from "../../../config/theme/themeContext";
 
 type HeaderProps = {
   navigation: any;
@@ -20,15 +22,21 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ navigation }) => {
+  // const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const { headerText, showBackButton, showLogo } =
+    React.useContext(HeaderContext);
+
+  const theme = useContext(themeContext);
+
   return (
     <View
       style={{
-        // backgroundColor: "#fff",
+        backgroundColor: theme.background,
         flexDirection: "row",
         width: "100%",
         paddingHorizontal: scale(16),
         height: scale(42),
-        marginTop: scale(35),
+        marginTop: scale(0),
         justifyContent: "space-between",
         alignItems: "center",
         // shadowColor: "#000",
@@ -41,19 +49,44 @@ const Header: React.FC<HeaderProps> = ({ navigation }) => {
         // elevation: 5,
       }}
     >
-      <Image
-        source={images.logo}
-        style={{
-          width: scale(100),
-          height: verticalScale(30),
-        }}
-      />
+      {showLogo && (
+        <Image
+          source={images.logo}
+          style={{
+            width: scale(100),
+            height: verticalScale(30),
+          }}
+        />
+      )}
+
+      {headerText && (
+        <Text
+          style={{
+            fontSize: scale(24),
+            fontWeight: "bold",
+            color: theme.text,
+          }}
+        >
+          {headerText}
+        </Text>
+      )}
+
+      {showBackButton && (
+        <Pressable onPress={() => navigation.goBack()}>
+          <Ionicons
+            name="md-chevron-back-sharp"
+            size={scale(24)}
+            color={theme.text}
+          />
+        </Pressable>
+      )}
+
       <Pressable
         onPress={() => {
           navigation.openDrawer();
         }}
       >
-        <Ionicons name="md-menu-sharp" size={24} color={COLORS.secondary} />
+        <Ionicons name="menu-outline" size={scale(28)} color={theme.text} />
       </Pressable>
     </View>
   );

@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Jobs from "../../screens/Jobs/Jobs";
 import Notifications from "../../screens/Notifications/Notifications";
 import Profile from "../../screens/Profile/Profile";
-import { COLORS } from "../../globals/constants/color";
 import { scale } from "react-native-size-matters";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
+import Dashboard from "../../screens/Dashboard/Dashboard";
+import themeContext from "../../config/theme/themeContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +19,8 @@ const BottomNavigations = () => {
     Ubuntu_400Regular,
   });
 
+  const theme = useContext(themeContext);
+
   if (!fontsLoaded) {
     return null;
   }
@@ -25,11 +28,11 @@ const BottomNavigations = () => {
   // now to animating it
   return (
     <Tab.Navigator
-      initialRouteName="Jobs"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: COLORS.secondary,
+          backgroundColor: theme.background,
           height: scale(53),
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
@@ -40,12 +43,22 @@ const BottomNavigations = () => {
           fontSize: scale(11),
           fontFamily: "Ubuntu_400Regular",
           marginTop: scale(-13),
+          marginBottom: scale(7),
         },
 
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: "white",
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.text,
       }}
     >
+      <Tab.Screen
+        name="Home"
+        component={Dashboard}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="home" size={24} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Jobs"
         component={Jobs}

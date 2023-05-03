@@ -7,9 +7,13 @@ import themeContext from "./app/config/theme/themeContext";
 import theme from "./app/config/theme/color_theme";
 import Onboarding from "./app/screens/Onboarding/Onboarding";
 import AuthNavigations from "./app/navigations/AuthNavigation";
+import DrawerNavigations from "./app/navigations/DrawerNavigation";
+import { NotificationProvider } from "./app/providers/notification";
+import { HeaderProvider } from "./app/providers/header";
+import { StatusBar } from "react-native";
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState("light");
+  const [isDarkMode, setIsDarkMode] = useState<string>("light");
 
   useEffect(() => {
     let listener = EventRegister.addEventListener("changeMode", (data) => {
@@ -22,16 +26,28 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <themeContext.Provider
-        value={isDarkMode === "light" ? theme.lightTheme : theme.darkTheme}
-      >
-        {/* <DrawerNavigations /> */}
+    <>
+      <StatusBar
+        barStyle={isDarkMode === "light" ? `dark-content` : `light-content`}
+        backgroundColor={isDarkMode === "light" ? "#ffffff" : "#000"}
+      />
+      <NavigationContainer>
+        <NotificationProvider>
+          <HeaderProvider>
+            <themeContext.Provider
+              value={
+                isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
+              }
+            >
+              <DrawerNavigations />
 
-        {/* <Onboarding /> */}
+              {/* <Onboarding /> */}
 
-        <AuthNavigations />
-      </themeContext.Provider>
-    </NavigationContainer>
+              {/* <AuthNavigations /> */}
+            </themeContext.Provider>
+          </HeaderProvider>
+        </NotificationProvider>
+      </NavigationContainer>
+    </>
   );
 }
