@@ -7,7 +7,7 @@ type Props = {
   navigation: any;
 };
 
-const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
+const JobOfferContainer: React.FC<Props> = ({ cardData, navigation }) => {
   return (
     <>
       {cardData.map((item: any) => (
@@ -16,7 +16,7 @@ const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
           image={item.image}
           isOpened={item.isOpened}
           role={item.role}
-          type="test"
+          type="offer"
           key={item.id}
           navigation={navigation}
         />
@@ -25,6 +25,6 @@ const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
   );
 };
 
-export default JobTestContainer;
+export default JobOfferContainer;
 
 const styles = StyleSheet.create({});

@@ -6,7 +6,7 @@ import { Text } from "react-native";
 import { scale } from "react-native-size-matters";
 
 const defaultImageUrl =
-  "https://www.google.com/url?sa=i&url=http%3A%2F%2Fedenchristianacademy.co.nz%2Fdummy-image-square%2F&psig=AOvVaw1R_gJEgzyUCTbwfEJXOzNw&ust=1683125023808000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCMDvxs7v1v4CFQAAAAAdAAAAABAE";
+  "http://edenchristianacademy.co.nz/wp-content/uploads/2013/11/dummy-image-square-768x768.jpg";
 
 type Props = {
   imageUrl: string;
@@ -16,6 +16,10 @@ type Props = {
 const ImageComponent: React.FC<Props> = ({ imageUrl, style }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const onLoadEnd = () => {
+    setLoading(false);
+  };
 
   const [imageSource, setImageSource] = useState<any>(defaultImageUrl);
 
@@ -41,10 +45,13 @@ const ImageComponent: React.FC<Props> = ({ imageUrl, style }) => {
   } else {
     return (
       <Image
-        style={{ ...style }}
+        style={[{ ...style }]}
         source={{ uri: imageUrl }}
+        loadingIndicatorSource={{
+          uri: defaultImageUrl,
+        }}
         // onLoadStart={() => setLoading(true)}
-        // onLoadEnd={() => setLoading(false)}
+        // onLoadEnd={onLoadEnd}
         // onError={handleError}
       />
     );

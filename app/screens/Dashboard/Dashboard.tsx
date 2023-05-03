@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { HeaderContext } from "../../providers/header";
 import { navData } from "./dashboardData";
 import NavButton from "../../components/app/Dashboard/NavButton";
@@ -9,8 +9,13 @@ import themeContext from "../../config/theme/themeContext";
 import { scale } from "react-native-size-matters";
 import SearchBar from "../../components/ui/Search/SearchBar";
 import data from "./MOCK_DATA.json";
+import test from "./MOCK_DATA _2.json";
+
 import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
 import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
+import JobTestContainer from "../../components/app/Jobs/containers/JobTestContainer";
+import JobInterviewContainer from "../../components/app/Jobs/containers/JobInterviewContainer";
+import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
 
 const Dashboard = ({ navigation }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
@@ -18,7 +23,15 @@ const Dashboard = ({ navigation }: any) => {
 
   const [cardData, setCardData] = useState(data);
 
+  const [type, setType] = useState("jobs");
+
   const [activeId, setActiveId] = useState("001");
+
+  const handleNavPress = ({ item }: any) => {
+    if (type !== item.type) {
+      setType(item.type);
+    }
+  };
 
   const changeActiveId = (id: string) => {
     setActiveId(() => id);
@@ -89,7 +102,7 @@ const Dashboard = ({ navigation }: any) => {
             marginBottom: scale(65),
           }}
         >
-          <JobsCardContainer cardData={data} navigation={navigation} />
+          <JobOfferContainer cardData={test} navigation={navigation} />
         </View>
       </ScrollView>
     </View>
