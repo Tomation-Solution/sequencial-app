@@ -11,6 +11,7 @@ import DrawerNavigations from "./app/navigations/DrawerNavigation";
 import { NotificationProvider } from "./app/providers/notification";
 import { HeaderProvider } from "./app/providers/header";
 import { StatusBar } from "react-native";
+import { AppProvider } from "./app/providers/app";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
@@ -32,21 +33,23 @@ export default function App() {
         backgroundColor={isDarkMode === "light" ? "#ffffff" : "#000"}
       />
       <NavigationContainer>
-        <NotificationProvider>
-          <HeaderProvider>
-            <themeContext.Provider
-              value={
-                isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
-              }
-            >
-              <DrawerNavigations />
+        <AppProvider>
+          <NotificationProvider>
+            <HeaderProvider>
+              <themeContext.Provider
+                value={
+                  isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
+                }
+              >
+                <DrawerNavigations />
 
-              {/* <Onboarding /> */}
+                {/* <Onboarding /> */}
 
-              {/* <AuthNavigations /> */}
-            </themeContext.Provider>
-          </HeaderProvider>
-        </NotificationProvider>
+                {/* <AuthNavigations /> */}
+              </themeContext.Provider>
+            </HeaderProvider>
+          </NotificationProvider>
+        </AppProvider>
       </NavigationContainer>
     </>
   );

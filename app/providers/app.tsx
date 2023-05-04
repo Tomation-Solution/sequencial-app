@@ -1,50 +1,51 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { Modal } from "react-native";
 
 export const AppContext = createContext<{
   loading: boolean;
-  authenticated: boolean;
-  setAuthenticated: (authenticated: boolean) => void;
+  setLoading: (authenticated: boolean) => void;
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
 }>({
   loading: false,
-  authenticated: false,
-  setAuthenticated: () => {},
+  setLoading: () => {},
+  modalVisible: false,
+  setModalVisible: () => {},
 });
 
 export const AppProvider = ({ children }: any) => {
-  const [loading, setLoading] = useState("");
-  const [showBackButton, setShowBackButton] = useState(false);
-  const [showLogo, setShowLogo] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const showBackButtonHandler = () => {
-    setShowBackButton(true);
-    setShowLogo(false);
-    setHeaderText("");
-  };
-
-  const showLogoHandler = () => {
-    setShowBackButton(false);
-    setShowLogo(true);
-    setHeaderText("");
-  };
-
-  const showHeaderTextHandler = (text: string) => {
-    setShowBackButton(false);
-    setShowLogo(false);
-    setHeaderText(text);
-  };
+  useEffect(() => {
+    if (loading) {
+      setModalVisible(true);
+    } else {
+      setModalVisible(false);
+    }
+  }, [loading]);
 
   return (
-    <HeaderContext.Provider
+    <AppContext.Provider
       value={{
-        headerText,
-        showHeaderTextHandler,
-        showBackButton,
-        showBackButtonHandler,
-        showLogo,
-        showLogoHandler,
+        loading,
+        setLoading,
+        modalVisible,
+        setModalVisible,
       }}
     >
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        }}
+      />
+
       {children}
-    </HeaderContext.Provider>
+    </AppContext.Provider>
   );
 };
