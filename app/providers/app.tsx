@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { Modal } from "react-native";
+import { Modal, View } from "react-native";
 
 export const AppContext = createContext<{
   loading: boolean;
@@ -14,7 +14,7 @@ export const AppContext = createContext<{
 });
 
 export const AppProvider = ({ children }: any) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -34,16 +34,19 @@ export const AppProvider = ({ children }: any) => {
         setModalVisible,
       }}
     >
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        }}
-      />
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+            backgroundColor: " rgba(0, 0 , 0, 0.7) ",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* {children} */}
+        </View>
+      </Modal>
 
       {children}
     </AppContext.Provider>
