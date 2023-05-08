@@ -1,14 +1,14 @@
 import { createContext, useEffect, useState } from "react";
-import { Modal, View } from "react-native";
+import { ActivityIndicator, Modal, StatusBar, View } from "react-native";
 
 export const AppContext = createContext<{
   loading: boolean;
-  setLoading: (authenticated: boolean) => void;
+  onLoading: () => void;
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
 }>({
   loading: false,
-  setLoading: () => {},
+  onLoading: () => {},
   modalVisible: false,
   setModalVisible: () => {},
 });
@@ -16,6 +16,12 @@ export const AppContext = createContext<{
 export const AppProvider = ({ children }: any) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<any>();
+
+  const onLoading = () => {
+    setLoading(true);
+    setModalContent(<ActivityIndicator size={"small"} />);
+  };
 
   useEffect(() => {
     if (loading) {
@@ -29,12 +35,13 @@ export const AppProvider = ({ children }: any) => {
     <AppContext.Provider
       value={{
         loading,
-        setLoading,
+        onLoading,
         modalVisible,
         setModalVisible,
       }}
     >
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <StatusBar backgroundColor="rgba(0, 0 , 0, 0.7)" />
         <View
           style={{
             flex: 1,
@@ -44,7 +51,7 @@ export const AppProvider = ({ children }: any) => {
             justifyContent: "center",
           }}
         >
-          {/* {children} */}
+          {modalContent}
         </View>
       </Modal>
 

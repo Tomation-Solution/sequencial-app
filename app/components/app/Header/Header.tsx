@@ -11,9 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { scale, verticalScale } from "react-native-size-matters";
 import { images } from "../../../assets";
-import { HeaderContext } from "../../../providers/header";
 import { Text } from "../../ui";
 import themeContext from "../../../config/theme/themeContext";
+import { HeaderContext } from "../../../providers/context/header";
 
 type HeaderProps = {
   navigation: any;
@@ -35,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ navigation }) => {
         flexDirection: "row",
         width: "100%",
         paddingHorizontal: scale(16),
+        paddingLeft: scale(8),
         height: scale(42),
         marginTop: scale(0),
         justifyContent: "space-between",
@@ -62,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ navigation }) => {
       {headerText && (
         <Text
           style={{
-            fontSize: scale(24),
+            fontSize: scale(20),
             fontWeight: "bold",
             color: theme.text,
           }}

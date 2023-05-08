@@ -9,11 +9,12 @@ const defaultImageUrl =
   "http://edenchristianacademy.co.nz/wp-content/uploads/2013/11/dummy-image-square-768x768.jpg";
 
 type Props = {
-  imageUrl: string;
+  imageUrl: any;
   style: ImageStyle;
+  onDevice?: boolean;
 };
 
-const ImageComponent: React.FC<Props> = ({ imageUrl, style }) => {
+const ImageComponent: React.FC<Props> = ({ imageUrl, style, onDevice }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,7 @@ const ImageComponent: React.FC<Props> = ({ imageUrl, style }) => {
     return (
       <Image
         style={[{ ...style }]}
-        source={{ uri: imageUrl }}
+        source={onDevice ? imageUrl : { uri: imageUrl }}
         loadingIndicatorSource={{
           uri: defaultImageUrl,
         }}

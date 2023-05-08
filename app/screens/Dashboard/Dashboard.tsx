@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import { HeaderContext } from "../../providers/header";
 import { navData } from "./dashboardData";
 import NavButton from "../../components/app/Dashboard/NavButton";
 import { ScrollView } from "react-native-gesture-handler";
@@ -16,10 +15,15 @@ import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardCont
 import JobTestContainer from "../../components/app/Jobs/containers/JobTestContainer";
 import JobInterviewContainer from "../../components/app/Jobs/containers/JobInterviewContainer";
 import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
+import { HeaderContext } from "../../providers/context/header";
+import getJobs from "../../providers/call-service/jobs/getJobs";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Dashboard = ({ navigation }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
+
+  // const { data } = getJobs();
 
   const [cardData, setCardData] = useState(data);
 
@@ -39,9 +43,12 @@ const Dashboard = ({ navigation }: any) => {
 
   const currentActive = navData.filter((item: any) => item.id === activeId);
 
-  useEffect(() => {
-    showHeaderTextHandler("Dashboard");
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Dashboard");
+    }, [])
+  );
+
   return (
     <View
       style={{
@@ -99,7 +106,7 @@ const Dashboard = ({ navigation }: any) => {
             flex: 1,
             paddingHorizontal: scale(15),
 
-            marginBottom: scale(65),
+            paddingBottom: scale(65),
           }}
         >
           <JobOfferContainer cardData={test} navigation={navigation} />

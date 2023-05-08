@@ -8,10 +8,12 @@ import theme from "./app/config/theme/color_theme";
 import Onboarding from "./app/screens/Onboarding/Onboarding";
 import AuthNavigations from "./app/navigations/AuthNavigation";
 import DrawerNavigations from "./app/navigations/DrawerNavigation";
-import { NotificationProvider } from "./app/providers/notification";
-import { HeaderProvider } from "./app/providers/header";
+
 import { StatusBar } from "react-native";
-import { AppProvider } from "./app/providers/app";
+import { AppProvider } from "./app/providers/context/app";
+import { NotificationProvider } from "./app/providers/context/notification";
+import { HeaderProvider } from "./app/providers/context/header";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
@@ -32,25 +34,27 @@ export default function App() {
         barStyle={isDarkMode === "light" ? `dark-content` : `light-content`}
         backgroundColor={isDarkMode === "light" ? "#ffffff" : "#000"}
       />
-      <NavigationContainer>
-        <AppProvider>
-          <NotificationProvider>
-            <HeaderProvider>
-              <themeContext.Provider
-                value={
-                  isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
-                }
-              >
-                <DrawerNavigations />
+      <QueryClientProvider client={new QueryClient()}>
+        <NavigationContainer>
+          <AppProvider>
+            <NotificationProvider>
+              <HeaderProvider>
+                <themeContext.Provider
+                  value={
+                    isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
+                  }
+                >
+                  <DrawerNavigations />
 
-                {/* <Onboarding /> */}
+                  {/* <Onboarding /> */}
 
-                {/* <AuthNavigations /> */}
-              </themeContext.Provider>
-            </HeaderProvider>
-          </NotificationProvider>
-        </AppProvider>
-      </NavigationContainer>
+                  {/* <AuthNavigations /> */}
+                </themeContext.Provider>
+              </HeaderProvider>
+            </NotificationProvider>
+          </AppProvider>
+        </NavigationContainer>
+      </QueryClientProvider>
     </>
   );
 }

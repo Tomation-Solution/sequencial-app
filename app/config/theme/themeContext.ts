@@ -8,6 +8,7 @@ type Theme = {
   accent: string;
   background: string;
   text: string;
+  grayText: string;
   disabled: string;
   success: string;
   warning: string;
@@ -23,6 +24,7 @@ const themeContext = createContext<Theme>({
   accent: "",
   background: "",
   text: "",
+  grayText: "",
   disabled: "",
   success: "",
   warning: "",

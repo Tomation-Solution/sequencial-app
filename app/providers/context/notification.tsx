@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 import { TouchableOpacity, Animated } from "react-native";
-import { Text } from "../components/ui";
+import { Text } from "../../components/ui";
 
 // Create a notification context
 export const NotificationContext = createContext<any>({
