@@ -37,10 +37,22 @@ const JobDetailsCard: React.FC<Props> = ({
 }) => {
   const theme = useContext(themeContext);
 
+  //  onPress={() =>
+  //                   navigation.navigate("News", {
+  //                     screen: "Details",
+  //                     params: item,
+  //                   })
+  //                 }
+
   return (
     <TouchableOpacity
       activeOpacity={0.6}
-      onPress={() => navigation.navigate("Jobs")}
+      onPress={() =>
+        navigation.navigate("Jobs", {
+          screen: "Details",
+          params: "item",
+        })
+      }
       style={{
         backgroundColor: theme.background,
         padding: scale(10),

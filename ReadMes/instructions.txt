@@ -20,4 +20,7 @@ pls (
     make use of expo icons only
 
     make use of the custom Text component from Typography
+    
+
+    all the app theme colors have been provided in the theme context pls do not use any out of this 
 )
