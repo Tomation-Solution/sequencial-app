@@ -16,7 +16,6 @@ import JobTestContainer from "../../components/app/Jobs/containers/JobTestContai
 import JobInterviewContainer from "../../components/app/Jobs/containers/JobInterviewContainer";
 import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
 import { HeaderContext } from "../../providers/context/header";
-import getJobs from "../../providers/call-service/jobs/getJobs";
 import { useFocusEffect } from "@react-navigation/native";
 
 const Dashboard = ({ navigation }: any) => {

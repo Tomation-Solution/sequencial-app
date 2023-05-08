@@ -59,7 +59,9 @@ const JobDetailsCard: React.FC<Props> = ({
       }}
     >
       <Pressable
-        onPress={() => {}}
+        onPress={() => {
+          console.log("heart");
+        }}
         style={{
           position: "absolute",
           top: scale(5),

@@ -33,6 +33,7 @@ const Details = ({ navigation }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       showBackButtonHandler();
+      setShowDetails(false);
     }, [])
   );
 

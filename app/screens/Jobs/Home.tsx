@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, ScrollViewBase, StyleSheet, View } from "react-native";
 import React, { useContext, useState } from "react";
 import { HeaderContext } from "../../providers/context/header";
 import themeContext from "../../config/theme/themeContext";
@@ -8,16 +8,23 @@ import { Text } from "../../components/ui";
 import { scale } from "react-native-size-matters";
 import SearchBar from "../../components/ui/Search/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
-import FIlter from "../../components/ui/filter/FIlter";
+import Filter from "../../components/ui/filter/FIlter";
 import { Seperator } from "../../components/ui/_helpers";
+import data from "./MOCK_DATA.json";
+import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
   { label: "Option 2", value: "option2" },
   { label: "Option 3", value: "option3" },
+  { label: "Option 3", value: "option3" },
+  { label: "Option 3", value: "option3" },
+  { label: "Option 3", value: "option3" },
+  { label: "Option 3", value: "option3" },
+  { label: "Option 3", value: "option3" },
 ];
 
-const Home = ({ props }: any) => {
+const Home = ({ navigation }: any) => {
   const { showBackButtonHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
 
@@ -64,35 +71,64 @@ const Home = ({ props }: any) => {
   };
 
   return (
-    <ScrollView
+    <View
       style={{
         backgroundColor: theme.background,
-        paddingHorizontal: scale(10),
         flex: 1,
       }}
     >
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-          paddingVertical: scale(10),
+          marginHorizontal: scale(10),
         }}
       >
-        <NavButton name="Jobs" />
-        <NavButton name="Interviews" />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingVertical: scale(10),
+            paddingHorizontal: scale(10),
+          }}
+        >
+          <NavButton name="Jobs" />
+          <NavButton name="Liked" />
+        </View>
+
+        <SearchBar outlineType="outline" />
+
+        <Seperator height={7} />
+
+        <Filter onSelect={handleSelect} options={OPTIONS} />
       </View>
 
-      <SearchBar outlineType="outline" />
-
-      <Seperator height={10} />
-
-      <FIlter onSelect={handleSelect} options={OPTIONS} />
-
-      <View>
-        <Text>lorem300</Text>
-      </View>
-    </ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            flex: 1,
+            paddingTop: scale(10),
+            paddingBottom: scale(50),
+            marginHorizontal: scale(10),
+          }}
+        >
+          {data.map((item: any) => (
+            <JobDetailsCard
+              key={item.id}
+              jobTitle={item.jobTitle}
+              companyName={item.companyName}
+              canApplyFromPhone={item.canApplyFromPhone}
+              isHiringMultiple={item.isHiringMultiple}
+              jobType={item.jobType}
+              image={item.image}
+              location={item.location}
+              navigation={navigation}
+              salary={item.salary}
+              whenPosted={item.whenPosted}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

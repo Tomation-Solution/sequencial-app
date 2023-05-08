@@ -6,11 +6,15 @@ export const AppContext = createContext<{
   onLoading: () => void;
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  modalContent: any;
+  setModalContent: (content: any) => void;
 }>({
   loading: false,
   onLoading: () => {},
   modalVisible: false,
   setModalVisible: () => {},
+  modalContent: null,
+  setModalContent: () => {},
 });
 
 export const AppProvider = ({ children }: any) => {
@@ -38,6 +42,8 @@ export const AppProvider = ({ children }: any) => {
         onLoading,
         modalVisible,
         setModalVisible,
+        modalContent,
+        setModalContent,
       }}
     >
       <Modal animationType="slide" transparent={true} visible={modalVisible}>

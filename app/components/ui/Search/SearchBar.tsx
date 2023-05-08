@@ -58,15 +58,17 @@ const SearchBar = ({ outlineType }: { outlineType?: "outline" | "filled" }) => {
             <Ionicons
               name="search"
               size={scale(21)}
-              color={isFocused ? theme.primary : theme.placeholder}
+              color={isFocused ? theme.primary : theme.text}
             />
           </TouchableOpacity>
         )}
 
         <TextInput
+          placeholderTextColor={theme.text}
           returnKeyType="search"
           style={{
             flex: 1,
+            color: theme.text,
           }}
           placeholder="Search"
           onFocus={handleFocus}
@@ -81,7 +83,7 @@ const SearchBar = ({ outlineType }: { outlineType?: "outline" | "filled" }) => {
             <Ionicons
               name="search"
               size={scale(21)}
-              color={isFocused ? theme.primary : theme.placeholder}
+              color={isFocused ? theme.primary : theme.text}
             />
           </TouchableOpacity>
         )}

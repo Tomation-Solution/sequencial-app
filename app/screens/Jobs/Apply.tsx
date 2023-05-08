@@ -27,8 +27,6 @@ const Apply = ({ navigation }: any) => {
     });
     if (result.type === "success") {
       setFileResponse(result);
-
-      console.log(result);
     }
   }, []);
 

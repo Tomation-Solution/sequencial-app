@@ -17,9 +17,6 @@ const Jobs = ({ navigation }: any) => {
       <Stack.Screen name="Details">
         {(props) => <Details {...props} />}
       </Stack.Screen>
-      <Stack.Screen name="Apply">
-        {(props) => <Apply {...props} />}
-      </Stack.Screen>
     </Stack.Navigator>
   );
 };
