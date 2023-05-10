@@ -1,3 +1,3 @@
 export const url = {
-  BASE_URL: "https://github.com/Tomation-Solution/sequencial-app/",
+  BASE_URL: "https://recruitment-api-production.up.railway.app",
 };

@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useContext } from "react";
-import { ImageComponent, Text } from "../../../ui";
+import { ImageComponent, Text } from "../../ui";
 import { scale } from "react-native-size-matters";
-import themeContext from "../../../../config/theme/themeContext";
+import themeContext from "../../../config/theme/themeContext";
 
 type Props = {
   isOpened: boolean;
@@ -102,7 +102,7 @@ const Offer = ({ company, role }: any) => {
     </Text>
   );
 };
-const JobNotifcationCard: React.FC<Props> = ({
+const NotifcationCard: React.FC<Props> = ({
   isOpened,
   image,
   company,
@@ -167,6 +167,6 @@ const JobNotifcationCard: React.FC<Props> = ({
   );
 };
 
-export default JobNotifcationCard;
+export default NotifcationCard;
 
 const styles = StyleSheet.create({});

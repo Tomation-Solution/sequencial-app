@@ -14,6 +14,7 @@ import { AppProvider } from "./app/providers/context/app";
 import { NotificationProvider } from "./app/providers/context/notification";
 import { HeaderProvider } from "./app/providers/context/header";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ApiProvider } from "./app/providers/context/api";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
@@ -37,21 +38,23 @@ export default function App() {
       <QueryClientProvider client={new QueryClient()}>
         <NavigationContainer>
           <AppProvider>
-            <NotificationProvider>
-              <HeaderProvider>
-                <themeContext.Provider
-                  value={
-                    isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
-                  }
-                >
-                  <DrawerNavigations />
+            <themeContext.Provider
+              value={
+                isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
+              }
+            >
+              <ApiProvider>
+                <NotificationProvider>
+                  <HeaderProvider>
+                    {/* <DrawerNavigations /> */}
 
-                  {/* <Onboarding /> */}
+                    {/* <Onboarding /> */}
 
-                  {/* <AuthNavigations /> */}
-                </themeContext.Provider>
-              </HeaderProvider>
-            </NotificationProvider>
+                    <AuthNavigations />
+                  </HeaderProvider>
+                </NotificationProvider>
+              </ApiProvider>
+            </themeContext.Provider>
           </AppProvider>
         </NavigationContainer>
       </QueryClientProvider>

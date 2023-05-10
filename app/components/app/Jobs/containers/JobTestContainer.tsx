@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import JobNotifcationCard from "../JobDetails/JobNotifcationCard";
+import NotifcationCard from "../../Notification/NotifcationCard";
 
 type Props = {
   cardData: Array<any>;
@@ -11,7 +11,7 @@ const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
   return (
     <>
       {cardData.map((item: any) => (
-        <JobNotifcationCard
+        <NotifcationCard
           company={item.company}
           image={item.image}
           isOpened={item.isOpened}

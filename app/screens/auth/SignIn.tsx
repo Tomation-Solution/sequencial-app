@@ -9,6 +9,9 @@ import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Seperator } from "../../components/ui/_helpers";
+import { NotificationContext } from "../../providers/context/notification";
+import { useNotifications } from "../../hooks/app-hooks/useNotification";
+import ApiContext from "../../providers/context/api";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().required("Email is required").email("Invalid email"),
@@ -20,6 +23,28 @@ const SignInSchema = Yup.object().shape({
 
 const SignIn = ({ navigation }: { navigation: any }) => {
   const theme = useContext(themeContext);
+  const { showNotification } = useNotifications();
+
+  const { useLogin } = useContext(ApiContext);
+  const { mutate, isLoading } = useLogin();
+
+  const handleButtonPress = () => {
+    showNotification({
+      title: "New message",
+      message: "You have a new message from John",
+      action: "View",
+    });
+  };
+
+  const handleLogin = ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    mutate({ email, password });
+  };
 
   return (
     <View>
@@ -36,7 +61,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
 
           <Formik
             initialValues={{ email: "", password: "" }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => handleLogin(values)}
             validationSchema={SignInSchema}
           >
             {({
@@ -103,7 +128,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                     onPress={() => handleSubmit()}
                     disabled={!isValid}
                   >
-                    Continue
+                    {isLoading ? "Loading..." : "Sign In"}
                   </Button>
 
                   <Seperator height={20} />
@@ -202,7 +227,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                       size={scale(30)}
                     />
                   </Pressable>
-                  <Pressable onPress={() => console.log("Sign in with google")}>
+                  <Pressable onPress={handleButtonPress}>
                     <Ionicons
                       color={theme.secondary}
                       name="logo-apple"

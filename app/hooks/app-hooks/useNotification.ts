@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { NotificationContext } from "../providers/context/notification";
+import { NotificationContext } from "../../providers/context/notification";
 
 // Define the notification control hook
 export const useNotifications = () => {
@@ -10,7 +10,11 @@ export const useNotifications = () => {
     handleNotificationAction,
   } = useContext(NotificationContext);
 
-  const showNotification = (notification: any) => {
+  const showNotification = (notification: {
+    title: string;
+    message: string;
+    action?: string;
+  }) => {
     addNotification(notification);
   };
 
