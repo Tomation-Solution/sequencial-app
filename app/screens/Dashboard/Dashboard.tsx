@@ -17,6 +17,7 @@ import JobInterviewContainer from "../../components/app/Jobs/containers/JobInter
 import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect } from "@react-navigation/native";
+import { retrieveAppData } from "../../globals/helper_functions/storingAppData";
 
 const Dashboard = ({ navigation }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);

@@ -1,4 +1,10 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import React, { useContext } from "react";
 
 import * as Yup from "yup";

@@ -1,4 +1,9 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import React, { useContext } from "react";
 
 import * as Yup from "yup";
@@ -30,7 +35,7 @@ const Page2 = ({ navigation, route }: any) => {
   console.log(previousValues);
 
   return (
-    <View>
+    <KeyboardAvoidingView>
       <Container
         navigationComponent={<AuthHeader navigation={navigation} />}
         image={auth_assets.signup_p2}
@@ -211,7 +216,7 @@ const Page2 = ({ navigation, route }: any) => {
           </Formik>
         </View>
       </Container>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

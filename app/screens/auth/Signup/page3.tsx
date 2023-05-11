@@ -10,6 +10,8 @@ import { auth_assets } from "../assets";
 import { Button, Input, Text } from "../../../components/ui";
 import { Seperator } from "../../../components/ui/_helpers";
 import AuthHeader from "../../../components/app/Header/AuthHeader";
+import ApiContext from "../../../providers/context/api";
+import { RegisterData } from "../../../globals/types";
 
 const confirm_password = Yup.object().shape({
   password: Yup.string()
@@ -22,9 +24,32 @@ const confirm_password = Yup.object().shape({
 
 const Page3 = ({ navigation, route }: any) => {
   const theme = useContext(themeContext);
+  const { useRegister } = useContext(ApiContext);
+
+  const { mutate, isLoading, isError } = useRegister();
 
   const { newValues } = route.params;
   const previousValues = newValues;
+
+  const handleLogin = ({
+    email,
+    password,
+    first_name,
+    last_name,
+    phone_number,
+    education_level,
+    profession,
+  }: RegisterData) => {
+    mutate({
+      email,
+      password,
+      first_name,
+      last_name,
+      phone_number,
+      education_level,
+      profession,
+    });
+  };
 
   console.log(newValues);
 

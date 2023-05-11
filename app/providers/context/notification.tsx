@@ -19,12 +19,31 @@ const Notification = ({
   onDismiss,
   onAction,
 }: {
-  notification: any;
-  onDismiss: any;
-  onAction: any;
+  notification: {
+    id: string;
+    title: string;
+    message: string;
+    action: string;
+    type: 0 | 1 | 2;
+  };
+  onDismiss: ({}) => void;
+  onAction: ({}) => void;
 }) => {
   const [position] = useState(new Animated.Value(-100));
   const theme = useContext(themeContext);
+
+  const color = () => {
+    switch (notification.type) {
+      case 0:
+        return theme.error;
+      case 1:
+        return theme.success;
+      case 2:
+        return theme.warning;
+      default:
+        return theme.primary;
+    }
+  };
 
   const slideIn = () => {
     Animated.timing(position, {
@@ -62,10 +81,36 @@ const Notification = ({
           height: 10,
         },
         position: "absolute",
+        shadowOpacity: 0.51,
+        shadowRadius: 13.16,
+        elevation: 20,
+        borderColor: color(),
+        borderWidth: 1,
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        // alignItems: "center",
       }}
     >
-      <Text style={{ fontWeight: "bold" }}>{notification.title}</Text>
-      <Text>{notification.message}</Text>
+      <View
+        style={{
+          flex: 1,
+          marginRight: scale(10),
+        }}
+      >
+        <Text
+          style={{ fontWeight: "bold", fontSize: scale(11), color: color() }}
+        >
+          {notification.title}
+        </Text>
+        <Text
+          style={{
+            fontSize: scale(12),
+            color: color(),
+          }}
+        >
+          {notification.message}
+        </Text>
+      </View>
       <View
         style={{
           flexDirection: "row",
@@ -74,7 +119,7 @@ const Notification = ({
           marginTop: scale(10),
         }}
       >
-        {notification.action && (
+        {notification.action ? (
           <TouchableOpacity
             style={{
               padding: 5,
@@ -86,9 +131,19 @@ const Notification = ({
           >
             <Text style={{ color: theme.primary }}>{notification.action}</Text>
           </TouchableOpacity>
+        ) : (
+          <View />
         )}
-        <TouchableOpacity onPress={() => slideOut()}>
-          <Text style={{ color: theme.text }}>Dismiss</Text>
+        <TouchableOpacity
+          style={{
+            padding: 5,
+            borderRadius: 5,
+            borderWidth: 1,
+            borderColor: color(),
+          }}
+          onPress={() => slideOut()}
+        >
+          <Text style={{ color: color(), fontSize: scale(11) }}>Dismiss</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>

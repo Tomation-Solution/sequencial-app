@@ -26,11 +26,12 @@ const SignIn = ({ navigation }: { navigation: any }) => {
   const { showNotification } = useNotifications();
 
   const { useLogin } = useContext(ApiContext);
-  const { mutate, isLoading } = useLogin();
+  const { mutate, isLoading, isError } = useLogin();
 
   const handleButtonPress = () => {
     showNotification({
       title: "New message",
+      type: 1,
       message: "You have a new message from John",
       action: "View",
     });

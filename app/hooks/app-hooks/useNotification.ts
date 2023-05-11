@@ -12,6 +12,7 @@ export const useNotifications = () => {
 
   const showNotification = (notification: {
     title: string;
+    type: number;
     message: string;
     action?: string;
   }) => {
