@@ -34,8 +34,7 @@ const Page3 = ({ navigation, route }: any) => {
   const handleLogin = ({
     email,
     password,
-    first_name,
-    last_name,
+    full_name,
     phone_number,
     education_level,
     profession,
@@ -43,15 +42,14 @@ const Page3 = ({ navigation, route }: any) => {
     mutate({
       email,
       password,
-      first_name,
-      last_name,
+      full_name,
       phone_number,
       education_level,
       profession,
     });
-  };
 
-  console.log(newValues);
+    // navigation.navigate("success");
+  };
 
   return (
     <View>
@@ -76,7 +74,8 @@ const Page3 = ({ navigation, route }: any) => {
                 ...previousValues,
                 ...values,
               };
-              navigation.navigate("success", { newValues });
+
+              handleLogin(newValues);
             }}
             validationSchema={confirm_password}
           >
@@ -141,9 +140,9 @@ const Page3 = ({ navigation, route }: any) => {
                       paddingVertical: scale(13),
                     }}
                     onPress={() => handleSubmit()}
-                    disabled={!isValid}
+                    disabled={!isValid || isLoading}
                   >
-                    Complete
+                    {isLoading ? "Loading..." : "Complete"}
                   </Button>
                 </View>
               </View>

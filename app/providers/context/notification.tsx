@@ -186,7 +186,7 @@ export const NotificationProvider = ({ children }: any) => {
     >
       {notifications.map((notification: any) => (
         <Notification
-          key={Date() + notification}
+          key={Math.random()}
           notification={notification}
           onDismiss={dismissNotification}
           onAction={handleNotificationAction}

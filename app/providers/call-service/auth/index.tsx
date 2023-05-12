@@ -16,19 +16,17 @@ export async function login(email: string, password: string) {
 export async function register_job_seeker(
   email: string,
   password: string,
-  first_name: string,
-  last_name: string,
+  full_name: string,
   phone_number: string,
   education_level: string,
   profession: string
 ) {
-  if (!email || !password || !first_name || !last_name || !phone_number) return;
+  if (!email || !password || !full_name || !phone_number) return;
 
   const response = await axios.post(`auth/create-seeker/`, {
     email,
     password,
-    first_name,
-    last_name,
+    full_name,
     phone_number,
     education_level,
     profession,

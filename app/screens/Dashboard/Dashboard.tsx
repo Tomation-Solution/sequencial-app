@@ -109,7 +109,8 @@ const Dashboard = ({ navigation }: any) => {
             paddingBottom: scale(65),
           }}
         >
-          <JobOfferContainer cardData={test} navigation={navigation} />
+          <JobsCardContainer cardData={cardData} navigation={navigation} />
+          {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
         </View>
       </ScrollView>
     </View>

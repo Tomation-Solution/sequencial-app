@@ -127,7 +127,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                       paddingVertical: scale(13),
                     }}
                     onPress={() => handleSubmit()}
-                    disabled={!isValid}
+                    disabled={!isValid || isLoading}
                   >
                     {isLoading ? "Loading..." : "Sign In"}
                   </Button>

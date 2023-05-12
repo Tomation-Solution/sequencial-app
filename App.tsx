@@ -18,21 +18,20 @@ import { retrieveAppData } from "./app/globals/helper_functions/storingAppData";
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isTokenCheckDone, setIsTokenCheckDone] = useState<boolean>(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(true);
 
   useEffect(() => {
     let listener = EventRegister.addEventListener("changeMode", (data) => {
       setIsDarkMode(data);
     });
+    const checkToken = async () => {
+      const token = await retrieveAppData("token");
+      if (token === null) {
+        setIsAuthenticated(true);
+      }
+    };
 
-    retrieveAppData("token")
-      .then((res) => {
-        if (res !== null) {
-          setIsAuthenticated(false);
-        }
-      })
-      .finally(() => setIsTokenCheckDone(true));
+    checkToken();
 
     return () => {
       EventRegister.removeEventListener(listener as string);

@@ -26,10 +26,16 @@ export const ApiProvider = (props: {
       (data: LoginData) => login(data.email, data.password),
       {
         onSuccess: (res) => {
+          showNotification({
+            title: "Success",
+            type: 1,
+            message: res.data.message,
+          });
           storeAppData({
             item: "token",
             value: res.data.tokens,
           });
+
           props.setIsAuthenticated(true);
         },
         onError: (error: any) => {
@@ -52,18 +58,24 @@ export const ApiProvider = (props: {
         register_job_seeker(
           data.email,
           data.password,
-          data.first_name,
-          data.last_name,
+          data.full_name,
           data.phone_number,
           data.education_level,
           data.profession
         ),
       {
         onSuccess: (res) => {
-          storeAppData({
-            item: "token",
-            value: res.data.tokens,
+          showNotification({
+            title: "Success",
+            type: 1,
+            message: res.data.message,
           });
+          setTimeout(() => {
+            storeAppData({
+              item: "token",
+              value: res.data.tokens,
+            });
+          }, 1000);
           props.setIsAuthenticated(true);
         },
         onError: (error: any) => {

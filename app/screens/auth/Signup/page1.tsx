@@ -19,13 +19,9 @@ import { Seperator } from "../../../components/ui/_helpers";
 import AuthHeader from "../../../components/app/Header/AuthHeader";
 
 const personal_details_scheama = Yup.object().shape({
-  first_name: Yup.string()
+  full_name: Yup.string()
     .required("First Name is required")
     .min(3, "First Name should be at least 3 characters"),
-
-  last_name: Yup.string()
-    .required("Last Name is required")
-    .min(3, "Last Name should be at least 3 characters"),
 
   email: Yup.string().required("Email is required").email("Invalid email"),
 
@@ -55,8 +51,8 @@ const Page1 = ({ navigation, route }: any) => {
 
           <Formik
             initialValues={{
-              first_name: "",
-              last_name: "",
+              full_name: "",
+
               email: "",
               phone_number: "",
             }}
@@ -80,40 +76,23 @@ const Page1 = ({ navigation, route }: any) => {
               >
                 <View
                   style={{
-                    marginTop: scale(20),
+                    marginTop: scale(10),
                   }}
                 >
                   <Input
-                    placeholder="First Name"
-                    onChangeText={handleChange("first_name")}
-                    onBlur={handleBlur("first_name")}
-                    value={values.first_name}
+                    placeholder="Full Name"
+                    onChangeText={handleChange("full_name")}
+                    onBlur={handleBlur("full_name")}
+                    value={values.full_name}
                   />
-                  {errors.first_name && touched.first_name && (
+                  {errors.full_name && touched.full_name && (
                     <Text
                       style={{
                         color: theme.error,
                         fontSize: scale(12),
                       }}
                     >
-                      {errors.first_name}
-                    </Text>
-                  )}
-
-                  <Input
-                    placeholder="Last Name"
-                    onChangeText={handleChange("last_name")}
-                    onBlur={handleBlur("last_name")}
-                    value={values.last_name}
-                  />
-                  {errors.last_name && touched.last_name && (
-                    <Text
-                      style={{
-                        color: theme.error,
-                        fontSize: scale(12),
-                      }}
-                    >
-                      {errors.last_name}
+                      {errors.full_name}
                     </Text>
                   )}
 
