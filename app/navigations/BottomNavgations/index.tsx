@@ -14,7 +14,7 @@ import themeContext from "../../config/theme/themeContext";
 
 const Tab = createBottomTabNavigator();
 
-const BottomNavigations = () => {
+const BottomNavigations = ({ navigation }: any) => {
   const [fontsLoaded] = useFonts({
     Ubuntu_400Regular,
   });
@@ -52,13 +52,14 @@ const BottomNavigations = () => {
     >
       <Tab.Screen
         name="Home"
-        component={Dashboard}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="home" size={24} color={color} />
           ),
         }}
-      />
+      >
+        {(props) => <Dashboard drawer_props={navigation} {...props} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Jobs"
         component={Jobs}

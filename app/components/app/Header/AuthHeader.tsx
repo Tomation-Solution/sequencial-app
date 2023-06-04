@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../../../globals/constants/color";
+import { COLORS } from "../../../config/constants/color";
 import { scale } from "react-native-size-matters";
 
 const AuthHeader = ({ navigation }: { navigation: any }) => {

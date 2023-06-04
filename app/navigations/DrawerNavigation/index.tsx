@@ -10,24 +10,22 @@ import {
 import {
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerToggleButton,
   createDrawerNavigator,
 } from "@react-navigation/drawer";
 
-import Dashboard from "../../screens/Dashboard/Dashboard";
-import Jobs from "../../screens/Jobs/Jobs";
 import CV_Management from "../../screens/CV_Management/CV_Management";
 import Test_Management from "../../screens/Test_Management/Test_Management";
 import Interview_Management from "../../screens/Interview_Management/Interview_Management";
 import Documentation_Management from "../../screens/Documentation_Management/Documentation_Management";
 import Calender from "../../screens/Calender/Calender";
 import Settings from "../../screens/Settings/Settings";
-import { COLORS } from "../../globals/constants/color";
+
 import {
   Ionicons,
   MaterialIcons,
   MaterialCommunityIcons,
   FontAwesome5,
-  AntDesign,
 } from "@expo/vector-icons";
 import { images } from "../../assets";
 import { scale, verticalScale } from "react-native-size-matters";
@@ -85,6 +83,10 @@ const DrawerNavigations = () => {
         screenOptions={{
           header: (props) => <Header {...props} />,
           drawerPosition: "right",
+          drawerType: "slide",
+          headerLeft: () => null,
+          headerRight: () => <DrawerToggleButton />,
+
           drawerStyle: {
             backgroundColor: theme.background,
           },

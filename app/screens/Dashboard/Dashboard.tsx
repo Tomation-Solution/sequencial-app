@@ -1,5 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useState,
+} from "react";
 import { navData } from "./dashboardData";
 import NavButton from "../../components/app/Dashboard/NavButton";
 import { ScrollView } from "react-native-gesture-handler";
@@ -16,10 +22,10 @@ import JobTestContainer from "../../components/app/Jobs/containers/JobTestContai
 import JobInterviewContainer from "../../components/app/Jobs/containers/JobInterviewContainer";
 import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
 import { HeaderContext } from "../../providers/context/header";
-import { useFocusEffect } from "@react-navigation/native";
-import { retrieveAppData } from "../../globals/helper_functions/storingAppData";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
 
-const Dashboard = ({ navigation }: any) => {
+const Dashboard = ({ drawer_props, navigation }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
 

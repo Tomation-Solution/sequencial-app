@@ -48,6 +48,7 @@ const ImageComponent: React.FC<Props> = ({ imageUrl, style, onDevice }) => {
       <Image
         style={[{ ...style }]}
         source={onDevice ? imageUrl : { uri: imageUrl }}
+        resizeMode="cover"
         loadingIndicatorSource={{
           uri: defaultImageUrl,
         }}

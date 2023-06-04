@@ -2,10 +2,20 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Details from "./Details";
 import Home from "./Home";
 import Apply from "./Apply";
+import { useFocusEffect } from "@react-navigation/native";
+import React from "react";
+import { HeaderContext } from "../../providers/context/header";
 
 const Stack = createStackNavigator();
 
 const Jobs = ({ navigation }: any) => {
+  const { showBackButtonHandler } = React.useContext(HeaderContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showBackButtonHandler();
+    }, [])
+  );
   return (
     <Stack.Navigator
       screenOptions={{

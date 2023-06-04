@@ -1,5 +1,11 @@
 import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
+
 import { useEffect, useState } from "react";
 import { EventRegister } from "react-native-event-listeners";
 import themeContext from "./app/config/theme/themeContext";
@@ -7,18 +13,22 @@ import theme from "./app/config/theme/color_theme";
 import Onboarding from "./app/screens/Onboarding/Onboarding";
 import AuthNavigations from "./app/navigations/AuthNavigation";
 import DrawerNavigations from "./app/navigations/DrawerNavigation";
-import { StatusBar, Text, View } from "react-native";
+import { StatusBar, Text, View, useColorScheme } from "react-native";
 import { AppProvider } from "./app/providers/context/app";
 import { NotificationProvider } from "./app/providers/context/notification";
 import { HeaderProvider } from "./app/providers/context/header";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ApiProvider } from "./app/providers/context/api";
-import { retrieveAppData } from "./app/globals/helper_functions/storingAppData";
+import { retrieveAppData } from "./app/helper_functions/storingAppData";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(true);
+
+  const colorScheme = useColorScheme();
+
+  console.log("colorScheme", colorScheme);
 
   useEffect(() => {
     let listener = EventRegister.addEventListener("changeMode", (data) => {
@@ -26,7 +36,7 @@ export default function App() {
     });
     const checkToken = async () => {
       const token = await retrieveAppData("token");
-      if (token === null) {
+      if (token !== null) {
         setIsAuthenticated(true);
       }
     };
@@ -74,21 +84,25 @@ export default function App() {
                 isDarkMode === "light" ? theme.lightTheme : theme.darkTheme
               }
             >
-              <NotificationProvider>
-                <ApiProvider setIsAuthenticated={setIsAuthenticated}>
-                  <HeaderProvider>
-                    {/* <DrawerNavigations /> */}
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <NotificationProvider>
+                  <ApiProvider setIsAuthenticated={setIsAuthenticated}>
+                    <HeaderProvider>
+                      {/* <DrawerNavigations /> */}
 
-                    {/* <Onboarding /> */}
+                      {/* <Onboarding /> */}
 
-                    {isAuthenticated ? (
-                      <DrawerNavigations />
-                    ) : (
-                      <AuthNavigations />
-                    )}
-                  </HeaderProvider>
-                </ApiProvider>
-              </NotificationProvider>
+                      {isAuthenticated ? (
+                        <DrawerNavigations />
+                      ) : (
+                        <AuthNavigations />
+                      )}
+                    </HeaderProvider>
+                  </ApiProvider>
+                </NotificationProvider>
+              </ThemeProvider>
             </themeContext.Provider>
           </AppProvider>
         </NavigationContainer>

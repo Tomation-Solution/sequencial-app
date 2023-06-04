@@ -25,22 +25,13 @@ const OPTIONS = [
 ];
 
 const Home = ({ navigation }: any) => {
-  const { showBackButtonHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
 
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
   const handleSelect = (option: string) => {
-    setSelectedOption(option);
+    // perform action with selected options
   };
 
   const [activeNav, setActiveNav] = React.useState("jobs");
-
-  useFocusEffect(
-    React.useCallback(() => {
-      showBackButtonHandler();
-    }, [])
-  );
 
   const NavButton = ({ name }: any) => {
     const active = activeNav === name.toLowerCase();

@@ -17,7 +17,7 @@ import themeContext from "../../config/theme/themeContext";
 import { images } from "../../assets";
 import { dateFormaterNow } from "../../helper_functions/dateFormater";
 
-const Apply = ({ navigation }: any) => {
+const UploadCv = ({ navigation }: any) => {
   const theme = useContext(themeContext);
   const [fileResponse, setFileResponse] = React.useState<any>(null);
 
@@ -38,8 +38,39 @@ const Apply = ({ navigation }: any) => {
     <View
       style={{
         padding: scale(10),
+        flex: 1,
+        backgroundColor: theme.background,
       }}
     >
+      <Seperator height={scale(20)} />
+      <Pressable
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={{
+          backgroundColor: theme.placeholder,
+          paddingHorizontal: scale(5),
+          paddingVertical: scale(7),
+          borderRadius: scale(10),
+          flexDirection: "row",
+          alignSelf: "flex-end",
+          marginRight: scale(10),
+        }}
+      >
+        <Text
+          style={{
+            fontSize: scale(12),
+            fontWeight: "bold",
+            color: theme.text,
+            marginLeft: scale(5),
+          }}
+        >
+          Setup Instead
+        </Text>
+      </Pressable>
+
+      <Seperator height={scale(20)} />
+
       <Text
         style={{
           fontWeight: "bold",
@@ -54,7 +85,7 @@ const Apply = ({ navigation }: any) => {
           fontSize: scale(14),
         }}
       >
-        Add your CV/Resume to apply for a job
+        Please upload your CV/Resume
       </Text>
 
       <Seperator height={scale(20)} />
@@ -70,6 +101,8 @@ const Apply = ({ navigation }: any) => {
             borderRadius: scale(18),
             borderStyle: "dashed",
             padding: scale(15),
+            height: scale(100),
+            width: "100%",
           }}
         >
           <View
@@ -164,39 +197,11 @@ const Apply = ({ navigation }: any) => {
       )}
 
       <Seperator height={scale(20)} />
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          //   justifyContent: "center",
-        }}
-      >
-        <View
-          style={{
-            borderColor: theme.placeholder,
-            borderWidth: scale(2),
-            borderRadius: scale(3),
-            width: scale(15),
-            height: scale(15),
-          }}
-        />
-        <Text
-          style={{
-            marginLeft: scale(8),
-            fontSize: scale(12),
-          }}
-        >
-          Apply with existing CV
-        </Text>
-      </View>
-
-      <Seperator height={scale(20)} />
-
-      <Button>{fileResponse === null ? "APPLY" : "PROCEED"}</Button>
+      {fileResponse !== null && <Button>PROCEED</Button>}
     </View>
   );
 };
 
-export default Apply;
+export default UploadCv;
 
 const styles = StyleSheet.create({});

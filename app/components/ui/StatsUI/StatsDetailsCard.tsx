@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { COLORS } from "../../../globals/constants/color";
+import { COLORS } from "../../../config/constants/color";
 import { scale } from "react-native-size-matters";
 import Text from "../Typography/Text";
 

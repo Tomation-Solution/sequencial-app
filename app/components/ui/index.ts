@@ -4,4 +4,6 @@ export { default as StatsCard } from "./StatsUI/StatsCard";
 export { default as StatsDetailsCard } from "./StatsUI/StatsDetailsCard";
 export { default as UpdateCard } from "./UpdateCard/UpdateCard";
 export { default as Input } from "./Input/Input";
+export { default as CustomInput } from "./Input/CustomInput";
+export { default as CustomSelectInput } from "./Input/CustomSelectInput";
 export { default as ImageComponent } from "./Image/ImageComponent";

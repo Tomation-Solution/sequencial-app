@@ -1,7 +1,7 @@
 import { Pressable, PressableProps, StyleSheet } from "react-native";
 import React, { useContext } from "react";
 import Text from "../Typography/Text";
-import { COLORS } from "../../../globals/constants/color";
+import { COLORS } from "../../../config/constants/color";
 import { scale } from "react-native-size-matters";
 import themeContext from "../../../config/theme/themeContext";
 

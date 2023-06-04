@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { memo, useContext } from "react";
 import Text from "../../../ui/Typography/Text";
 import { scale } from "react-native-size-matters";
-import { COLORS } from "../../../../globals/constants/color";
+import { COLORS } from "../../../../config/constants/color";
 import { Entypo, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
 import { placeholders } from "../../../../assets/placeholders";

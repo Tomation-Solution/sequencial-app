@@ -11,7 +11,7 @@ import { Button, Input, Text } from "../../../components/ui";
 import { Seperator } from "../../../components/ui/_helpers";
 import AuthHeader from "../../../components/app/Header/AuthHeader";
 import ApiContext from "../../../providers/context/api";
-import { RegisterData } from "../../../globals/types";
+import { RegisterData } from "../../../../types";
 
 const confirm_password = Yup.object().shape({
   password: Yup.string()
