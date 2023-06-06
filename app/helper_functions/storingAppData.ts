@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EventRegister } from "react-native-event-listeners";
 
 export const retrieveAppData = async (item: string) => {
   try {
@@ -27,6 +28,15 @@ export const storeAppData = async ({
 export const removeAppData = async (item: string) => {
   try {
     await AsyncStorage.removeItem(item);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const clearAppData = async () => {
+  try {
+    await AsyncStorage.clear();
+    EventRegister.emit("logout");
   } catch (error) {
     console.log(error);
   }

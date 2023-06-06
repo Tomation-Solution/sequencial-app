@@ -33,12 +33,16 @@ import { scale, verticalScale } from "react-native-size-matters";
 import { useFonts, Ubuntu_400Regular } from "@expo-google-fonts/ubuntu";
 import BottomNavigations from "../BottomNavgations";
 import Header from "../../components/app/Header/Header";
-import { EventRegister } from "react-native-event-listeners";
 import themeContext from "../../config/theme/themeContext";
+import { clearAppData } from "../../helper_functions/storingAppData";
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = (props: any) => {
   const [mode, setMode] = React.useState<"light" | "dark">("light");
+
+  const logOut = () => {
+    clearAppData();
+  };
   return (
     <View style={styles.drawerContainer}>
       <View style={styles.drawerHeader}>
@@ -54,10 +58,12 @@ const CustomDrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <TouchableOpacity
-        onPress={() => {
-          setMode(mode === "light" ? "dark" : "light");
-          EventRegister.emit("changeMode", mode);
-        }}
+        // onPress={() => {
+        //   setMode(mode === "light" ? "dark" : "light");
+        //   EventRegister.emit("changeMode", mode);
+        // }}
+
+        onPress={() => logOut()}
         style={styles.logoutButton}
       >
         <Text style={styles.logoutText}>Logout</Text>

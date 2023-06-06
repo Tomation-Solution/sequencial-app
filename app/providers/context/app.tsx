@@ -20,7 +20,9 @@ export const AppContext = createContext<{
 export const AppProvider = ({ children }: any) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState<any>();
+  const [modalContent, setModalContent] = useState<any>(
+    <ActivityIndicator size={"small"} />
+  );
 
   const onLoading = () => {
     setLoading(true);

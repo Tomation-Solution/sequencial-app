@@ -1,23 +1,22 @@
 import { useQuery } from "react-query";
-import axios from "../../api/axios";
+import axios, { axiosPrivate } from "../../api/axios";
+import { retrieveAppData } from "../../../helper_functions/storingAppData";
 
-async function getJobsFnc() {
-  const response = await axios.get(
-    `blob/master/app/screens/Dashboard/MOCK_DATA.json`
-    // {
-    //   headers: {
-    //     "ysu-afriktv-auth-token": extraheaders,
-    //   },
-    // }
-  );
-  console.log(response.data);
+export async function getJobsFnc() {
+  const token = await retrieveAppData("token");
+
+  const response = await axios.get("jobs/job-seeker-view/", {
+    headers: {
+      Authorization: `Bearer ${token.access}`,
+    },
+  });
   return response.data;
 }
 
-const getJobs = () =>
-  useQuery({
-    queryKey: ["getJobs"], // include plan in the queryKey
-    queryFn: () => getJobsFnc(), // use a closure to capture the plan variable
-  });
+// const getJobs = () =>
+//   useQuery({
+//     queryKey: ["getJobs"], // include plan in the queryKey
+//     queryFn: () => getJobsFnc(), // use a closure to capture the plan variable
+//   });
 
-export default getJobs;
+// export default getJobs;

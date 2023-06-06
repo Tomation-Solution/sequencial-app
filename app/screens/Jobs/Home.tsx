@@ -10,8 +10,11 @@ import SearchBar from "../../components/ui/Search/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import Filter from "../../components/ui/filter/FIlter";
 import { Seperator } from "../../components/ui/_helpers";
-import data from "./MOCK_DATA.json";
+// import data from "./MOCK_DATA.json";
 import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
+import ApiContext from "../../providers/context/api";
+import { getJobsFnc } from "../../providers/call-service/jobs/getJobs";
+import { AppContext } from "../../providers/context/app";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -26,6 +29,22 @@ const OPTIONS = [
 
 const Home = ({ navigation }: any) => {
   const theme = useContext(themeContext);
+
+  const { useApiQuery } = useContext(ApiContext);
+
+  const { setModalVisible } = useContext(AppContext);
+
+  const { data, error, isLoading } = useApiQuery({
+    queryKey: "fetchAllJobs",
+    queryFunction: getJobsFnc,
+  });
+
+  // if (isLoading) {
+  //   setModalVisible(true);
+  //   return <></>;
+  // } else {
+  //   setModalVisible(false);
+  // }
 
   const handleSelect = (option: string) => {
     // perform action with selected options
@@ -101,23 +120,7 @@ const Home = ({ navigation }: any) => {
             paddingBottom: scale(50),
             marginHorizontal: scale(10),
           }}
-        >
-          {data.map((item: any) => (
-            <JobDetailsCard
-              key={item.id}
-              jobTitle={item.jobTitle}
-              companyName={item.companyName}
-              canApplyFromPhone={item.canApplyFromPhone}
-              isHiringMultiple={item.isHiringMultiple}
-              jobType={item.jobType}
-              image={item.image}
-              location={item.location}
-              navigation={navigation}
-              salary={item.salary}
-              whenPosted={item.whenPosted}
-            />
-          ))}
-        </View>
+        ></View>
       </ScrollView>
     </View>
   );

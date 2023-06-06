@@ -24,12 +24,21 @@ import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferCont
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { retrieveAppData } from "../../helper_functions/storingAppData";
+import ApiContext from "../../providers/context/api";
+import { getJobsFnc } from "../../providers/call-service/jobs/getJobs";
+import { AppContext } from "../../providers/context/app";
 
 const Dashboard = ({ drawer_props, navigation }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
+  const { setModalVisible } = useContext(AppContext);
 
-  // const { data } = getJobs();
+  const { useApiQuery } = useContext(ApiContext);
+
+  const { data, error, isLoading } = useApiQuery({
+    queryKey: "fetchAllJobs",
+    queryFunction: getJobsFnc,
+  });
 
   const [cardData, setCardData] = useState(data);
 
@@ -54,6 +63,13 @@ const Dashboard = ({ drawer_props, navigation }: any) => {
       showHeaderTextHandler("Dashboard");
     }, [])
   );
+
+  if (isLoading) {
+    // setModalVisible(true);
+    return <></>;
+  } else {
+    // setModalVisible(false);z
+  }
 
   return (
     <View
@@ -115,7 +131,7 @@ const Dashboard = ({ drawer_props, navigation }: any) => {
             paddingBottom: scale(65),
           }}
         >
-          <JobsCardContainer cardData={cardData} navigation={navigation} />
+          <JobsCardContainer cardData={data?.data} navigation={navigation} />
           {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
         </View>
       </ScrollView>

@@ -8,17 +8,19 @@ type Props = {
 };
 
 const JobsCardContainer: React.FC<Props> = ({ cardData, navigation }) => {
+  if (!cardData) return <></>;
   return (
     <>
       {cardData.map((item) => (
         <JobDetailsCard
           canApplyFromPhone={item.canApplyFromPhone}
-          companyName={item.companyName}
+          org_name={item.org_name}
           isHiringMultiple={item.isHiringMultiple}
-          jobTitle={item.jobTitle}
-          jobType={item.jobType}
+          job_title={item.job_title}
+          job_type={item.job_type}
           location={item.location}
           salary={item.salary}
+          currency={item.currency}
           whenPosted={item.whenPosted}
           image={item.image}
           key={item.id}

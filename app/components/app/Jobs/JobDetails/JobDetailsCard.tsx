@@ -11,11 +11,12 @@ import ImageComponent from "../../../ui/Image/ImageComponent";
 import { useNavigation } from "@react-navigation/native";
 
 type Props = {
-  jobTitle: string;
-  companyName: string;
+  job_title: string;
+  org_name: string;
   location: string;
-  jobType: string;
+  job_type: string;
   salary: string;
+  currency: string;
   canApplyFromPhone: boolean;
   isHiringMultiple: boolean;
   whenPosted: string;
@@ -24,11 +25,12 @@ type Props = {
 };
 
 const JobDetailsCard: React.FC<Props> = ({
-  jobTitle,
-  companyName,
+  job_title,
+  org_name,
   location,
-  jobType,
+  job_type,
   salary,
+  currency,
   canApplyFromPhone,
   isHiringMultiple,
   whenPosted,
@@ -100,7 +102,7 @@ const JobDetailsCard: React.FC<Props> = ({
             marginTop: scale(5),
           }}
         >
-          {jobTitle}
+          {job_title}
         </Text>
 
         <View
@@ -140,7 +142,7 @@ const JobDetailsCard: React.FC<Props> = ({
                 fontWeight: "bold",
               }}
             >
-              {companyName}
+              {org_name}
             </Text>
             <Text
               style={{
@@ -178,7 +180,7 @@ const JobDetailsCard: React.FC<Props> = ({
                 marginLeft: scale(5),
               }}
             >
-              {jobType}
+              {job_type}
             </Text>
           </View>
           <View
@@ -203,7 +205,8 @@ const JobDetailsCard: React.FC<Props> = ({
                 marginLeft: scale(5),
               }}
             >
-              ${salary}
+              {currency === "naira" ? "₦" : "$"}
+              {salary}
             </Text>
           </View>
         </View>
@@ -228,8 +231,8 @@ const JobDetailsCard: React.FC<Props> = ({
             />
             <Text
               style={{
-                fontSize: scale(12),
-                fontWeight: "bold",
+                fontSize: scale(10),
+                // fontWeight: "bold",
                 marginLeft: scale(5),
               }}
             >
@@ -253,8 +256,8 @@ const JobDetailsCard: React.FC<Props> = ({
             />
             <Text
               style={{
-                fontSize: scale(12),
-                fontWeight: "bold",
+                fontSize: scale(10),
+                // fontWeight: "bold",
                 marginLeft: scale(5),
               }}
             >

@@ -1,0 +1,121 @@
+const handleEducationChange = (text: string, name: string, id: number) => {
+  const newEducation = education.map((item) => {
+    if (item.id === id) {
+      return {
+        ...item,
+        [name]: text,
+      };
+    }
+    return item;
+  });
+  setEducation(newEducation);
+};
+
+const handleCertificationsChange = (text: string, name: string, id: number) => {
+  const newCertifications = certifications.map((item) => {
+    if (item.id === id) {
+      return {
+        ...item,
+        [name]: text,
+      };
+    }
+    return item;
+  });
+  setCertifications(newCertifications);
+};
+
+const handleReferencesChange = (text: string, name: string, id: number) => {
+  const newReferences = references.map((item) => {
+    if (item.id === id) {
+      return {
+        ...item,
+        [name]: text,
+      };
+    }
+    return item;
+  });
+  setReferences(newReferences);
+};
+
+const handleWorkExperienceChange = (text: string, name: string, id: number) => {
+  const newWorkExperience = workExperience.map((item) => {
+    if (item.id === id) {
+      return {
+        ...item,
+        [name]: text,
+      };
+    }
+    return item;
+  });
+
+  setWorkExperience(newWorkExperience);
+};
+
+const handleAddEducation = () => {
+  const newEducation = {
+    id: education.length + 1,
+    school: "",
+    degree: "",
+    courseOfStudy: "",
+    startYear: "",
+    endYear: "",
+  };
+  setEducation([...education, newEducation]);
+  if (educationRef.current) {
+    educationRef.current.scrollToEnd({ animated: true });
+  }
+};
+
+const handleAddCertification = () => {
+  const newCertification = {
+    id: certifications.length + 1,
+    certificate: "",
+    year: "",
+    issuer: "",
+  };
+  setCertifications([...certifications, newCertification]);
+
+  if (certificationRef.current) {
+    certificationRef.current.scrollToEnd({ animated: true });
+  }
+};
+
+const handleAddWorkExperience = () => {
+  const newWorkExperience = {
+    id: workExperience.length + 1,
+    company: "",
+    position: "",
+    startYear: "",
+    endYear: "",
+    role: "",
+    responsibilities: "",
+  };
+  setWorkExperience([...workExperience, newWorkExperience]);
+
+  if (workExperienceRef.current) {
+    workExperienceRef.current.scrollToEnd({ animated: true });
+  }
+};
+
+const handleAddReference = () => {
+  const newReference = {
+    id: references.length + 1,
+    fullName: "",
+    relationship: "",
+    email: "",
+    phoneNumber: "",
+  };
+
+  setReferences([...references, newReference]);
+
+  if (referenceRef.current) {
+    referenceRef.current.scrollToEnd({ animated: true });
+  }
+};
+
+const handleFormChange = (value: any, name: string) => {
+  setUserDetails({
+    ...userDetails,
+    [name]: value,
+  });
+};

@@ -9,12 +9,14 @@ const DropdownComponent = ({
   data,
   onChange,
   label,
+  value,
 }: {
   data: { label: string; value: string }[];
   onChange: (item: { label: string; value: string }) => void;
   label?: string;
+  value?: string;
 }) => {
-  const [value, setValue] = useState<null | string>(null);
+  const [_value, setValue] = useState<any>(value);
 
   return (
     <View style={{ marginTop: scale(12) }}>
@@ -41,7 +43,7 @@ const DropdownComponent = ({
         valueField="value"
         placeholder="Select item"
         searchPlaceholder="Search..."
-        value={value}
+        value={_value}
         onChange={onChange}
         // renderLeftIcon={() => (
         //   <AntDesign

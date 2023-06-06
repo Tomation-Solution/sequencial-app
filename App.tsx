@@ -34,6 +34,11 @@ export default function App() {
     let listener = EventRegister.addEventListener("changeMode", (data) => {
       setIsDarkMode(data);
     });
+
+    let logout_listener = EventRegister.addEventListener("logout", () => {
+      setIsAuthenticated(false);
+    });
+
     const checkToken = async () => {
       const token = await retrieveAppData("token");
       if (token !== null) {
@@ -45,6 +50,7 @@ export default function App() {
 
     return () => {
       EventRegister.removeEventListener(listener as string);
+      EventRegister.removeEventListener(logout_listener as string);
     };
   }, []);
 
