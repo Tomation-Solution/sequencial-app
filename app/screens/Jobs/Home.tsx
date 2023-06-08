@@ -13,7 +13,7 @@ import { Seperator } from "../../components/ui/_helpers";
 // import data from "./MOCK_DATA.json";
 import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
 import ApiContext from "../../providers/context/api";
-import { getJobsFnc } from "../../providers/call-service/jobs/getJobs";
+import { getJobsFnc } from "../../providers/call-service/jobs";
 import { AppContext } from "../../providers/context/app";
 
 const OPTIONS = [

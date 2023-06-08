@@ -13,6 +13,20 @@ export async function getJobsFnc() {
   return response.data;
 }
 
+export async function jobsApplied() {
+  const token = await retrieveAppData("token");
+
+  const response = await axios.get(
+    "/jobs/job-seeker-dashboard/jobs_applied_for/",
+    {
+      headers: {
+        Authorization: `Bearer ${token.access}`,
+      },
+    }
+  );
+  return response.data;
+}
+
 // const getJobs = () =>
 //   useQuery({
 //     queryKey: ["getJobs"], // include plan in the queryKey

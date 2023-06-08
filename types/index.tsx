@@ -59,3 +59,9 @@ export type UserDetails = {
   twitter: string;
   personal_statement: string;
 };
+
+export type NavButtonProps = {
+  id: string;
+  title: string;
+  _count: number | string;
+};

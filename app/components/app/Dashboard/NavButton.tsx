@@ -11,6 +11,7 @@ type Props = {
   title: string;
   activeId: string;
   changeActiveId: any;
+  _count: number | string;
   onPress?: () => void;
 };
 
@@ -19,6 +20,7 @@ const NavButton: React.FC<Props> = ({
   title,
   activeId,
   changeActiveId,
+  _count,
   onPress,
 }) => {
   const theme = useContext(themeContext);
@@ -35,7 +37,7 @@ const NavButton: React.FC<Props> = ({
       onPress={handlePress}
       style={{
         paddingHorizontal: scale(8),
-        paddingRight: active ? scale(25) : scale(8),
+        paddingRight: _count === "_" ? scale(8) : scale(25),
         paddingVertical: scale(2),
         borderRadius: scale(8),
         marginHorizontal: scale(3.5),
@@ -55,7 +57,7 @@ const NavButton: React.FC<Props> = ({
       >
         {title}
       </Text>
-      {active && (
+      {_count !== "_" && (
         <View
           style={{
             position: "absolute",
@@ -71,14 +73,14 @@ const NavButton: React.FC<Props> = ({
         >
           <Text
             style={{
-              color: active ? theme.text : theme.background,
+              color: theme.text,
               fontWeight: active ? "bold" : "400",
               fontSize: scale(12),
               marginLeft: scale(7),
               textAlign: "center",
             }}
           >
-            5
+            {_count}
           </Text>
         </View>
       )}

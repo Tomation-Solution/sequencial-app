@@ -1,76 +1,77 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useState,
-} from "react";
-import { navData } from "./dashboardData";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useLayoutEffect, useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useFocusEffect } from "@react-navigation/native";
+import { HeaderContext } from "../../providers/context/header";
+import AllJobs from "./AllJobs";
+import { scale } from "react-native-size-matters";
+import ApiContext from "../../providers/context/api";
+import { getDashBoardSummary } from "../../providers/call-service/dashboard";
 import NavButton from "../../components/app/Dashboard/NavButton";
-import { ScrollView } from "react-native-gesture-handler";
+import SearchBar from "../../components/ui/Search/SearchBar";
 import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
-import { scale } from "react-native-size-matters";
-import SearchBar from "../../components/ui/Search/SearchBar";
-import data from "./MOCK_DATA.json";
-import test from "./MOCK_DATA _2.json";
+import JobsApplied from "./JobsApplied";
 
-import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
-import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
-import JobTestContainer from "../../components/app/Jobs/containers/JobTestContainer";
-import JobInterviewContainer from "../../components/app/Jobs/containers/JobInterviewContainer";
-import JobOfferContainer from "../../components/app/Jobs/containers/JobOfferContainer";
-import { HeaderContext } from "../../providers/context/header";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { retrieveAppData } from "../../helper_functions/storingAppData";
-import ApiContext from "../../providers/context/api";
-import { getJobsFnc } from "../../providers/call-service/jobs/getJobs";
-import { AppContext } from "../../providers/context/app";
+const Stack = createStackNavigator();
 
-const Dashboard = ({ drawer_props, navigation }: any) => {
-  const { showHeaderTextHandler } = React.useContext(HeaderContext);
-  const theme = useContext(themeContext);
-  const { setModalVisible } = useContext(AppContext);
-
+const Dashboard = ({ navigation }: { navigation: any }) => {
   const { useApiQuery } = useContext(ApiContext);
-
-  const { data, error, isLoading } = useApiQuery({
-    queryKey: "fetchAllJobs",
-    queryFunction: getJobsFnc,
-  });
-
-  const [cardData, setCardData] = useState(data);
-
-  const [type, setType] = useState("jobs");
+  const theme = useContext(themeContext);
 
   const [activeId, setActiveId] = useState("001");
 
-  const handleNavPress = ({ item }: any) => {
-    if (type !== item.type) {
-      setType(item.type);
-    }
-  };
-
   const changeActiveId = (id: string) => {
     setActiveId(() => id);
+    navigation.navigate(id);
   };
 
-  const currentActive = navData.filter((item: any) => item.id === activeId);
+  const dashboard_summar_query = useApiQuery({
+    queryKey: "dashboard_summary",
+    queryFunction: getDashBoardSummary,
+  });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      showHeaderTextHandler("Dashboard");
-    }, [])
-  );
+  const navData = [
+    {
+      id: "001",
+      title: "All Jobs",
+      _count: "_",
+    },
+    {
+      id: "002",
+      title: "Jobs Applied",
+      _count: dashboard_summar_query?.data?.data?.jobs_applied_for ?? 0,
+    },
+    {
+      id: "003",
+      title: "Jobs Test Taken",
+      _count: dashboard_summar_query?.data?.data?.jobs_test_taken ?? 0,
+    },
+    {
+      id: "004",
+      title: "Jobs Test Scheduled",
+      _count: dashboard_summar_query?.data?.data?.jobs_test_scheduled ?? 0,
+    },
+    {
+      id: "007",
+      title: "Interviews Scheduled",
+      _count: dashboard_summar_query?.data?.data?.interview_scheduled ?? 0,
+    },
+    {
+      id: "005",
+      title: "Interviews Attended",
+      _count: dashboard_summar_query?.data?.data?.interviews_attended ?? 0,
+    },
+    {
+      id: "006",
+      title: "Job Offers",
+      _count: dashboard_summar_query?.data?.data?.job_offers ?? 0,
+    },
+  ];
 
-  if (isLoading) {
-    // setModalVisible(true);
-    return <></>;
-  } else {
-    // setModalVisible(false);z
-  }
-
+  useFocusEffect(() => {
+    dashboard_summar_query.refetch();
+  });
   return (
     <View
       style={{
@@ -78,63 +79,55 @@ const Dashboard = ({ drawer_props, navigation }: any) => {
         flex: 1,
       }}
     >
-      <Seperator height={17} />
+      <Seperator height={15} />
+
       <View>
         <ScrollView
           style={{
-            paddingLeft: scale(5),
+            backgroundColor: "#ccc",
           }}
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {navData.map((item: any) => (
-            <NavButton
-              activeId={activeId}
-              changeActiveId={changeActiveId}
-              id={item.id}
-              title={item.title}
-              key={item.id}
-            />
-          ))}
+          <View
+            style={{
+              paddingLeft: scale(10),
+              paddingRight: scale(20),
+              flexDirection: "row",
+              paddingVertical: scale(5),
+            }}
+          >
+            {navData.map((item: any) => (
+              <NavButton
+                activeId={activeId}
+                changeActiveId={changeActiveId}
+                id={item.id}
+                title={item.title}
+                _count={item._count}
+                key={item.id}
+              />
+            ))}
+          </View>
         </ScrollView>
+
+        <Seperator height={17} />
+
+        <SearchBar />
       </View>
-
-      <Seperator height={17} />
-
-      <SearchBar />
-
-      <Seperator height={15} />
-
-      <View
-        style={{
-          paddingHorizontal: scale(15),
-          paddingBottom: scale(15),
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
         }}
+        initialRouteName="001"
       >
-        <Text
-          style={{
-            fontWeight: "bold",
-            fontSize: scale(16),
-            color: theme.text,
-          }}
-        >
-          {currentActive[0]?.title}
-        </Text>
-      </View>
+        <Stack.Screen name="001">
+          {(props) => <AllJobs {...props} />}
+        </Stack.Screen>
 
-      <ScrollView>
-        <View
-          style={{
-            flex: 1,
-            paddingHorizontal: scale(15),
-
-            paddingBottom: scale(65),
-          }}
-        >
-          <JobsCardContainer cardData={data?.data} navigation={navigation} />
-          {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
-        </View>
-      </ScrollView>
+        <Stack.Screen name="002">
+          {(props) => <JobsApplied {...props} />}
+        </Stack.Screen>
+      </Stack.Navigator>
     </View>
   );
 };

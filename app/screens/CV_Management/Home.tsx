@@ -90,7 +90,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   });
   const { setModalVisible } = useContext(AppContext);
 
-  const { data, error, isSuccess, isLoading } = useApiQuery({
+  const { data, error, refetch, isSuccess, isLoading } = useApiQuery({
     queryKey: "fetchUserData",
     queryFunction: fetch_user_data,
   });
@@ -382,14 +382,15 @@ const Home = ({ navigation }: { navigation: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       showHeaderTextHandler("CV Management");
+      refetch();
     }, [])
   );
 
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await retrieveAppData("token");
-    };
-  }, []);
+  if (isLoading) {
+    setModalVisible(true);
+  } else {
+    setModalVisible(false);
+  }
 
   return (
     <KeyboardAvoidingView>
@@ -613,7 +614,7 @@ const Home = ({ navigation }: { navigation: any }) => {
                 },
                 index: number
               ) => {
-                const _id = index;
+                const _id = index + 1;
 
                 return (
                   <View
