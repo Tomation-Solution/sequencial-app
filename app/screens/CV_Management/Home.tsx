@@ -386,7 +386,7 @@ const Home = ({ navigation }: { navigation: any }) => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={{
-          padding: scale(10),
+          paddingVertical: scale(10),
         }}
       >
         <Pressable
