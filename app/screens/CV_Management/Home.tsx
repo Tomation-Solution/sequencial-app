@@ -42,6 +42,7 @@ import {
 } from "../../../types";
 import { KeyboardAvoidingView } from "../../components/ui/customElements";
 import Loading from "../../components/ui/_helpers/Loading";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
 
 interface State {
   education: Education[];
@@ -82,7 +83,9 @@ const initialState: State = {
   },
 };
 
-const Home = ({ navigation }: { navigation: any }) => {
+const Home = ({ navigation, route }: { navigation: any; route: any }) => {
+  const { first_timer, token } = route.params;
+
   const educationRef = useRef<ScrollView>(null);
   const workExperienceRef = useRef<ScrollView>(null);
   const certificationRef = useRef<ScrollView>(null);
@@ -294,7 +297,7 @@ const Home = ({ navigation }: { navigation: any }) => {
     }, 100);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const __data: {
       [key: string]: any;
     } = {
@@ -313,7 +316,10 @@ const Home = ({ navigation }: { navigation: any }) => {
       _data.append(key, __data[key]);
     });
 
-    mutate(_data);
+    const __token = await retrieveAppData("token");
+    const _token = first_timer ? __token.access : token;
+
+    mutate(_data, _token);
   };
 
   const handleDocumentSelection = useCallback(

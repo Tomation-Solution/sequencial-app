@@ -5,6 +5,7 @@ import { ForgotPassword, SignIn } from "../../screens/auth";
 import SignUpNavigations from "./signup";
 import OTP from "../../screens/auth/OTP";
 import ForgotPasswordNavigations from "./forgotPassword";
+import CV_Management from "../../screens/CV_Management/CV_Management";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const AuthNavigations = () => {
       >
         <Stack.Screen name="signin" component={SignIn} />
         <Stack.Screen name="signup" component={SignUpNavigations} />
+        <Stack.Screen name="configure_cv" component={CV_Management} />
         <Stack.Screen
           name="forgotpassword"
           component={ForgotPasswordNavigations}

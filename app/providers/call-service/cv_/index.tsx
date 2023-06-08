@@ -1,15 +1,13 @@
 import axios from "../../api/axios";
 import { retrieveAppData } from "../../../helper_functions/storingAppData";
 
-export async function update_job_seeker(data: any) {
-  if (!data) return;
-
-  const token = await retrieveAppData("token");
+export async function update_job_seeker(data: any, token: any) {
+  if (!data || !token) return;
 
   const response = await axios.patch(`auth/jobseeker-profile/`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token.access}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 

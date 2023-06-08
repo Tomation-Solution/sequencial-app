@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -26,10 +26,19 @@ const Page3 = ({ navigation, route }: any) => {
   const theme = useContext(themeContext);
   const { useRegister } = useContext(ApiContext);
 
-  const { mutate, isLoading, isError } = useRegister();
+  const { mutate, isLoading, isError, data, isSuccess } = useRegister();
 
   const { newValues } = route.params;
   const previousValues = newValues;
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigation.navigate("configure_cv", {
+        first_timer: true,
+        token: data.data.tokens.access,
+      });
+    }
+  }, [isSuccess]);
 
   const handleLogin = ({
     email,

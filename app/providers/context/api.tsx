@@ -86,13 +86,13 @@ export const ApiProvider = (props: {
             type: 1,
             message: res.data.message,
           });
-          setTimeout(() => {
-            storeAppData({
-              item: "token",
-              value: res.data.tokens,
-            });
-          }, 1000);
-          props.setIsAuthenticated(true);
+          // setTimeout(() => {
+          //   storeAppData({
+          //     item: "token",
+          //     value: res.data.tokens,
+          //   });
+          // }, 1000);
+          // props.setIsAuthenticated(true);
         },
         onError: (error: any) => {
           console.log("error", error);
