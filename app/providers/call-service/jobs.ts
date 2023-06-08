@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import axios, { axiosPrivate } from "../../api/axios";
-import { retrieveAppData } from "../../../helper_functions/storingAppData";
+import axios, { axiosPrivate } from "../api/axios";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
 
 export async function getJobsFnc() {
   const token = await retrieveAppData("token");
@@ -18,6 +18,20 @@ export async function jobsApplied() {
 
   const response = await axios.get(
     "/jobs/job-seeker-dashboard/jobs_applied_for/",
+    {
+      headers: {
+        Authorization: `Bearer ${token.access}`,
+      },
+    }
+  );
+  return response.data;
+}
+
+export async function jobsTestScheduled() {
+  const token = await retrieveAppData("token");
+
+  const response = await axios.get(
+    "jobs/job-seeker-dashboard/jobs_test_scheduled/",
     {
       headers: {
         Authorization: `Bearer ${token.access}`,

@@ -5,31 +5,24 @@ import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
 import { scale } from "react-native-size-matters";
 
-import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import ApiContext from "../../providers/context/api";
-import { getJobsFnc } from "../../providers/call-service/jobs";
 import { AppContext } from "../../providers/context/app";
+import { jobsTestScheduled } from "../../providers/call-service/jobs";
+import JobTestContainer from "../../components/app/Jobs/containers/JobTestContainer";
 import Loading from "../../components/ui/_helpers/Loading";
+import { isLoading } from "expo-font";
 
-const AllJobs = ({ navigation }: any) => {
+const JobsTestScheduled = ({ navigation }: any) => {
   const theme = useContext(themeContext);
   const { setModalVisible } = useContext(AppContext);
 
   const { useApiQuery } = useContext(ApiContext);
 
   const jobs_query = useApiQuery({
-    queryKey: "fetchAllJobs",
-    queryFunction: getJobsFnc,
+    queryKey: "fetchJobsTestsSchedulde",
+    queryFunction: jobsTestScheduled,
   });
-
-  const [type, setType] = useState("jobs");
-
-  const handleNavPress = ({ item }: any) => {
-    if (type !== item.type) {
-      setType(item.type);
-    }
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -63,7 +56,7 @@ const AllJobs = ({ navigation }: any) => {
                 color: theme.text,
               }}
             >
-              All Jobs
+              Jobs Test Scheduled
             </Text>
           </View>
 
@@ -76,11 +69,14 @@ const AllJobs = ({ navigation }: any) => {
                 paddingBottom: scale(65),
               }}
             >
-              <JobsCardContainer
-                cardData={jobs_query.data?.data}
+              {/* <JobsCardContainer
+            cardData={jobs_query.data?.data}
+            navigation={navigation}
+          /> */}
+              <JobTestContainer
+                cardData={jobs_query?.data?.data}
                 navigation={navigation}
               />
-              {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
             </View>
           </ScrollView>
         </View>
@@ -89,6 +85,6 @@ const AllJobs = ({ navigation }: any) => {
   );
 };
 
-export default AllJobs;
+export default JobsTestScheduled;
 
 const styles = StyleSheet.create({});

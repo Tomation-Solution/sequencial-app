@@ -38,7 +38,7 @@ const NavButton: React.FC<Props> = ({
       style={{
         paddingHorizontal: scale(8),
         paddingRight: _count === "_" ? scale(8) : scale(25),
-        paddingVertical: scale(2),
+        paddingVertical: scale(5),
         borderRadius: scale(8),
         marginHorizontal: scale(3.5),
         backgroundColor: active ? theme.primary : theme.disabled,

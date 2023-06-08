@@ -10,14 +10,12 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useReducer,
   useRef,
 } from "react";
 import { HeaderContext } from "../../providers/context/header";
 import {
   Button,
-  CustomSelectInput,
   ImageComponent,
   CustomInput as Input,
   Text,
@@ -26,12 +24,8 @@ import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
 import { AntDesign } from "@expo/vector-icons";
 import { Seperator } from "../../components/ui/_helpers";
-import C_BS_View from "../../components/ui/BottomDrawers/C_BS_View";
-import C_BS_Backdrop from "../../components/ui/BottomDrawers/C_BS_Backdrop";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { data as selectData } from "../../../dummyDatas/dropDown";
 import { Ionicons } from "@expo/vector-icons";
-import { retrieveAppData } from "../../helper_functions/storingAppData";
 import * as DocumentPicker from "expo-document-picker";
 import {
   fetch_user_data,
@@ -47,6 +41,15 @@ import {
   WorkExperience,
 } from "../../../types";
 import { KeyboardAvoidingView } from "../../components/ui/customElements";
+import Loading from "../../components/ui/_helpers/Loading";
+
+interface State {
+  education: Education[];
+  workExperience: WorkExperience[];
+  certifications: Certification[];
+  references: Reference[];
+  userDetails: UserDetails;
+}
 
 type Action =
   | { type: "SET_EDUCATION"; payload: Education[] }
@@ -59,13 +62,25 @@ type Action =
   | { type: "ADD_CERTIFICATIONS" }
   | { type: "ADD_REFERENCES" };
 
-interface State {
-  education: Education[];
-  workExperience: WorkExperience[];
-  certifications: Certification[];
-  references: Reference[];
-  userDetails: UserDetails;
-}
+const initialState: State = {
+  education: [],
+  workExperience: [],
+  certifications: [],
+  references: [],
+  userDetails: {
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    city: "",
+    state: "",
+    country_of_residence: "",
+    linkdin: "",
+    twitter: "",
+    personal_statement: "",
+  },
+};
 
 const Home = ({ navigation }: { navigation: any }) => {
   const educationRef = useRef<ScrollView>(null);
@@ -100,60 +115,6 @@ const Home = ({ navigation }: { navigation: any }) => {
   const { mutate } = useApiMutation({
     mutationFunction: update_job_seeker,
   });
-
-  const initialState: State = {
-    education: useable?.education || [
-      {
-        id: 1,
-        school_name: "",
-        start_year: "",
-        end_year: "",
-        course_of_study: "",
-        degree_type: "",
-      },
-    ],
-    workExperience: useable?.experience || [
-      {
-        id: 1,
-        company: "",
-        position: "",
-        start_year: "",
-        end_year: "",
-        role: "",
-        responsibilities: "",
-      },
-    ],
-    certifications: useable?.certificaton || [
-      {
-        id: 1,
-        certification: "",
-        year: "",
-        issuer: "",
-      },
-    ],
-    references: useable?.refrences || [
-      {
-        id: 1,
-        full_name: "",
-        relationship: "",
-        email: "",
-        phoneNumber: "",
-      },
-    ],
-    userDetails: {
-      first_name: useable?.first_name || "",
-      last_name: useable?.last_name || "",
-      email: useable?.email || "",
-      phone_number: useable?.phone_number || "",
-      address: useable?.addresse || "",
-      city: useable?.city || "",
-      state: useable?.state || "",
-      country_of_residence: useable?.country_of_residence || "",
-      linkdin: useable?.linkdin || "",
-      twitter: useable?.twitter || "",
-      personal_statement: useable?.personal_statement || "",
-    },
-  };
 
   const reducer = (state: State, action: Action): State => {
     switch (action.type) {
@@ -386,11 +347,39 @@ const Home = ({ navigation }: { navigation: any }) => {
     }, [])
   );
 
-  if (isLoading) {
-    setModalVisible(true);
-  } else {
-    setModalVisible(false);
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      const fetchedData = data?.data?.user_extra?.job_seakers?.cvStucture;
+      if (fetchedData) {
+        dispatch({ type: "SET_EDUCATION", payload: fetchedData.education });
+        dispatch({
+          type: "SET_WORK_EXPERIENCE",
+          payload: fetchedData.experience,
+        });
+        dispatch({
+          type: "SET_CERTIFICATIONS",
+          payload: fetchedData.certificaton,
+        });
+        dispatch({ type: "SET_REFERENCES", payload: fetchedData.refrences });
+        dispatch({
+          type: "SET_USER_DETAILS",
+          payload: {
+            first_name: fetchedData.first_name || "",
+            last_name: fetchedData.last_name || "",
+            email: fetchedData.email || "",
+            phone_number: fetchedData.phone_number || "",
+            address: fetchedData.addresse || "",
+            city: fetchedData.city || "",
+            state: fetchedData.state || "",
+            country_of_residence: fetchedData.country_of_residence || "",
+            linkdin: fetchedData.linkdin || "",
+            twitter: fetchedData.twitter || "",
+            personal_statement: fetchedData.personal_statement || "",
+          },
+        });
+      }
+    }
+  }, [isSuccess, data]);
 
   return (
     <KeyboardAvoidingView>
@@ -603,82 +592,71 @@ const Home = ({ navigation }: { navigation: any }) => {
             Education
           </Text>
           <ScrollView horizontal style={{ flex: 1 }} ref={educationRef}>
-            {education?.map(
-              (
-                item: {
-                  school_name: string;
-                  start_year: string;
-                  end_year: string;
-                  course_of_study: string;
-                  degree_type: string;
-                },
-                index: number
-              ) => {
-                const _id = index + 1;
+            {education?.map((item: Education) => {
+              const _id = item.id;
 
-                return (
-                  <View
-                    style={{
-                      marginLeft: scale(10),
-                      backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
-                      borderColor: theme.placeholder,
-                      borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-                      padding: scale(10),
-                      borderRadius: scale(10),
-                      marginBottom: scale(10),
-                      width: scale(270),
-                    }}
-                    key={_id}
-                  >
-                    <Input
-                      label="School"
-                      value={item.school_name}
-                      placeholder="School"
-                      onChangeText={(text: string) =>
-                        handleEducationChange(text, "school", _id)
-                      }
-                    />
-                    <Input
-                      label="Start Year"
-                      value={item.start_year}
-                      placeholder="Start Year"
-                      onChangeText={(text: string) =>
-                        handleEducationChange(text, "start_year", _id)
-                      }
-                      keyboardType="numeric"
-                    />
+              return (
+                <View
+                  style={{
+                    marginLeft: scale(10),
+                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
+                    borderColor: theme.placeholder,
+                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                    padding: scale(10),
+                    borderRadius: scale(10),
+                    marginBottom: scale(10),
+                    width: scale(270),
+                  }}
+                  key={_id}
+                >
+                  <Input
+                    label="School"
+                    value={item.school_name}
+                    placeholder="School"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "school_name", _id)
+                    }
+                  />
+                  <Input
+                    label="Start Year"
+                    value={item.start_year}
+                    placeholder="Start Year"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "start_year", _id)
+                    }
+                    keyboardType="numeric"
+                  />
 
-                    <Input
-                      label="End Year"
-                      value={item.end_year}
-                      placeholder="End Year"
-                      onChangeText={(text: string) =>
-                        handleEducationChange(text, "end_year", _id)
-                      }
-                      keyboardType="numeric"
-                    />
+                  <Input
+                    label="End Year"
+                    value={item.end_year}
+                    placeholder="End Year"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "end_year", _id)
+                    }
+                    keyboardType="numeric"
+                  />
 
-                    <Input
-                      label="Course Of Study"
-                      value={item.course_of_study}
-                      placeholder="Course Of Study"
-                      onChangeText={(text: string) =>
-                        handleEducationChange(text, "course_of_study", _id)
-                      }
-                    />
+                  <Input
+                    label="Course Of Study"
+                    value={item.course_of_study}
+                    placeholder="Course Of Study"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "course_of_study", _id)
+                    }
+                  />
 
-                    <Input
-                      label="Degree"
-                      value={item.degree_type}
-                      placeholder="Degree"
-                      onChangeText={(text: string) =>
-                        handleEducationChange(text, "degree_type", _id)
-                      }
-                    />
-                  </View>
-                );
-              }
-            )}
+                  <Input
+                    label="Degree"
+                    value={item.degree_type}
+                    placeholder="Degree"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "degree_type", _id)
+                    }
+                  />
+                </View>
+              );
+            })}
           </ScrollView>
           <View
             style={{

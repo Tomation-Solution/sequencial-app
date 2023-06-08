@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { HeaderContext } from "../../providers/context/header";
@@ -12,6 +12,7 @@ import SearchBar from "../../components/ui/Search/SearchBar";
 import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
 import JobsApplied from "./JobsApplied";
+import JobsTestScheduled from "./JobsTestScheduled";
 
 const Stack = createStackNavigator();
 
@@ -20,16 +21,21 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
   const theme = useContext(themeContext);
 
   const [activeId, setActiveId] = useState("001");
+  const [dashboardSummary, setDashboardSummary] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getDashBoardSummary();
+      setDashboardSummary(response.data);
+    };
+
+    fetchData();
+  }, []);
 
   const changeActiveId = (id: string) => {
     setActiveId(() => id);
     navigation.navigate(id);
   };
-
-  const dashboard_summar_query = useApiQuery({
-    queryKey: "dashboard_summary",
-    queryFunction: getDashBoardSummary,
-  });
 
   const navData = [
     {
@@ -40,38 +46,35 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
     {
       id: "002",
       title: "Jobs Applied",
-      _count: dashboard_summar_query?.data?.data?.jobs_applied_for ?? 0,
+      _count: dashboardSummary?.jobs_applied_for ?? 0,
     },
     {
       id: "003",
       title: "Jobs Test Taken",
-      _count: dashboard_summar_query?.data?.data?.jobs_test_taken ?? 0,
+      _count: dashboardSummary?.jobs_test_taken ?? 0,
     },
     {
       id: "004",
       title: "Jobs Test Scheduled",
-      _count: dashboard_summar_query?.data?.data?.jobs_test_scheduled ?? 0,
+      _count: dashboardSummary?.jobs_test_scheduled ?? 0,
     },
     {
       id: "007",
       title: "Interviews Scheduled",
-      _count: dashboard_summar_query?.data?.data?.interview_scheduled ?? 0,
+      _count: dashboardSummary?.interview_scheduled ?? 0,
     },
     {
       id: "005",
       title: "Interviews Attended",
-      _count: dashboard_summar_query?.data?.data?.interviews_attended ?? 0,
+      _count: dashboardSummary?.interviews_attended ?? 0,
     },
     {
       id: "006",
       title: "Job Offers",
-      _count: dashboard_summar_query?.data?.data?.job_offers ?? 0,
+      _count: dashboardSummary?.job_offers ?? 0,
     },
   ];
 
-  useFocusEffect(() => {
-    dashboard_summar_query.refetch();
-  });
   return (
     <View
       style={{
@@ -126,6 +129,10 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
 
         <Stack.Screen name="002">
           {(props) => <JobsApplied {...props} />}
+        </Stack.Screen>
+
+        <Stack.Screen name="004">
+          {(props) => <JobsTestScheduled {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </View>

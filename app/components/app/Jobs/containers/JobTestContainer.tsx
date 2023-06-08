@@ -12,12 +12,12 @@ const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
     <>
       {cardData.map((item: any) => (
         <NotifcationCard
-          company={item.company}
+          company={item.job.company_name}
           image={item.image}
           isOpened={item.isOpened}
-          role={item.role}
+          role={item.job.position}
           type="test"
-          key={item.id}
+          key={item.job.id}
           navigation={navigation}
         />
       ))}
