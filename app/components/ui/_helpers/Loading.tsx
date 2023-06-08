@@ -33,12 +33,12 @@ const Loading = () => {
   }, [fadeAnim]);
 
   return (
-    <Modal animationType="slide" transparent={true}>
-      <StatusBar backgroundColor="rgba(0, 0 , 0, 0.7)" />
+    <Modal animationType="fade" transparent={true}>
+      <StatusBar hidden />
       <View
         style={{
-          flex: 1,
-          padding: 20,
+          // flex: 1,
+          // padding: 20,
           backgroundColor: "rgba(0, 0 , 0, 0.2)",
           alignItems: "center",
           justifyContent: "center",

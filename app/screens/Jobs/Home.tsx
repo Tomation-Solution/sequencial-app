@@ -1,20 +1,14 @@
-import { Pressable, ScrollViewBase, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import React, { useContext, useState } from "react";
-import { HeaderContext } from "../../providers/context/header";
 import themeContext from "../../config/theme/themeContext";
-import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { Text } from "../../components/ui";
 import { scale } from "react-native-size-matters";
 import SearchBar from "../../components/ui/Search/SearchBar";
-import { Ionicons } from "@expo/vector-icons";
 import Filter from "../../components/ui/filter/FIlter";
 import { Seperator } from "../../components/ui/_helpers";
-// import data from "./MOCK_DATA.json";
-import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
 import ApiContext from "../../providers/context/api";
 import { getJobsFnc } from "../../providers/call-service/jobs";
-import { AppContext } from "../../providers/context/app";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -32,19 +26,10 @@ const Home = ({ navigation }: any) => {
 
   const { useApiQuery } = useContext(ApiContext);
 
-  const { setModalVisible } = useContext(AppContext);
-
   const { data, error, isLoading } = useApiQuery({
     queryKey: "fetchAllJobs",
     queryFunction: getJobsFnc,
   });
-
-  // if (isLoading) {
-  //   setModalVisible(true);
-  //   return <></>;
-  // } else {
-  //   setModalVisible(false);
-  // }
 
   const handleSelect = (option: string) => {
     // perform action with selected options

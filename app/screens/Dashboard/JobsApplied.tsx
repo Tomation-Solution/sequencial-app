@@ -88,6 +88,7 @@ const JobsApplied = ({ navigation }: any) => {
                   whenPosted={item?.job?.more_on_job?.whenPosted}
                   image={item?.job?.more_on_job?.image}
                   key={item?.job?.more_on_job?.id}
+                  id={item?.job?.more_on_job?.id}
                   navigation={navigation}
                 />
               ))}

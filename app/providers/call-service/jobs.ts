@@ -1,4 +1,3 @@
-import { useQuery } from "react-query";
 import axios, { axiosPrivate } from "../api/axios";
 import { retrieveAppData } from "../../helper_functions/storingAppData";
 
@@ -6,6 +5,17 @@ export async function getJobsFnc() {
   const token = await retrieveAppData("token");
 
   const response = await axios.get("jobs/job-seeker-view/", {
+    headers: {
+      Authorization: `Bearer ${token.access}`,
+    },
+  });
+  return response.data;
+}
+
+export async function jobApply(data: { job_id: number }) {
+  const token = await retrieveAppData("token");
+
+  const response = await axios.post("jobs/job-seeker-view/", data, {
     headers: {
       Authorization: `Bearer ${token.access}`,
     },

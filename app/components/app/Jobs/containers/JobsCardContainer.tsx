@@ -24,6 +24,7 @@ const JobsCardContainer: React.FC<Props> = ({ cardData, navigation }) => {
           whenPosted={item.whenPosted}
           image={item.image}
           key={item.id}
+          id={item.id}
           navigation={navigation}
         />
       ))}

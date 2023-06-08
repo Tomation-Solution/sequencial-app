@@ -5,7 +5,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { HeaderContext } from "../../providers/context/header";
 import AllJobs from "./AllJobs";
 import { scale } from "react-native-size-matters";
-import ApiContext from "../../providers/context/api";
 import { getDashBoardSummary } from "../../providers/call-service/dashboard";
 import NavButton from "../../components/app/Dashboard/NavButton";
 import SearchBar from "../../components/ui/Search/SearchBar";
@@ -17,12 +16,22 @@ import JobsTestScheduled from "./JobsTestScheduled";
 const Stack = createStackNavigator();
 
 const Dashboard = ({ navigation }: { navigation: any }) => {
-  const { useApiQuery } = useContext(ApiContext);
+  const { showLogoHandler } = React.useContext(HeaderContext);
   const theme = useContext(themeContext);
 
   const [activeId, setActiveId] = useState("001");
   const [dashboardSummary, setDashboardSummary] = useState<any>(null);
 
+  const changeActiveId = (id: string) => {
+    setActiveId(() => id);
+    navigation.navigate(id);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showLogoHandler();
+    }, [])
+  );
   useEffect(() => {
     const fetchData = async () => {
       const response = await getDashBoardSummary();
@@ -31,11 +40,6 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
 
     fetchData();
   }, []);
-
-  const changeActiveId = (id: string) => {
-    setActiveId(() => id);
-    navigation.navigate(id);
-  };
 
   const navData = [
     {

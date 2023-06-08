@@ -1,134 +1,167 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import React, { useContext, useEffect } from "react";
-import { HeaderContext } from "../../providers/context/header";
-import { Button, ImageComponent, Text } from "../../components/ui";
-import themeContext from "../../config/theme/themeContext";
-import { useFocusEffect } from "@react-navigation/native";
-import { placeholders } from "../../assets/placeholders";
+import React, { useContext } from "react";
 import { scale } from "react-native-size-matters";
+import themeContext from "../../config/theme/themeContext";
 import { Seperator } from "../../components/ui/_helpers";
-import { ScrollView } from "react-native";
+import { Button, Text } from "../../components/ui";
 import { Ionicons, Entypo } from "@expo/vector-icons";
-import JobDetails from "./JobDetails";
-import Apply from "./Apply";
+import JobWrapper from "./JobWrapper";
 
-type Props = {
-  jobTitle: string;
-  companyName: string;
-  location: string;
-  jobType: string;
-  salary: string;
-  canApplyFromPhone: boolean;
-  isHiringMultiple: boolean;
-  whenPosted: string;
-  image: string;
-  navigation: any;
-};
-
-const Details = ({ navigation }: any) => {
-  const { showBackButtonHandler } = React.useContext(HeaderContext);
-  const [showDetails, setShowDetails] = React.useState(false);
+const BulletPoint = ({ children }: any) => {
   const theme = useContext(themeContext);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      showBackButtonHandler();
-      setShowDetails(false);
-    }, [])
-  );
-
   return (
-    <ScrollView
+    <View
       style={{
-        paddingHorizontal: scale(10),
-        backgroundColor: theme.background,
-        flex: 1,
+        flexDirection: "row",
+        alignItems: "flex-start",
+        marginVertical: scale(2),
+        //   justifyContent: "flex-end",
       }}
     >
       <View
         style={{
-          paddingBottom: scale(70),
+          height: scale(6),
+          width: scale(6),
+          borderRadius: scale(4),
+          backgroundColor: theme.text,
+          marginTop: scale(5),
+          marginRight: scale(10),
+        }}
+      />
+      <Text
+        style={{
+          fontSize: scale(14),
+          color: theme.grayText,
+        }}
+      >
+        {children}
+      </Text>
+    </View>
+  );
+};
+
+const Details = ({ navigation, route }: { navigation: any; route: any }) => {
+  const [showMore, setShowMore] = React.useState(false);
+  const theme = useContext(themeContext);
+
+  const { job_id } = route.params;
+
+  let text =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voluptatibus consequuntur voluptate quod quae doloribus fugit...";
+  return (
+    <JobWrapper>
+      <View
+        style={{
+          borderColor: theme.placeholder,
+          borderWidth: scale(2),
+          borderRadius: scale(8),
+          padding: scale(12),
+          borderStyle: "dashed",
         }}
       >
         <View
           style={{
-            marginTop: scale(20),
             flexDirection: "row",
+            justifyContent: "space-between",
             alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          <View
+          <Text
             style={{
-              alignItems: "center",
+              fontSize: scale(16),
+              fontWeight: "bold",
             }}
           >
-            <View
-              style={{
-                borderRadius: scale(30),
-                overflow: "hidden",
-                backgroundColor: theme.placeholder,
-              }}
-            >
-              <ImageComponent
-                imageUrl={placeholders.company}
-                onDevice
-                style={{
-                  width: scale(60),
-                  height: scale(60),
-                }}
-              />
-            </View>
-            <Seperator height={scale(6)} />
-            <Text
-              style={{
-                fontSize: scale(16),
-                fontWeight: "bold",
-              }}
-            >
-              Business Developer
-            </Text>
-          </View>
+            Job Description
+          </Text>
+          <Pressable>
+            <Entypo
+              name="share-alternative"
+              size={scale(20)}
+              color={theme.text}
+            />
+          </Pressable>
         </View>
-        <Seperator height={scale(15)} />
+        <Seperator height={scale(8)} />
+        <Text
+          style={{
+            lineHeight: scale(23),
+            textAlign: "justify",
+            color: theme.grayText,
+            fontSize: scale(14),
+          }}
+        >
+          {showMore ? text : text.slice(0, 100)}
+        </Text>
+        <Button
+          onPress={() => setShowMore(!showMore)}
+          textStyles={{
+            color: theme.text,
+            fontSize: scale(14),
+          }}
+          style={{
+            marginTop: scale(15),
+            backgroundColor: showMore ? theme.placeholder : theme.primary,
+            alignSelf: "flex-end",
+            paddingHorizontal: scale(14),
+            paddingVertical: scale(6),
+            borderRadius: scale(8),
+          }}
+        >
+          {showMore ? "Show Less" : "Show More"}
+        </Button>
+
+        <Seperator height={scale(10)} />
+        <View>
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            Requirements
+          </Text>
+          <Seperator height={scale(10)} />
+          <BulletPoint>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+          </BulletPoint>
+          <BulletPoint>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+          </BulletPoint>
+          <BulletPoint>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+          </BulletPoint>
+          <BulletPoint>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+          </BulletPoint>
+        </View>
 
         <View
           style={{
+            marginTop: scale(30),
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-around",
           }}
         >
-          <Text>Google</Text>
-          <View
-            style={{
-              height: scale(8),
-              width: scale(8),
-              borderRadius: scale(4),
-              backgroundColor: theme.placeholder,
+          <Pressable>
+            <Ionicons
+              name="heart-outline"
+              size={scale(28)}
+              color={theme.text}
+            />
+          </Pressable>
+          <Button
+            onPress={() => navigation.navigate("Apply", { job_id })}
+            styles={{
+              flex: 1,
+              marginLeft: scale(10),
             }}
-          />
-          <Text>California</Text>
-          <View
-            style={{
-              height: scale(8),
-              width: scale(8),
-              borderRadius: scale(4),
-              backgroundColor: theme.placeholder,
-            }}
-          />
-          <Text>1 day(s)</Text>
+          >
+            APPLY NOW
+          </Button>
         </View>
-
-        <Seperator height={scale(30)} />
-
-        {!showDetails ? (
-          <JobDetails setShowDetails={setShowDetails} />
-        ) : (
-          <Apply />
-        )}
       </View>
-    </ScrollView>
+    </JobWrapper>
   );
 };
 

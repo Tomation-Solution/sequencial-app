@@ -3,19 +3,27 @@ import Details from "./Details";
 import Home from "./Home";
 import Apply from "./Apply";
 import { useFocusEffect } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { HeaderContext } from "../../providers/context/header";
 
 const Stack = createStackNavigator();
 
 const Jobs = ({ navigation }: any) => {
-  const { showBackButtonHandler } = React.useContext(HeaderContext);
+  // const { showBackButtonHandler } = React.useContext(HeaderContext);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      showBackButtonHandler();
-    }, [])
-  );
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     navigation.navigate("Jobs", { screen: "Home" });
+  //   });
+
+  //   return unsubscribe;
+  // }, [navigation]);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     showBackButtonHandler();
+  //   }, [])
+  // );
   return (
     <Stack.Navigator
       screenOptions={{
@@ -24,6 +32,9 @@ const Jobs = ({ navigation }: any) => {
       initialRouteName="Home"
     >
       <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
+      <Stack.Screen name="Apply">
+        {(props) => <Apply {...props} />}
+      </Stack.Screen>
       <Stack.Screen name="Details">
         {(props) => <Details {...props} />}
       </Stack.Screen>

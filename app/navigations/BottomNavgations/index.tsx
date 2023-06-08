@@ -58,7 +58,7 @@ const BottomNavigations = ({ navigation }: any) => {
           ),
         }}
       >
-        {(props) => <Dashboard drawer_props={navigation} {...props} />}
+        {(props) => <Dashboard {...props} />}
       </Tab.Screen>
       <Tab.Screen
         name="Jobs"

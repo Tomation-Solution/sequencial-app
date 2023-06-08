@@ -83,7 +83,11 @@ const DrawerNavigations = () => {
   }
 
   return (
-    <>
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
       <Drawer.Navigator
         drawerContent={(props) => <CustomDrawerContent {...props} />}
         screenOptions={{
@@ -231,7 +235,7 @@ const DrawerNavigations = () => {
           component={Settings}
         />
       </Drawer.Navigator>
-    </>
+    </View>
   );
 };
 

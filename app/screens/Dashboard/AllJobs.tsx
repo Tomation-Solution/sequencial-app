@@ -6,15 +6,13 @@ import themeContext from "../../config/theme/themeContext";
 import { scale } from "react-native-size-matters";
 
 import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import ApiContext from "../../providers/context/api";
 import { getJobsFnc } from "../../providers/call-service/jobs";
-import { AppContext } from "../../providers/context/app";
 import Loading from "../../components/ui/_helpers/Loading";
 
 const AllJobs = ({ navigation }: any) => {
   const theme = useContext(themeContext);
-  const { setModalVisible } = useContext(AppContext);
 
   const { useApiQuery } = useContext(ApiContext);
 
@@ -23,13 +21,11 @@ const AllJobs = ({ navigation }: any) => {
     queryFunction: getJobsFnc,
   });
 
-  const [type, setType] = useState("jobs");
-
-  const handleNavPress = ({ item }: any) => {
-    if (type !== item.type) {
-      setType(item.type);
-    }
-  };
+  // const handleNavPress = ({ item }: any) => {
+  //   if (type !== item.type) {
+  //     setType(item.type);
+  //   }
+  // };
 
   useFocusEffect(
     React.useCallback(() => {

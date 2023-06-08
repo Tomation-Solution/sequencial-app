@@ -9,6 +9,7 @@ import { placeholders } from "../../../../assets/placeholders";
 import themeContext from "../../../../config/theme/themeContext";
 import ImageComponent from "../../../ui/Image/ImageComponent";
 import { useNavigation } from "@react-navigation/native";
+import { limitTextLength } from "../../../../helper_functions/miscs";
 
 type Props = {
   job_title: string;
@@ -22,6 +23,7 @@ type Props = {
   whenPosted: string;
   image: string;
   navigation: any;
+  id: number | string;
 };
 
 const JobDetailsCard: React.FC<Props> = ({
@@ -36,25 +38,12 @@ const JobDetailsCard: React.FC<Props> = ({
   whenPosted,
   image,
   navigation,
+  id,
 }) => {
   const theme = useContext(themeContext);
 
-  //  onPress={() =>
-  //                   navigation.navigate("News", {
-  //                     screen: "Details",
-  //                     params: item,
-  //                   })
-  //                 }
-
   return (
-    <TouchableOpacity
-      activeOpacity={0.6}
-      onPress={() =>
-        navigation.navigate("Jobs", {
-          screen: "Details",
-          params: "item",
-        })
-      }
+    <View
       style={{
         backgroundColor: theme.background,
         padding: scale(10),
@@ -68,7 +57,7 @@ const JobDetailsCard: React.FC<Props> = ({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        marginBottom: scale(10),
+        marginBottom: scale(1),
         overflow: "hidden",
       }}
     >
@@ -84,11 +73,7 @@ const JobDetailsCard: React.FC<Props> = ({
       >
         <Ionicons name="heart-outline" size={24} color={theme.text} />
       </Pressable>
-      <View
-        style={{
-          marginTop: scale(12),
-        }}
-      >
+      <View>
         <Text
           style={{
             fontSize: scale(16),
@@ -99,10 +84,9 @@ const JobDetailsCard: React.FC<Props> = ({
             width: "100%",
             padding: scale(2),
             borderRadius: scale(5),
-            marginTop: scale(5),
           }}
         >
-          {job_title}
+          {limitTextLength(30, job_title)}
         </Text>
 
         <View
@@ -143,6 +127,7 @@ const JobDetailsCard: React.FC<Props> = ({
               }}
             >
               {org_name}
+              {limitTextLength(20, org_name)}
             </Text>
             <Text
               style={{
@@ -268,13 +253,22 @@ const JobDetailsCard: React.FC<Props> = ({
           </View>
         </View>
       </View>
-      <View
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={() =>
+          navigation.navigate("Jobs", {
+            screen: "Details",
+            params: {
+              job_id: id,
+            },
+          })
+        }
         style={{
           flexDirection: "row",
           justifyContent: "flex-end",
           position: "absolute",
-          left: 0,
-          top: 0,
+          right: 0,
+          bottom: "35%",
         }}
       >
         <Text
@@ -283,15 +277,18 @@ const JobDetailsCard: React.FC<Props> = ({
             fontWeight: "bold",
             color: "white",
             paddingHorizontal: scale(5),
-            paddingVertical: scale(2),
+            paddingVertical: scale(5),
             backgroundColor: theme.primary,
-            borderBottomRightRadius: scale(6),
+            borderTopLeftRadius: scale(6),
+            borderBottomLeftRadius: scale(6),
+            // borderBottomRightRadius: scale(6),
           }}
         >
-          {whenPosted}
+          {/* {whenPosted} */}
+          View Job
         </Text>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 };
 
