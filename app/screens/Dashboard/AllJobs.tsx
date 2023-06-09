@@ -63,22 +63,20 @@ const AllJobs = ({ navigation }: any) => {
             </Text>
           </View>
 
-          <ScrollView>
-            <View
-              style={{
-                flex: 1,
-                paddingHorizontal: scale(15),
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: scale(15),
 
-                paddingBottom: scale(65),
-              }}
-            >
-              <JobsCardContainer
-                cardData={jobs_query.data?.data}
-                navigation={navigation}
-              />
-              {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
-            </View>
-          </ScrollView>
+              paddingBottom: scale(65),
+            }}
+          >
+            <JobsCardContainer
+              cardData={jobs_query.data?.data}
+              navigation={navigation}
+            />
+            {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
+          </View>
         </View>
       )}
     </>

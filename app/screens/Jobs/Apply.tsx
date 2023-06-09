@@ -9,14 +9,26 @@ import themeContext from "../../config/theme/themeContext";
 import { images } from "../../assets";
 import { dateFormaterNow } from "../../helper_functions/dateFormater";
 import JobWrapper from "./JobWrapper";
+import ApiContext from "../../providers/context/api";
+import { jobApply } from "../../providers/call-service/jobs";
 
 const Apply = ({ navigation, route }: any) => {
-  const theme = useContext(themeContext);
   const [fileResponse, setFileResponse] = React.useState<any>(null);
 
+  const theme = useContext(themeContext);
+  const { useApiMutation } = useContext(ApiContext);
   const { job_id } = route.params;
 
-  console.log("job_id", job_id);
+  const { mutate, isLoading, isSuccess } = useApiMutation({
+    mutationFunction: jobApply,
+  });
+
+  const handleApply = () => {
+    mutate({
+      job_id,
+      file: fileResponse,
+    });
+  };
 
   const handleDocumentSelection = useCallback(async () => {
     let result = await DocumentPicker.getDocumentAsync({

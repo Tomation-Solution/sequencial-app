@@ -1,41 +1,41 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import ApiContext from "../../providers/context/api";
-import { getTests } from "../../providers/call-service/test_mangement";
 import Loading from "../../components/ui/_helpers/Loading";
 import { FlatList } from "react-native-gesture-handler";
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect } from "@react-navigation/native";
-import { Dropdown } from "react-native-element-dropdown";
-import Drop from "../../components/ui/Input/Drop";
 import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
-import TestUpdateCard from "../../components/ui/UpdateCard/TestUpdateCard";
-
-const OPTIONS = [
-  { label: "Option 1", value: "option1" },
-  { label: "Option 2", value: "option2" },
-  { label: "Option 3", value: "option3" },
-  { label: "Option 3", value: "option3" },
-  { label: "Option 3", value: "option3" },
-  { label: "Option 3", value: "option3" },
-  { label: "Option 3", value: "option3" },
-  { label: "Option 3", value: "option3" },
-];
+import Drop from "../../components/ui/Input/Drop";
+import InterviewUpdateCard from "../../components/ui/UpdateCard/InterviewUpdateCard";
+import { getInterviews } from "../../providers/call-service/interview_mangement";
+import jwt_decode from "jwt-decode";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const { useApiQuery } = useContext(ApiContext);
+  const [user, set_user] = useState<any>();
   const { showHeaderTextHandler } = useContext(HeaderContext);
   const theme = useContext(themeContext);
 
-  const [dropVal, setDropVal] = useState(null);
-
   const { data, isLoading, isSuccess } = useApiQuery({
-    queryKey: "fetchTests",
-    queryFunction: getTests,
+    queryKey: "fetchInterviews",
+    queryFunction: getInterviews,
   });
 
-  console.log(data);
+  var token: any = retrieveAppData("token");
+
+  async function decodeToken() {
+    const token = await retrieveAppData("token");
+    var decoded = jwt_decode(token?.access);
+
+    set_user(decoded);
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, []);
 
   return (
     <>
@@ -60,20 +60,19 @@ const Home = ({ navigation }: { navigation: any }) => {
           </View>
           <View
             style={{
-              padding: scale(15),
+              paddingHorizontal: scale(15),
             }}
           >
             {
               <FlatList
-                data={data}
+                data={data.data}
                 renderItem={({ item }: any) => (
-                  <TestUpdateCard
-                    notification={item.test_info.title}
-                    date="dfiohdsoihf"
-                    updateType="Test"
-                    startTime="dhiofhdo"
-                    endTime="ifjoisdf"
-                    // remainigTime="diofhihdsf"
+                  <InterviewUpdateCard
+                    user_name={user?.full_name}
+                    date_picked="dfiohdsoihf"
+                    updateType="Interview"
+                    time_picked="dhiofhdo"
+                    remainigTime="diofhihdsf"
                   />
                 )}
               />

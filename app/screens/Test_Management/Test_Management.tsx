@@ -1,32 +1,22 @@
-import { StyleSheet, View, useColorScheme } from "react-native";
-import React, { useLayoutEffect } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import Home from "./Home";
 import { useFocusEffect } from "@react-navigation/native";
+import React, { useEffect } from "react";
 import { HeaderContext } from "../../providers/context/header";
 
-import { Text } from "../../components/ui";
+const Stack = createStackNavigator();
 
-const Test_Management = () => {
-  const { showHeaderTextHandler } = React.useContext(HeaderContext);
-  const colorScheme = useColorScheme();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      showHeaderTextHandler("Test Management");
-    }, [])
-  );
+const Test_Management = ({ navigation }: any) => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
       }}
+      initialRouteName="Home"
     >
-      <Text>Test_Management</Text>
-    </View>
+      <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
+    </Stack.Navigator>
   );
 };
 
 export default Test_Management;
-
-const styles = StyleSheet.create({});

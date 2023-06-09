@@ -84,7 +84,7 @@ const initialState: State = {
 };
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { first_timer, token } = route.params;
+  const route_params = route.params;
 
   const educationRef = useRef<ScrollView>(null);
   const workExperienceRef = useRef<ScrollView>(null);
@@ -317,7 +317,9 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
     });
 
     const __token = await retrieveAppData("token");
-    const _token = first_timer ? __token.access : token;
+    const _token = route_params?.first_timer
+      ? __token.access
+      : route_params?.token;
 
     mutate(_data, _token);
   };

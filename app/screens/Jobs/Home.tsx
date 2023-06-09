@@ -9,6 +9,8 @@ import Filter from "../../components/ui/filter/FIlter";
 import { Seperator } from "../../components/ui/_helpers";
 import ApiContext from "../../providers/context/api";
 import { getJobsFnc } from "../../providers/call-service/jobs";
+import Loading from "../../components/ui/_helpers/Loading";
+import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -66,48 +68,59 @@ const Home = ({ navigation }: any) => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: theme.background,
-        flex: 1,
-      }}
-    >
-      <View
-        style={{
-          marginHorizontal: scale(10),
-        }}
-      >
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            alignItems: "center",
-            paddingVertical: scale(10),
-            paddingHorizontal: scale(10),
+            backgroundColor: theme.background,
+            flex: 1,
           }}
         >
-          <NavButton name="Jobs" />
-          <NavButton name="Liked" />
+          <View
+            style={{
+              marginHorizontal: scale(10),
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                alignItems: "center",
+                paddingVertical: scale(10),
+                paddingHorizontal: scale(10),
+              }}
+            >
+              <NavButton name="Jobs" />
+              <NavButton name="Liked" />
+            </View>
+
+            <SearchBar outlineType="outline" />
+
+            {/* <Seperator height={7} /> */}
+
+            <Filter onSelect={handleSelect} options={OPTIONS} />
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View
+              style={{
+                flex: 1,
+                paddingTop: scale(10),
+                paddingBottom: scale(50),
+                marginHorizontal: scale(10),
+              }}
+            >
+              <JobsCardContainer
+                cardData={data?.data}
+                navigation={navigation}
+              />
+            </View>
+          </ScrollView>
         </View>
-
-        <SearchBar outlineType="outline" />
-
-        <Seperator height={7} />
-
-        <Filter onSelect={handleSelect} options={OPTIONS} />
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            flex: 1,
-            paddingTop: scale(10),
-            paddingBottom: scale(50),
-            marginHorizontal: scale(10),
-          }}
-        ></View>
-      </ScrollView>
-    </View>
+      )}
+    </>
   );
 };
 

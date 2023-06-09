@@ -1,14 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import Home from "./Home";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { HeaderContext } from "../../providers/context/header";
 
-const Interview_Management = () => {
+const Stack = createStackNavigator();
+
+const Interview_Management = ({ navigation }: any) => {
   return (
-    <View>
-      <Text>Interview_Management</Text>
-    </View>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="Home"
+    >
+      <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
+    </Stack.Navigator>
   );
 };
 
 export default Interview_Management;
-
-const styles = StyleSheet.create({});
