@@ -5,6 +5,7 @@ import Apply from "./Apply";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { HeaderContext } from "../../providers/context/header";
+import Job_Question from "./Job_Question";
 
 const Stack = createStackNavigator();
 
@@ -29,7 +30,7 @@ const Jobs = ({ navigation }: any) => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="Home"
+      initialRouteName="Job_Question"
     >
       <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
       <Stack.Screen name="Apply">
@@ -37,6 +38,9 @@ const Jobs = ({ navigation }: any) => {
       </Stack.Screen>
       <Stack.Screen name="Details">
         {(props) => <Details {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="Job_Question">
+        {(props) => <Job_Question {...props} />}
       </Stack.Screen>
     </Stack.Navigator>
   );

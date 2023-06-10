@@ -1,5 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { Button, Text } from "../../components/ui";
 import { scale } from "react-native-size-matters";
 import { Seperator } from "../../components/ui/_helpers";
@@ -17,7 +17,7 @@ const Apply = ({ navigation, route }: any) => {
 
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
-  const { job_id } = route.params;
+  const { job_id, job_variant } = route.params;
 
   const { mutate, isLoading, isSuccess } = useApiMutation({
     mutationFunction: jobApply,
@@ -42,6 +42,14 @@ const Apply = ({ navigation, route }: any) => {
   const handleRemoveFile = () => {
     setFileResponse(null);
   };
+
+  useEffect(() => {
+    if (isSuccess && job_variant === "question") {
+      navigation.navigate("Job_Question", {
+        job_id,
+      });
+    }
+  }, [isSuccess]);
 
   return (
     <JobWrapper>
@@ -203,10 +211,13 @@ const Apply = ({ navigation, route }: any) => {
         <Seperator height={scale(20)} />
 
         <Button
-          disabled={fileResponse === null}
+          onPress={handleApply}
+          disabled={fileResponse === null || isLoading}
           styles={{
             backgroundColor:
-              fileResponse === null ? theme.placeholder : theme.primary,
+              fileResponse === null || isLoading
+                ? theme.placeholder
+                : theme.primary,
           }}
         >
           {fileResponse === null ? "APPLY" : "PROCEED"}

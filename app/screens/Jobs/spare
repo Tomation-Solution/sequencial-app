@@ -1,0 +1,40 @@
+  const handleSelectOne = (value: string, question_id: number, id: number) => {
+    setFormState((prevState: any) => {
+      const isObjectExist = prevState.filter_quetion_option.some(
+        (item: any) => item.question_id === question_id
+      );
+
+      if (!isObjectExist) {
+        return {
+          ...prevState,
+          filter_quetion_option: [
+            ...prevState.filter_quetion_option,
+            {
+              question_id,
+              answer: value,
+            },
+          ],
+        };
+      }
+
+      return prevState;
+    });
+
+    if (
+      !selected.some(
+        (item: { question_id: number; id: number }) =>
+          item.question_id === question_id && item.id === id
+      )
+    ) {
+      setSelected([
+        ...selected,
+        {
+          question_id,
+          id,
+        },
+      ]);
+    }
+
+    console.log(selected);
+    console.log(formState.filter_quetion_option);
+  };

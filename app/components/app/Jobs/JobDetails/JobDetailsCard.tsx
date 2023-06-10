@@ -24,6 +24,7 @@ type Props = {
   image: string;
   navigation: any;
   id: number | string;
+  job_variant?: string;
 };
 
 const JobDetailsCard: React.FC<Props> = ({
@@ -39,6 +40,7 @@ const JobDetailsCard: React.FC<Props> = ({
   image,
   navigation,
   id,
+  job_variant,
 }) => {
   const theme = useContext(themeContext);
 
@@ -260,6 +262,7 @@ const JobDetailsCard: React.FC<Props> = ({
             screen: "Details",
             params: {
               job_id: id,
+              job_variant,
             },
           })
         }

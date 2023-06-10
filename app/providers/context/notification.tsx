@@ -172,7 +172,7 @@ export const NotificationProvider = ({ children }: any) => {
 
     setTimeout(() => {
       dismissNotification(notification);
-    }, 5000);
+    }, 6000);
   };
 
   return (
