@@ -41,11 +41,20 @@ const NavButton: React.FC<Props> = ({
         paddingVertical: scale(5),
         borderRadius: scale(8),
         marginHorizontal: scale(3.5),
-        backgroundColor: active ? theme.primary : theme.disabled,
+        backgroundColor: active ? theme.primary : theme.placeholder,
         alignItems: "center",
         flexDirection: "row",
         position: "relative",
         overflow: "hidden",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 4,
       }}
     >
       <Text

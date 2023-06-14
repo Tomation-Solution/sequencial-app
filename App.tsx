@@ -20,6 +20,7 @@ import { HeaderProvider } from "./app/providers/context/header";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ApiProvider } from "./app/providers/context/api";
 import { retrieveAppData } from "./app/helper_functions/storingAppData";
+import { COLORS } from "./app/config/constants/color";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
@@ -80,7 +81,7 @@ export default function App() {
     <>
       <StatusBar
         barStyle={isDarkMode === "light" ? `dark-content` : `light-content`}
-        backgroundColor={isDarkMode === "light" ? "#ffffff" : "#000"}
+        backgroundColor={isDarkMode === "light" ? COLORS.light_blue : "#000"}
       />
       <QueryClientProvider client={new QueryClient()}>
         <NavigationContainer>

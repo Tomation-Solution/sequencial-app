@@ -34,6 +34,21 @@ export async function jobQuestion(data: { job_id: number }) {
   return response.data;
 }
 
+export async function submitJobQuestion(data: any) {
+  const token = await retrieveAppData("token");
+
+  const response = await axios.post(
+    "jobs/job-seeker-view/submit_quetion/",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token.access}`,
+      },
+    }
+  );
+  return response.data;
+}
+
 export async function jobsApplied() {
   const token = await retrieveAppData("token");
 

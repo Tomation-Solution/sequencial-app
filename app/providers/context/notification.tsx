@@ -48,7 +48,7 @@ const Notification = ({
   const slideIn = () => {
     Animated.timing(position, {
       toValue: 0,
-      duration: 500,
+      duration: 300,
       useNativeDriver: true,
     }).start();
   };
@@ -172,7 +172,7 @@ export const NotificationProvider = ({ children }: any) => {
 
     setTimeout(() => {
       dismissNotification(notification);
-    }, 6000);
+    }, 5000);
   };
 
   return (

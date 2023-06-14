@@ -1,13 +1,17 @@
 import { Alert, StyleSheet, View } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import themeContext from "../../config/theme/themeContext";
 import { Seperator } from "../../components/ui/_helpers";
-import { Button, Text } from "../../components/ui";
+import { Button, ImageComponent, Text } from "../../components/ui";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
-import { clearAppData } from "../../helper_functions/storingAppData";
+import {
+  clearAppData,
+  retrieveAppData,
+} from "../../helper_functions/storingAppData";
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect } from "@react-navigation/native";
+import jwt_decode from "jwt-decode";
 
 const CustomButton = ({
   onPress,
@@ -54,6 +58,8 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   const { showHeaderTextHandler } = useContext(HeaderContext);
 
+  const [user, set_user] = useState<any>();
+
   useFocusEffect(
     React.useCallback(() => {
       showHeaderTextHandler("Profile");
@@ -77,8 +83,25 @@ const Home = ({ navigation }: { navigation: any }) => {
     ]);
   };
 
+  async function decodeToken() {
+    const token = await retrieveAppData("token");
+    var decoded = jwt_decode(token?.access);
+
+    set_user(decoded);
+  }
+
+  useEffect(() => {
+    decodeToken();
+    console.log(user);
+  }, []);
+
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.background,
+      }}
+    >
       <View
         style={{
           justifyContent: "center",
@@ -97,10 +120,35 @@ const Home = ({ navigation }: { navigation: any }) => {
             alignSelf: "center",
             marginTop: 20,
           }}
-        ></View>
+        >
+          <ImageComponent
+            imageUrl={
+              user?.profile_image
+                ? user?.profile_image
+                : "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+            }
+            style={{
+              width: 90,
+              height: 90,
+              borderRadius: 50,
+            }}
+          />
+        </View>
 
         <Seperator height={10} />
-        <Text>Tom Brad</Text>
+        <Text>
+          Your profie,{" "}
+          <Text
+            style={{
+              fontWeight: "bold",
+              textDecorationColor: theme.primary,
+              textDecorationLine: "underline",
+              textDecorationStyle: "solid",
+            }}
+          >
+            {user?.full_name}
+          </Text>
+        </Text>
         <Seperator height={10} />
         <Button onPress={() => navigation.navigate("CV Management")}>
           Edit Cv

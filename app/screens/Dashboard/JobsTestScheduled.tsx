@@ -41,26 +41,25 @@ const JobsTestScheduled = ({ navigation }: any) => {
             flex: 1,
           }}
         >
-          <Seperator height={15} />
+          <ScrollView>
+            <Seperator height={15} />
 
-          <View
-            style={{
-              paddingHorizontal: scale(15),
-              paddingBottom: scale(15),
-            }}
-          >
-            <Text
+            <View
               style={{
-                fontWeight: "bold",
-                fontSize: scale(16),
-                color: theme.text,
+                paddingHorizontal: scale(15),
+                paddingBottom: scale(15),
               }}
             >
-              Jobs Test Scheduled
-            </Text>
-          </View>
-
-          <ScrollView>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: scale(16),
+                  color: theme.text,
+                }}
+              >
+                Jobs Test Scheduled
+              </Text>
+            </View>
             <View
               style={{
                 flex: 1,

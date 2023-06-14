@@ -19,6 +19,8 @@ const Apply = ({ navigation, route }: any) => {
   const { useApiMutation } = useContext(ApiContext);
   const { job_id, job_variant } = route.params;
 
+  console.log("job_variant", job_variant);
+
   const { mutate, isLoading, isSuccess } = useApiMutation({
     mutationFunction: jobApply,
   });
@@ -44,7 +46,7 @@ const Apply = ({ navigation, route }: any) => {
   };
 
   useEffect(() => {
-    if (isSuccess && job_variant === "question") {
+    if (isSuccess && job_variant === "filter_and_test") {
       navigation.navigate("Job_Question", {
         job_id,
       });

@@ -121,6 +121,8 @@ export const ApiProvider = (props: {
           type: 1,
           message: data?.message,
         });
+
+        console.log("data", data);
       },
       onError: (error) => {
         console.log("error", error);

@@ -39,7 +39,7 @@ const Loading = () => {
         style={{
           // flex: 1,
           // padding: 20,
-          backgroundColor: "rgba(0, 0 , 0, 0.2)",
+          // backgroundColor: "rgba(0, 0 , 0, 0.2)",
           alignItems: "center",
           justifyContent: "center",
           position: "absolute",

@@ -1,11 +1,5 @@
-import React, {
-  memo,
-  useContext,
-  useEffect,
-  useState,
-  useReducer,
-} from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import React, { memo, useContext, useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import ApiContext from "../../providers/context/api";
 import {
   jobQuestion,
@@ -16,8 +10,9 @@ import themeContext from "../../config/theme/themeContext";
 import { scale } from "react-native-size-matters";
 import { Button, CustomInput, Text } from "../../components/ui";
 import { Seperator } from "../../components/ui/_helpers";
-import SingleChoice from "../../components/app/Questions/SingleChoice";
 import { useForm } from "react-hook-form";
+import SingleChoice from "../../components/app/Questions/SingleChoice";
+import { testQuestion } from "../../providers/call-service/test";
 
 interface JobQuestionProps {
   navigation: any;
@@ -30,8 +25,8 @@ interface FormState {
   fill_in_the_gap: any[];
 }
 
-const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
-  const { job_id } = route.params;
+const Test_Questions: React.FC<JobQuestionProps> = ({ navigation, route }) => {
+  const { test_id } = route.params;
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
 
@@ -39,16 +34,16 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   const { register, handleSubmit, setValue } = useForm();
 
   const getQuestions = useApiMutation({
-    mutationFunction: jobQuestion,
+    mutationFunction: testQuestion,
   });
 
-  const submitJobQuestionHandler = useApiMutation({
+  const submitTestQuestionHandler = useApiMutation({
     mutationFunction: submitJobQuestion,
   });
 
   useEffect(() => {
     getQuestions.mutate({
-      job_id,
+      job_id: test_id,
     });
   }, []);
 
@@ -82,7 +77,7 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
 
   const onSubmit = (data: FormState) => {
     const formattedData = {
-      job_id,
+      test_id,
       filter_quetion_option: data.filter_quetion_option || [],
       filter_quetion_multi_choice_quetion: [],
       fill_in_the_gap: data.fill_in_the_gap || [],
@@ -90,14 +85,14 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
 
     console.log("formattedData", formattedData);
 
-    submitJobQuestionHandler.mutate(formattedData);
+    submitTestQuestionHandler.mutate(formattedData);
   };
 
   useEffect(() => {
-    if (submitJobQuestionHandler.isSuccess) {
-      navigation.navigate("Details", { job_id });
+    if (submitTestQuestionHandler.isSuccess) {
+      navigation.navigate("Home");
     }
-  }, [submitJobQuestionHandler.isSuccess]);
+  }, [submitTestQuestionHandler.isSuccess]);
 
   return (
     <>
@@ -171,6 +166,6 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   );
 };
 
-export default memo(Job_Question);
+export default memo(Test_Questions);
 
 const styles = StyleSheet.create({});

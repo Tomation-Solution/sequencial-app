@@ -45,7 +45,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const [showMore, setShowMore] = React.useState(false);
   const theme = useContext(themeContext);
 
-  const { job_id } = route.params;
+  const { job_id, job_variant } = route.params;
 
   let text =
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voluptatibus consequuntur voluptate quod quae doloribus fugit...";
@@ -151,7 +151,9 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             />
           </Pressable>
           <Button
-            onPress={() => navigation.navigate("Apply", { job_id })}
+            onPress={() =>
+              navigation.navigate("Apply", { job_id, job_variant })
+            }
             styles={{
               flex: 1,
               marginLeft: scale(10),

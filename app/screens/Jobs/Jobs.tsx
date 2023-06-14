@@ -30,7 +30,7 @@ const Jobs = ({ navigation }: any) => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="Job_Question"
+      initialRouteName="Home"
     >
       <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
       <Stack.Screen name="Apply">

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useContext, useState } from "react";
 import ApiContext from "../../providers/context/api";
 import { getTests } from "../../providers/call-service/test_mangement";
@@ -11,6 +11,7 @@ import Drop from "../../components/ui/Input/Drop";
 import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
 import TestUpdateCard from "../../components/ui/UpdateCard/TestUpdateCard";
+import { Text } from "../../components/ui";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -25,15 +26,18 @@ const OPTIONS = [
 
 const Home = ({ navigation }: { navigation: any }) => {
   const { useApiQuery } = useContext(ApiContext);
-  const { showHeaderTextHandler } = useContext(HeaderContext);
   const theme = useContext(themeContext);
 
-  const [dropVal, setDropVal] = useState(null);
-
-  const { data, isLoading, isSuccess } = useApiQuery({
+  const { data, isLoading, isSuccess, refetch } = useApiQuery({
     queryKey: "fetchTests",
     queryFunction: getTests,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   console.log(data);
 
@@ -55,29 +59,55 @@ const Home = ({ navigation }: { navigation: any }) => {
             }}
           >
             <Drop />
-
             <Drop />
           </View>
           <View
             style={{
-              padding: scale(15),
+              paddingHorizontal: scale(12),
             }}
           >
-            {
+            <Text
+              style={{
+                fontSize: scale(20),
+                fontWeight: "bold",
+                color: theme.secondary,
+                marginBottom: scale(10),
+              }}
+            >
+              Test Line-Up
+            </Text>
+            {data.length > 0 ? (
               <FlatList
                 data={data}
                 renderItem={({ item }: any) => (
                   <TestUpdateCard
-                    notification={item.test_info.title}
-                    date="dfiohdsoihf"
+                    onPress={() =>
+                      navigation.navigate("Test_Questions", {
+                        test_id: item.test_info.job_id,
+                      })
+                    }
+                    title={item.test_info.title}
+                    org_name={item?.test_info.org_name}
+                    job_title={item?.job_title}
+                    // date="dfiohdsoihf"
                     updateType="Test"
-                    startTime="dhiofhdo"
-                    endTime="ifjoisdf"
+                    // startTime="dhiofhdo"
+                    // endTime="ifjoisdf"
                     // remainigTime="diofhihdsf"
                   />
                 )}
               />
-            }
+            ) : (
+              <Text
+                style={{
+                  fontSize: scale(16),
+                  color: theme.secondary,
+                  textAlign: "center",
+                }}
+              >
+                No Tests Available
+              </Text>
+            )}
           </View>
         </View>
       )}

@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ navigation }) => {
   return (
     <View
       style={{
-        backgroundColor: theme.background,
+        backgroundColor: theme.primary,
         flexDirection: "row",
         width: "100%",
         paddingHorizontal: scale(16),

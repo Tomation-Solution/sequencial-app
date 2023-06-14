@@ -12,6 +12,7 @@ import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
 import JobsApplied from "./JobsApplied";
 import JobsTestScheduled from "./JobsTestScheduled";
+import Home from "../Test_Management/Home";
 
 const Stack = createStackNavigator();
 
@@ -32,14 +33,14 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
       showLogoHandler();
     }, [])
   );
-  useEffect(() => {
+  useFocusEffect(() => {
     const fetchData = async () => {
       const response = await getDashBoardSummary();
       setDashboardSummary(response.data);
     };
 
     fetchData();
-  }, []);
+  });
 
   const navData = [
     {
@@ -62,16 +63,16 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
       title: "Jobs Test Scheduled",
       _count: dashboardSummary?.jobs_test_scheduled ?? 0,
     },
-    {
-      id: "007",
-      title: "Interviews Scheduled",
-      _count: dashboardSummary?.interview_scheduled ?? 0,
-    },
-    {
-      id: "005",
-      title: "Interviews Attended",
-      _count: dashboardSummary?.interviews_attended ?? 0,
-    },
+    // {
+    //   id: "007",
+    //   title: "Interviews Scheduled",
+    //   _count: dashboardSummary?.interview_scheduled ?? 0,
+    // },
+    // {
+    //   id: "005",
+    //   title: "Interviews Attended",
+    //   _count: dashboardSummary?.interviews_attended ?? 0,
+    // },
     {
       id: "006",
       title: "Job Offers",
@@ -86,12 +87,13 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
         flex: 1,
       }}
     >
-      <Seperator height={15} />
-
+      <Seperator height={10} />
+      <SearchBar />
+      <Seperator height={10} />
       <View>
         <ScrollView
           style={{
-            backgroundColor: "#ccc",
+            backgroundColor: theme.background,
           }}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -114,31 +116,63 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
                 key={item.id}
               />
             ))}
+
+            <NavButton
+              activeId={activeId}
+              changeActiveId={changeActiveId}
+              id={"007"}
+              title={"Interviews "}
+              _count={dashboardSummary?.interview_scheduled ?? 0}
+              key={"007"}
+            />
           </View>
         </ScrollView>
 
-        <Seperator height={17} />
-
-        <SearchBar />
+        {/* <Seperator height={17} /> */}
       </View>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
+      <View
+        style={{
+          flex: 1,
+          borderColor: theme.primary,
+          borderTopLeftRadius: scale(20),
+          borderTopRightRadius: scale(20),
+          borderWidth: 2,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.23,
+          shadowRadius: 2.62,
+
+          elevation: 4,
+          overflow: "hidden",
         }}
-        initialRouteName="001"
       >
-        <Stack.Screen name="001">
-          {(props) => <AllJobs {...props} />}
-        </Stack.Screen>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="001"
+        >
+          <Stack.Screen name="001">
+            {(props) => <AllJobs {...props} />}
+          </Stack.Screen>
 
-        <Stack.Screen name="002">
-          {(props) => <JobsApplied {...props} />}
-        </Stack.Screen>
+          <Stack.Screen name="002">
+            {(props) => <JobsApplied {...props} />}
+          </Stack.Screen>
 
-        <Stack.Screen name="004">
-          {(props) => <JobsTestScheduled {...props} />}
-        </Stack.Screen>
-      </Stack.Navigator>
+          <Stack.Screen name="004">
+            {(props) => <JobsTestScheduled {...props} />}
+          </Stack.Screen>
+
+          <Stack.Screen name="003">
+            {(props) => <Home {...props} />}
+          </Stack.Screen>
+          {/* <Stack.Screen name="007">{(props) => <Home {...props} />}</Stack.Screen> */}
+        </Stack.Navigator>
+      </View>
     </View>
   );
 };

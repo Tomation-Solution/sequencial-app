@@ -12,6 +12,8 @@ import InterviewUpdateCard from "../../components/ui/UpdateCard/InterviewUpdateC
 import { getInterviews } from "../../providers/call-service/interview_mangement";
 import jwt_decode from "jwt-decode";
 import { retrieveAppData } from "../../helper_functions/storingAppData";
+import { Seperator } from "../../components/ui/_helpers";
+import { Text } from "../../components/ui";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const { useApiQuery } = useContext(ApiContext);
@@ -23,8 +25,6 @@ const Home = ({ navigation }: { navigation: any }) => {
     queryKey: "fetchInterviews",
     queryFunction: getInterviews,
   });
-
-  var token: any = retrieveAppData("token");
 
   async function decodeToken() {
     const token = await retrieveAppData("token");
@@ -48,15 +48,33 @@ const Home = ({ navigation }: { navigation: any }) => {
             backgroundColor: theme.background,
           }}
         >
+          <Seperator height={scale(10)} />
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
+              justifyContent: "center",
+              marginBottom: scale(10),
+
+              backgroundColor: theme.primary,
+              paddingVertical: scale(5),
+              paddingHorizontal: scale(10),
+              borderRadius: scale(10),
+              width: "90%",
+              alignSelf: "center",
+              borderColor: theme.text,
+              borderWidth: 1,
             }}
           >
-            <Drop />
-
-            <Drop />
+            {/* <Drop />
+            <Drop /> */}
+            <Text
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Hi 👋 {user?.full_name} {user?.role} - Your newest interviews
+            </Text>
           </View>
           <View
             style={{
@@ -65,14 +83,21 @@ const Home = ({ navigation }: { navigation: any }) => {
           >
             {
               <FlatList
-                data={data.data}
+                data={data?.data}
                 renderItem={({ item }: any) => (
                   <InterviewUpdateCard
                     user_name={user?.full_name}
-                    date_picked="dfiohdsoihf"
-                    updateType="Interview"
-                    time_picked="dhiofhdo"
-                    remainigTime="diofhihdsf"
+                    date_picked={item.date_picked}
+                    time_picked={item.time_picked}
+                    // updateType="Interview"
+                    // remainigTime="diofhihdsf"
+                    job_title={item.interview.job_title}
+                    company={item.interview.company}
+                    onPress={() =>
+                      navigation.navigate("Interview_details", {
+                        interview_id: item.interview.interview_id,
+                      })
+                    }
                   />
                 )}
               />

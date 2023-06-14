@@ -93,7 +93,7 @@ const DrawerNavigations = () => {
         screenOptions={{
           header: (props) => <Header {...props} />,
           drawerPosition: "right",
-          drawerType: "slide",
+          swipeEnabled: false,
           headerLeft: () => null,
           headerRight: () => <DrawerToggleButton />,
 

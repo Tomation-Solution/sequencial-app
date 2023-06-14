@@ -1,98 +1,129 @@
-import { StyleSheet, View } from "react-native";
-import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useContext } from "react";
 import { scale } from "react-native-size-matters";
 import Text from "../Typography/Text";
 import { COLORS } from "../../../config/constants/color";
+import themeContext from "../../../config/theme/themeContext";
 
 type Props = {
-  notification: string;
-  date: string;
+  // notification: string;
+  // date: string;
   updateType: string;
-  startTime: string;
-  endTime: string;
-  remainigTime?: string;
+  // startTime: string;
+  // endTime: string;
+  // remainigTime?: string;
+  org_name: string;
+  title: string;
+  job_title: string;
+  onPress: () => void;
 };
 
 const TestUpdateCard: React.FC<Props> = ({
-  notification,
-  date,
+  // notification,
+  // date,
   updateType,
-  startTime,
-  endTime,
-  remainigTime,
+  // startTime,
+  // endTime,
+  // remainigTime,
+  org_name,
+  title,
+  job_title,
+  onPress,
 }) => {
+  const theme = useContext(themeContext);
   return (
     <View
       style={{
-        borderColor: COLORS.light_blue,
-        borderWidth: scale(1),
-        borderRadius: scale(8),
-        paddingTop: scale(10),
-        marginVertical: scale(10),
-        overflow: "hidden",
+        position: "relative",
       }}
     >
       <View
         style={{
-          paddingHorizontal: scale(10),
+          borderColor: theme.primary,
+          borderWidth: scale(1),
+          borderRadius: scale(8),
+          // paddingTop: scale(10),
+          marginVertical: scale(2),
+
+          backgroundColor: theme.background,
+          padding: 1,
         }}
       >
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            paddingRight: scale(10),
+            position: "relative",
+            borderRadius: scale(8),
+            overflow: "hidden",
           }}
         >
-          {remainigTime && (
-            <Text
-              style={{
-                ...styles.badge,
-                backgroundColor: COLORS.light_red,
-              }}
-            >
-              {remainigTime}
-            </Text>
-          )}
-          <Text
+          <View
             style={{
-              ...styles.badge,
-              backgroundColor: COLORS.light_green,
+              backgroundColor: theme.primary,
+              position: "absolute",
+              height: "100%",
+              zIndex: 10,
+              top: 0,
+              alignContent: "center",
+              justifyContent: "center",
+              paddingHorizontal: scale(3),
             }}
           >
-            {updateType}
+            <View
+              style={{
+                width: scale(10),
+                height: scale(10),
+                backgroundColor: theme.background,
+                borderRadius: scale(5),
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22,
+
+                elevation: 3,
+              }}
+            />
+          </View>
+
+          <Text
+            style={{
+              marginVertical: scale(8),
+              marginLeft: scale(20),
+              fontWeight: "600",
+              fontSize: scale(13),
+            }}
+          >
+            {org_name} has invited you to take {title} for the position of{" "}
+            {job_title}
           </Text>
         </View>
-
-        <Text
-          style={{
-            marginVertical: scale(12),
-            fontWeight: "600",
-            fontSize: scale(15),
-          }}
-        >
-          {notification}
-        </Text>
       </View>
-      <View
+      <TouchableOpacity
+        onPress={onPress}
         style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
+          backgroundColor: theme.primary,
+          padding: scale(5),
+          paddingHorizontal: scale(10),
+          alignSelf: "flex-end",
+          marginTop: scale(-12),
+          marginRight: scale(10),
+          borderRadius: scale(5),
+          marginBottom: scale(3),
         }}
       >
         <Text
           style={{
-            fontSize: scale(10),
+            color: theme.background,
+            fontSize: scale(12),
             fontWeight: "bold",
-            color: COLORS.gray,
-            paddingHorizontal: scale(5),
-            // paddingVertical: scale(2),
-            backgroundColor: COLORS.secondary,
-            borderTopLeftRadius: scale(10),
           }}
         >
-          {date}, {startTime} - {endTime}
+          View
         </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
