@@ -1,22 +1,21 @@
 import * as Yup from "yup";
 
-export const CVScheama = Yup.object().shape({
-  userDetails: Yup.object().shape({
-    first_name: Yup.string().required("First name is required"),
-    last_name: Yup.string().required("Last name is required"),
-    middle_name: Yup.string(),
-    email: Yup.string().required("Email is required").email("Invalid email"),
-    phone_number: Yup.string().required("Phone number is required"),
-    address: Yup.string().required("Address is required"),
-    city: Yup.string().required("City is required"),
-    state: Yup.string().required("State is required"),
-    country_of_residence: Yup.string().required(
-      "Country of residence is required"
-    ),
-    linkdin: Yup.string(),
-    twitter: Yup.string(),
-    personal_statement: Yup.string().required("Personal statement is required"),
-  }),
+export const CVSchema = Yup.object().shape({
+  first_name: Yup.string().required("First name is required"),
+  last_name: Yup.string().required("Last name is required"),
+  middle_name: Yup.string().required("Middle name is required"),
+  email: Yup.string().required("Email is required").email("Invalid email"),
+  phone_number: Yup.string().required("Phone number is required"),
+  address: Yup.string().required("Address is required"),
+  city: Yup.string().required("City is required"),
+  state: Yup.string().required("State is required"),
+  country_of_residence: Yup.string().required(
+    "Country of residence is required"
+  ),
+  linkdin: Yup.string(),
+  twitter: Yup.string(),
+  personal_statement: Yup.string().required("Personal statement is required"),
+  skills: Yup.string(),
 
   education: Yup.array().of(
     Yup.object().shape({
@@ -28,7 +27,7 @@ export const CVScheama = Yup.object().shape({
     })
   ),
 
-  workExperience: Yup.array().of(
+  experience: Yup.array().of(
     Yup.object().shape({
       company: Yup.string().required("Company is required"),
       position: Yup.string().required("Position is required"),
@@ -39,7 +38,7 @@ export const CVScheama = Yup.object().shape({
     })
   ),
 
-  certifications: Yup.array().of(
+  certification: Yup.array().of(
     Yup.object().shape({
       certification: Yup.string().required("Certification is required"),
       year: Yup.string().required("Year is required"),
