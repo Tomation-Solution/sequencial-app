@@ -31,7 +31,7 @@ const CustomInput: React.FC<InputProps> = ({
   };
 
   return (
-    <View style={{ marginTop: scale(12) }}>
+    <View style={{ marginTop: scale(5) }}>
       {label && (
         <Text
           style={{
@@ -51,7 +51,7 @@ const CustomInput: React.FC<InputProps> = ({
           position: "relative",
           flexDirection: "row",
           alignItems: "center",
-          marginTop: scale(5),
+          // marginTop: scale(5),
         }}
       >
         <TextInput

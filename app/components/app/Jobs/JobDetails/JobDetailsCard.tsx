@@ -49,6 +49,7 @@ const JobDetailsCard: React.FC<Props> = ({
       style={{
         backgroundColor: theme.background,
         padding: scale(10),
+        paddingBottom: scale(5),
         borderRadius: 8,
         shadowColor: theme.text,
         position: "relative",
@@ -197,7 +198,7 @@ const JobDetailsCard: React.FC<Props> = ({
             </Text>
           </View>
         </View>
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -253,7 +254,7 @@ const JobDetailsCard: React.FC<Props> = ({
                 : "Not Hiring Multiple candidates"}
             </Text>
           </View>
-        </View>
+        </View> */}
       </View>
       <TouchableOpacity
         activeOpacity={0.6}

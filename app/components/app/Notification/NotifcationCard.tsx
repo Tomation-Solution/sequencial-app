@@ -10,7 +10,7 @@ type Props = {
   company: string;
   role: string;
   type: string;
-  navigation: any;
+  onPress: any;
 };
 
 const Test = ({ company, role }: any) => {
@@ -108,12 +108,13 @@ const NotifcationCard: React.FC<Props> = ({
   company,
   role,
   type,
-  navigation,
+  onPress,
 }) => {
   const theme = useContext(themeContext);
 
   return (
     <TouchableOpacity
+      onPress={onPress}
       activeOpacity={0.5}
       style={{
         paddingVertical: scale(10),

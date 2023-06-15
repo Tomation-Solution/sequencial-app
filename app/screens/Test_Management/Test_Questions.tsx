@@ -12,7 +12,10 @@ import { Button, CustomInput, Text } from "../../components/ui";
 import { Seperator } from "../../components/ui/_helpers";
 import { useForm } from "react-hook-form";
 import SingleChoice from "../../components/app/Questions/SingleChoice";
-import { testQuestion } from "../../providers/call-service/test";
+import {
+  submitTestQuestion,
+  testQuestion,
+} from "../../providers/call-service/test_mangement";
 
 interface JobQuestionProps {
   navigation: any;
@@ -38,7 +41,7 @@ const Test_Questions: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   });
 
   const submitTestQuestionHandler = useApiMutation({
-    mutationFunction: submitJobQuestion,
+    mutationFunction: submitTestQuestion,
   });
 
   useEffect(() => {
@@ -77,7 +80,7 @@ const Test_Questions: React.FC<JobQuestionProps> = ({ navigation, route }) => {
 
   const onSubmit = (data: FormState) => {
     const formattedData = {
-      test_id,
+      job_id: test_id,
       filter_quetion_option: data.filter_quetion_option || [],
       filter_quetion_multi_choice_quetion: [],
       fill_in_the_gap: data.fill_in_the_gap || [],

@@ -12,6 +12,7 @@ import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
 import TestUpdateCard from "../../components/ui/UpdateCard/TestUpdateCard";
 import { Text } from "../../components/ui";
+import NotifcationCard from "../../components/app/Notification/NotifcationCard";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -80,21 +81,34 @@ const Home = ({ navigation }: { navigation: any }) => {
               <FlatList
                 data={data}
                 renderItem={({ item }: any) => (
-                  <TestUpdateCard
+                  <NotifcationCard
                     onPress={() =>
                       navigation.navigate("Test_Questions", {
                         test_id: item.test_info.job_id,
                       })
                     }
-                    title={item.test_info.title}
-                    org_name={item?.test_info.org_name}
-                    job_title={item?.job_title}
-                    // date="dfiohdsoihf"
-                    updateType="Test"
-                    // startTime="dhiofhdo"
-                    // endTime="ifjoisdf"
-                    // remainigTime="diofhihdsf"
+                    company={item?.test_info.org_name}
+                    image={item.image}
+                    isOpened={item?.isOpened}
+                    role={item?.job_title}
+                    type="interview"
+                    key={item.test_info.job_id}
                   />
+                  // <TestUpdateCard
+                  //   onPress={() =>
+                  //     navigation.navigate("Test_Questions", {
+                  //       test_id: item.test_info.job_id,
+                  //     })
+                  //   }
+                  //   title={item.test_info.title}
+                  //   org_name={item?.test_info.org_name}
+                  //   job_title={item?.job_title}
+                  //   // date="dfiohdsoihf"
+                  //   updateType="Test"
+                  //   // startTime="dhiofhdo"
+                  //   // endTime="ifjoisdf"
+                  //   // remainigTime="diofhihdsf"
+                  // />
                 )}
               />
             ) : (

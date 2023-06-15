@@ -1,0 +1,1315 @@
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
+import { HeaderContext } from "../../providers/context/header";
+import {
+  Button,
+  ImageComponent,
+  CustomInput as Input,
+  Text,
+} from "../../components/ui";
+import { scale } from "react-native-size-matters";
+import themeContext from "../../config/theme/themeContext";
+import { AntDesign } from "@expo/vector-icons";
+import { Seperator } from "../../components/ui/_helpers";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import * as DocumentPicker from "expo-document-picker";
+import {
+  fetch_user_data,
+  update_job_seeker,
+} from "../../providers/call-service/cv_";
+import ApiContext from "../../providers/context/api";
+import { AppContext } from "../../providers/context/app";
+import {
+  Certification,
+  Education,
+  Reference,
+  UserDetails,
+  WorkExperience,
+} from "../../../types";
+import { KeyboardAvoidingView } from "../../components/ui/customElements";
+import Loading from "../../components/ui/_helpers/Loading";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
+import { State } from "./interfaces";
+import { useForm } from "react-hook-form";
+
+const initialState: State = {
+  education: [],
+  workExperience: [],
+  certifications: [],
+  references: [],
+  userDetails: {
+    first_name: "",
+    last_name: "",
+    middle_name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    city: "",
+    state: "",
+    country_of_residence: "",
+    linkdin: "",
+    twitter: "",
+    personal_statement: "",
+  },
+};
+
+const Home = ({ navigation, route }: { navigation: any; route: any }) => {
+  const route_params = route.params;
+
+  const educationRef = useRef<ScrollView>(null);
+  const workExperienceRef = useRef<ScrollView>(null);
+  const certificationRef = useRef<ScrollView>(null);
+  const referenceRef = useRef<ScrollView>(null);
+
+  const theme = useContext(themeContext);
+  const { useApiMutation, useApiQuery } = useContext(ApiContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
+
+  const {
+    handleSubmit,
+    register,
+    getValues,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<State>({
+    defaultValues: initialState,
+  });
+
+  const handleFormChange = (text: string, name: any) => {
+    setValue(name, text);
+  };
+
+  const { data, error, refetch, isSuccess, isLoading } = useApiQuery({
+    queryKey: "fetchUserData",
+    queryFunction: fetch_user_data,
+  });
+
+  const uploadCv = useApiMutation({
+    mutationFunction: update_job_seeker,
+  });
+
+  // const useable = data?.data?.user_extra?.job_seakers?.cvStucture;
+
+  useEffect(() => {
+    if (isSuccess && data?.data?.user_extra?.job_seakers?.cvStucture) {
+      const { cvStucture } = data.data.user_extra.job_seakers;
+
+      // Iterate over the fields and set their values
+      Object.keys(cvStucture).forEach((field) => {
+        setValue(`userDetails.${field}`, cvStucture[field]);
+      });
+    }
+  }, [isSuccess, data]);
+
+  const handleAddEducation = () => {
+    const education = getValues("education") || [];
+    const newEducation = [
+      ...education,
+      {
+        id: education.length + 1,
+        school_name: "",
+        start_year: "",
+        end_year: "",
+        course_of_study: "",
+        degree_type: "",
+      },
+    ];
+    setValue("education", newEducation);
+    setTimeout(() => {
+      educationRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
+  const handleAddWorkExperience = () => {
+    const workExperience = getValues("workExperience") || [];
+    const newWorkExperience = [
+      ...workExperience,
+      {
+        id: workExperience.length + 1,
+        company: "",
+        position: "",
+        start_year: "",
+        end_year: "",
+        role: "",
+        responsibilities: "",
+      },
+    ];
+    setValue("workExperience", newWorkExperience);
+    setTimeout(() => {
+      workExperienceRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
+  const handleAddCertification = () => {
+    const certifications = getValues("certifications") || [];
+    const newCertifications = [
+      ...certifications,
+      {
+        id: certifications.length + 1,
+        certification: "",
+        year: "",
+        issuer: "",
+      },
+    ];
+    setValue("certifications", newCertifications);
+    setTimeout(() => {
+      certificationRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
+  const handleAddReference = () => {
+    const references = getValues("references") || [];
+    const newReferences = [
+      ...references,
+      {
+        id: references.length + 1,
+        full_name: "",
+        relationship: "",
+        email: "",
+        phone_number: "",
+      },
+    ];
+    setValue("references", newReferences);
+    setTimeout(() => {
+      referenceRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
+  const handleSave = handleSubmit(async (formData) => {
+    const __data = {
+      ...formData.userDetails,
+      education: JSON.stringify(formData.education),
+      experience: JSON.stringify(formData.workExperience),
+      certificaton: JSON.stringify(formData.certifications),
+      refrences: JSON.stringify(formData.references),
+    };
+
+    const _data = new FormData();
+
+    Object.entries(__data).forEach(([key, value]) => {
+      _data.append(key, value);
+    });
+
+    uploadCv.mutate(_data);
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("CV Management");
+      refetch();
+    }, [])
+  );
+
+  useEffect(() => {
+    if (uploadCv.isSuccess) {
+      navigation.goBack();
+    }
+  }, [uploadCv.isSuccess]);
+
+  return (
+    <KeyboardAvoidingView>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          paddingVertical: scale(10),
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigation.navigate("Upload CV");
+          }}
+          style={[
+            styles.uploadCVButton,
+            {
+              backgroundColor: theme.placeholder,
+            },
+          ]}
+        >
+          <AntDesign name="upload" size={scale(12)} color={theme.text} />
+          <Text
+            style={{
+              fontSize: scale(12),
+              fontWeight: "bold",
+              color: theme.text,
+              marginLeft: scale(5),
+            }}
+          >
+            Upload Instead
+          </Text>
+        </Pressable>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <ImageComponent
+            imageUrl={
+              "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFuJTIwZmFjZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
+            }
+            style={{
+              width: scale(50),
+              height: scale(50),
+              borderRadius: scale(50),
+            }}
+          />
+        </View>
+        {/* input fields  */}
+        <View>
+          <View>
+            <Text>Presonal Statement</Text>
+            <TextInput
+              numberOfLines={5}
+              multiline={true}
+              value={getValues("userDetails.personal_statement") || ""}
+              style={{
+                padding: scale(7),
+                borderRadius: scale(10),
+                borderWidth: scale(1),
+                borderColor: theme.placeholder,
+                marginTop: scale(10),
+                textAlignVertical: "top",
+                fontSize: scale(14),
+              }}
+              onChangeText={(text: string) =>
+                handleFormChange(text, "userDetails.personal_statement")
+              }
+            />
+          </View>
+          {errors.userDetails?.first_name && (
+            <Text>This field is required.</Text>
+          )}
+          <Seperator height={scale(20)} />
+          {/* <CustomSelectInput onChange={() => {}} data={data} /> */}
+          <Input
+            label="First Name"
+            value={userDetails.first_name}
+            placeholder="First Name"
+            onChangeText={(text: string) =>
+              handleFormChange(text, "first_name")
+            }
+          />
+          <Input
+            label="Middle Name"
+            value={userDetails.middle_name}
+            placeholder="First Name"
+            onChangeText={(text: string) =>
+              handleFormChange(text, "first_name")
+            }
+          />
+          <Input
+            label="Last Name"
+            value={userDetails.last_name}
+            placeholder="Last Name"
+            onChangeText={(text: string) => handleFormChange(text, "last_name")}
+          />
+          <Input
+            label="Email"
+            value={userDetails.email}
+            placeholder="Email"
+            onChangeText={(text: string) => handleFormChange(text, "email")}
+          />
+          <Input
+            label="Phone Number"
+            value={userDetails.phone_number}
+            placeholder="Phone Number"
+            onChangeText={(text: string) =>
+              handleFormChange(text, "phone_number")
+            }
+          />
+          <Input
+            label="Address"
+            value={userDetails.address}
+            placeholder="Address"
+            onChangeText={(text: string) => handleFormChange(text, "address")}
+          />
+          <Input
+            label="City"
+            value={userDetails.city}
+            placeholder="City"
+            onChangeText={(text: string) => handleFormChange(text, "city")}
+          />
+          <Input
+            label="Post Code"
+            placeholder="Post Code"
+            onChangeText={(text: string) => handleFormChange(text, "email")}
+          />
+          <Input
+            label="Country"
+            value={userDetails.country_of_residence}
+            placeholder="Country"
+            onChangeText={(text: string) =>
+              handleFormChange(text, "country_of_residence")
+            }
+          />
+
+          <Input
+            label="Linkdin"
+            value={userDetails.linkdin}
+            placeholder="Linkdin"
+            onChangeText={(text: string) => handleFormChange(text, "linkdin")}
+          />
+
+          <Input
+            label="Twitter"
+            value={userDetails.twitter}
+            placeholder="Twitter"
+            onChangeText={(text: string) => handleFormChange(text, "twitter")}
+          />
+        </View>
+        {/* // Education */}
+        <View
+          style={{
+            marginBottom: scale(20),
+          }}
+        >
+          <Seperator height={scale(20)} />
+          <Text
+            style={{
+              fontSize: scale(16),
+              fontWeight: "bold",
+              marginBottom: scale(10),
+            }}
+          >
+            Education
+          </Text>
+          <ScrollView horizontal style={{ flex: 1 }} ref={educationRef}>
+            {education?.map((item: Education) => {
+              const _id = item.id;
+
+              return (
+                <View
+                  style={{
+                    marginLeft: scale(10),
+                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
+                    borderColor: theme.placeholder,
+                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                    padding: scale(10),
+                    borderRadius: scale(10),
+                    marginBottom: scale(10),
+                    width: scale(270),
+                  }}
+                  key={_id}
+                >
+                  <Input
+                    label="School"
+                    value={item.school_name}
+                    placeholder="School"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "school_name", _id)
+                    }
+                  />
+                  <Input
+                    label="Start Year"
+                    value={item.start_year}
+                    placeholder="Start Year"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "start_year", _id)
+                    }
+                    keyboardType="numeric"
+                  />
+
+                  <Input
+                    label="End Year"
+                    value={item.end_year}
+                    placeholder="End Year"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "end_year", _id)
+                    }
+                    keyboardType="numeric"
+                  />
+
+                  <Input
+                    label="Course Of Study"
+                    value={item.course_of_study}
+                    placeholder="Course Of Study"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "course_of_study", _id)
+                    }
+                  />
+
+                  <Input
+                    label="Degree"
+                    value={item.degree_type}
+                    placeholder="Degree"
+                    onChangeText={(text: string) =>
+                      handleEducationChange(text, "degree_type", _id)
+                    }
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                handleAddEducation();
+              }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: scale(10),
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={scale(20)}
+                color={theme.text}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* // work experience */}
+        <View
+          style={{
+            marginBottom: scale(20),
+          }}
+        >
+          <Seperator height={scale(20)} />
+          <Text
+            style={{
+              fontSize: scale(16),
+              fontWeight: "bold",
+              marginBottom: scale(10),
+            }}
+          >
+            Work Experience
+          </Text>
+          <ScrollView horizontal style={{ flex: 1 }} ref={workExperienceRef}>
+            {workExperience?.map((item, index) => {
+              const _id = index;
+
+              return (
+                <View
+                  style={{
+                    marginLeft: scale(10),
+                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
+                    borderColor: theme.placeholder,
+                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                    padding: scale(10),
+                    borderRadius: scale(10),
+                    marginBottom: scale(10),
+                    width: scale(270),
+                  }}
+                  key={_id}
+                >
+                  <Input
+                    label="Company"
+                    value={item.company}
+                    placeholder="Company"
+                    onChangeText={(text: string) =>
+                      handleWorkExperienceChange(text, "company", _id)
+                    }
+                  />
+                  <Input
+                    label="Start Year"
+                    value={item.start_year}
+                    placeholder="Start Year"
+                    onChangeText={(text: string) =>
+                      handleWorkExperienceChange(text, "startYear", _id)
+                    }
+                    keyboardType="numeric"
+                  />
+
+                  <Input
+                    label="End Year"
+                    value={item.end_year}
+                    placeholder="End Year"
+                    onChangeText={(text: string) =>
+                      handleWorkExperienceChange(text, "endYear", _id)
+                    }
+                    keyboardType="numeric"
+                  />
+
+                  <Input
+                    label="Role"
+                    value={item.role}
+                    placeholder="Role"
+                    onChangeText={(text: string) =>
+                      handleWorkExperienceChange(text, "role", _id)
+                    }
+                    multiline={true}
+                    numberOfLines={6}
+                    style={{
+                      textAlignVertical: "top",
+                    }}
+                  />
+
+                  <Input
+                    label="Responsibilities"
+                    value={item.responsibilities}
+                    placeholder="Responsibilities"
+                    onChangeText={(text: string) =>
+                      handleWorkExperienceChange(text, "responsibilities", _id)
+                    }
+                    multiline={true}
+                    numberOfLines={6}
+                    style={{
+                      textAlignVertical: "top",
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleAddWorkExperience}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: scale(10),
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={scale(20)}
+                color={theme.text}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* // Certification */}
+        <View
+          style={{
+            marginBottom: scale(20),
+          }}
+        >
+          <Seperator height={scale(20)} />
+          <Text
+            style={{
+              fontSize: scale(16),
+              fontWeight: "bold",
+              marginBottom: scale(10),
+            }}
+          >
+            Certification
+          </Text>
+          <ScrollView horizontal style={{ flex: 1 }} ref={certificationRef}>
+            {certifications?.map((item, index) => {
+              const _id = index;
+
+              return (
+                <View
+                  style={{
+                    marginLeft: scale(10),
+                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
+                    borderColor: theme.placeholder,
+                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                    padding: scale(10),
+                    borderRadius: scale(10),
+                    marginBottom: scale(10),
+                    width: scale(270),
+                  }}
+                  key={_id}
+                >
+                  <Input
+                    label="Certificate"
+                    value={item.certification}
+                    placeholder="Certificate"
+                    onChangeText={(text: string) =>
+                      handleCertificationsChange(text, "certificate", _id)
+                    }
+                  />
+                  <Input
+                    label="Year"
+                    value={item.year}
+                    placeholder="Year"
+                    onChangeText={(text: string) =>
+                      handleCertificationsChange(text, "year", _id)
+                    }
+                    keyboardType="numeric"
+                  />
+
+                  <Input
+                    label="Issuer"
+                    value={item.issuer}
+                    placeholder="Issuer"
+                    onChangeText={(text: string) =>
+                      handleCertificationsChange(text, "issuer", _id)
+                    }
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleAddCertification}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: scale(10),
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={scale(20)}
+                color={theme.text}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* // Certification */}
+        <View
+          style={{
+            marginBottom: scale(20),
+          }}
+        >
+          <Seperator height={scale(20)} />
+          <Text
+            style={{
+              fontSize: scale(16),
+              fontWeight: "bold",
+              marginBottom: scale(10),
+            }}
+          >
+            References
+          </Text>
+          <ScrollView horizontal style={{ flex: 1 }} ref={referenceRef}>
+            {references?.map((item, index) => {
+              const _id = index;
+
+              return (
+                <View
+                  style={{
+                    marginLeft: scale(10),
+                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
+                    borderColor: theme.placeholder,
+                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                    padding: scale(10),
+                    borderRadius: scale(10),
+                    marginBottom: scale(10),
+                    width: scale(270),
+                  }}
+                  key={_id}
+                >
+                  <Input
+                    label="Reference Name"
+                    value={item.full_name}
+                    placeholder="Reference Name"
+                    onChangeText={(text: string) =>
+                      handleReferencesChange(text, "fullName", _id)
+                    }
+                  />
+
+                  <Input
+                    label="Relationship"
+                    value={item.relationship}
+                    placeholder="Relationship"
+                    onChangeText={(text: string) =>
+                      handleReferencesChange(text, "relationship", _id)
+                    }
+                  />
+
+                  <Input
+                    label="Reference Email"
+                    value={item.email}
+                    placeholder="Reference Email"
+                    onChangeText={(text: string) =>
+                      handleReferencesChange(text, "email", _id)
+                    }
+                  />
+
+                  <Input
+                    label="Phone Number"
+                    value={item.phone_number}
+                    placeholder="Phone Number"
+                    onChangeText={(text: string) =>
+                      handleReferencesChange(text, "phoneNumber", _id)
+                    }
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleAddReference}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: scale(10),
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={scale(20)}
+                color={theme.text}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Button
+          onPress={() => {
+            handleSave();
+          }}
+        >
+          Save
+        </Button>
+        <Seperator height={scale(20)} />
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  uploadCVButton: {
+    paddingHorizontal: scale(5),
+    paddingVertical: scale(7),
+    borderRadius: scale(10),
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    marginRight: scale(10),
+  },
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import { HeaderContext } from "../../providers/context/header";
+import {
+  Button,
+  ImageComponent,
+  CustomInput as Input,
+  Text,
+} from "../../components/ui";
+import { scale } from "react-native-size-matters";
+import themeContext from "../../config/theme/themeContext";
+import { AntDesign } from "@expo/vector-icons";
+import { Seperator } from "../../components/ui/_helpers";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import * as DocumentPicker from "expo-document-picker";
+import {
+  fetch_user_data,
+  update_job_seeker,
+} from "../../providers/call-service/cv_";
+import ApiContext from "../../providers/context/api";
+import { AppContext } from "../../providers/context/app";
+import {
+  Certification,
+  Education,
+  Reference,
+  UserDetails,
+  WorkExperience,
+} from "../../../types";
+import { KeyboardAvoidingView } from "../../components/ui/customElements";
+import Loading from "../../components/ui/_helpers/Loading";
+import { retrieveAppData } from "../../helper_functions/storingAppData";
+import { State } from "./interfaces";
+import { useForm } from "react-hook-form";
+
+import * as Yup from "yup";
+import { Formik } from "formik";
+import { CVScheama } from "./Scheama";
+import { convertToTitleCase } from "../../helper_functions/miscs";
+
+const _initialState: State = {
+  education: [
+    {
+      id: 1,
+      school_name: "",
+      start_year: "",
+      end_year: "",
+      course_of_study: "",
+      degree_type: "",
+    },
+  ],
+  experience: [
+    {
+      id: 1,
+      company: "",
+      position: "",
+      start_year: "",
+      end_year: "",
+      role: "",
+      responsibilities: "",
+    },
+  ],
+  certificaton: [
+    {
+      id: 1,
+      certification: "",
+      year: "",
+      issuer: "",
+    },
+  ],
+  refrences: [
+    {
+      id: 1,
+      full_name: "",
+      relationship: "",
+      email: "",
+      phone_number: "",
+    },
+  ],
+
+  first_name: "",
+  last_name: "",
+  middle_name: "",
+  email: "",
+  phone_number: "",
+  address: "",
+  city: "",
+  state: "",
+  country_of_residence: "",
+  linkdin: "",
+  twitter: "",
+  personal_statement: "",
+  skills: "",
+};
+
+const Home = ({ navigation, route }: { navigation: any; route: any }) => {
+  const route_params = route.params;
+  const [initialState, setInitialState] = useState<State>(_initialState);
+
+  const educationRef = useRef<ScrollView>(null);
+  const workExperienceRef = useRef<ScrollView>(null);
+  const certificationRef = useRef<ScrollView>(null);
+  const referenceRef = useRef<ScrollView>(null);
+
+  const theme = useContext(themeContext);
+  const { useApiMutation, useApiQuery } = useContext(ApiContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
+
+  // const {
+  //   handleSubmit,
+  //   register,
+  //   getValues,
+  //   control,
+  //   setValue,
+  //   formState: { errors },
+  // } = useForm<State>({
+  //   defaultValues: initialState,
+  // });
+
+  // const handleFormChange = (text: string, name: any) => {
+  //   console.log(getValues("userDetails.phone_number"));
+  //   setValue(name, text);
+  // };
+
+  const { data, error, refetch, isSuccess, isLoading } = useApiQuery({
+    queryKey: "fetchUserData",
+    queryFunction: fetch_user_data,
+  });
+
+  const uploadCv = useApiMutation({
+    mutationFunction: update_job_seeker,
+  });
+
+  useEffect(() => {
+    if (isSuccess && data?.data?.user_extra?.job_seakers?.cvStucture) {
+      const { cvStucture } = data.data.user_extra.job_seakers;
+
+      setInitialState({
+        ...initialState,
+        ...cvStucture,
+      });
+
+      console.log("ininin: ", initialState);
+    }
+  }, [isSuccess, data]);
+
+  // const handleAddEducation = () => {
+  //   const education = getValues("education") || [];
+  //   const newEducation = [
+  //     ...education,
+  //     {
+  //       id: education.length + 1,
+  //       school_name: "",
+  //       start_year: "",
+  //       end_year: "",
+  //       course_of_study: "",
+  //       degree_type: "",
+  //     },
+  //   ];
+  //   setValue("education", newEducation);
+  //   setTimeout(() => {
+  //     educationRef.current?.scrollToEnd({ animated: true });
+  //   }, 100);
+  // };
+
+  // const handleAddWorkExperience = () => {
+  //   const workExperience = getValues("workExperience") || [];
+  //   const newWorkExperience = [
+  //     ...workExperience,
+  //     {
+  //       id: workExperience.length + 1,
+  //       company: "",
+  //       position: "",
+  //       start_year: "",
+  //       end_year: "",
+  //       role: "",
+  //       responsibilities: "",
+  //     },
+  //   ];
+  //   setValue("workExperience", newWorkExperience);
+  //   setTimeout(() => {
+  //     workExperienceRef.current?.scrollToEnd({ animated: true });
+  //   }, 100);
+  // };
+
+  // const handleAddCertification = () => {
+  //   const certifications = getValues("certifications") || [];
+  //   const newCertifications = [
+  //     ...certifications,
+  //     {
+  //       id: certifications.length + 1,
+  //       certification: "",
+  //       year: "",
+  //       issuer: "",
+  //     },
+  //   ];
+  //   setValue("certifications", newCertifications);
+  //   setTimeout(() => {
+  //     certificationRef.current?.scrollToEnd({ animated: true });
+  //   }, 100);
+  // };
+
+  // const handleAddReference = () => {
+  //   const references = getValues("references") || [];
+  //   const newReferences = [
+  //     ...references,
+  //     {
+  //       id: references.length + 1,
+  //       full_name: "",
+  //       relationship: "",
+  //       email: "",
+  //       phone_number: "",
+  //     },
+  //   ];
+  //   setValue("references", newReferences);
+  //   setTimeout(() => {
+  //     referenceRef.current?.scrollToEnd({ animated: true });
+  //   }, 100);
+  // };
+
+  // const handleSave = handleSubmit(async (formData) => {
+  //   const __data = {
+  //     ...formData.userDetails,
+  //     education: JSON.stringify(formData.education),
+  //     experience: JSON.stringify(formData.workExperience),
+  //     certificaton: JSON.stringify(formData.certifications),
+  //     refrences: JSON.stringify(formData.references),
+  //   };
+
+  //   const _data = new FormData();
+
+  //   Object.entries(__data).forEach(([key, value]) => {
+  //     _data.append(key, value);
+  //   });
+
+  //   uploadCv.mutate(_data);
+  // });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("CV Management");
+      refetch();
+    }, [])
+  );
+
+  useEffect(() => {
+    if (uploadCv.isSuccess) {
+      navigation.goBack();
+    }
+  }, [uploadCv.isSuccess]);
+
+  return (
+    <KeyboardAvoidingView>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          paddingVertical: scale(10),
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigation.navigate("Upload CV");
+          }}
+          style={[
+            styles.uploadCVButton,
+            {
+              backgroundColor: theme.placeholder,
+            },
+          ]}
+        >
+          <AntDesign name="upload" size={scale(12)} color={theme.text} />
+          <Text
+            style={{
+              fontSize: scale(12),
+              fontWeight: "bold",
+              color: theme.text,
+              marginLeft: scale(5),
+            }}
+          >
+            Upload Instead
+          </Text>
+        </Pressable>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <ImageComponent
+            imageUrl={
+              "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFuJTIwZmFjZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
+            }
+            style={{
+              width: scale(50),
+              height: scale(50),
+              borderRadius: scale(50),
+            }}
+          />
+        </View>
+        {/* input fields  */}
+        <View>
+          <Formik
+            initialValues={initialState}
+            onSubmit={(values: State) => console.log(values)}
+            validationSchema={CVScheama}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isValid,
+            }) => (
+              <View
+                style={{
+                  // flex: 1,
+                  width: "100%",
+                }}
+              >
+                <View
+                  style={{
+                    marginTop: scale(20),
+                  }}
+                >
+                  <Text>Personal Statement</Text>
+                  <TextInput
+                    numberOfLines={5}
+                    multiline={true}
+                    value={values.personal_statement}
+                    onBlur={handleBlur("personal_statement")}
+                    style={{
+                      padding: scale(7),
+                      borderRadius: scale(10),
+                      borderWidth: scale(1),
+                      borderColor: theme.placeholder,
+                      marginTop: scale(10),
+                      textAlignVertical: "top",
+                      fontSize: scale(14),
+                    }}
+                    onChangeText={handleChange("personal_statement")}
+                  />
+                  {errors?.personal_statement &&
+                    touched?.personal_statement && (
+                      <Text
+                        style={{
+                          color: theme.error,
+                          fontSize: scale(12),
+                        }}
+                      >
+                        {errors?.personal_statement}
+                      </Text>
+                    )}
+
+                  {/* map through the rest of form fields */}
+                  {Object.keys(initialState).map((field) => {
+                    if (field === "personal_statement") return null;
+                    return (
+                      <View>
+                        <Input
+                          // label={convertToTitleCase(field)}
+                          value={values?.[field]}
+                          placeholder={convertToTitleCase(field)}
+                          onChangeText={handleChange(`userDetails.${field}`)}
+                          onBlur={handleBlur(`userDetails.${field}`)}
+                        />
+
+                        {errors?.[field] && touched?.[field] && (
+                          <Text
+                            style={{
+                              color: theme.error,
+                              fontSize: scale(12),
+                            }}
+                          >
+                            {errors?.[field]}
+                          </Text>
+                        )}
+                      </View>
+                    );
+                  })}
+
+                  <Seperator height={20} />
+
+                  {/* Education */}
+                  <FlatList
+                    horizontal
+                    style={{ flex: 1 }}
+                    ref={educationRef}
+                    data={values.education}
+                    keyExtractor={(item: Education) => item.id.toString()}
+                    renderItem={({ item }: { item: Education }) => (
+                      <View
+                        style={{
+                          marginLeft: scale(10),
+                          backgroundColor:
+                            item.id % 2 !== 0 ? theme.placeholder : "",
+                          borderColor: theme.placeholder,
+                          borderWidth:
+                            item.id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                          padding: scale(10),
+                          borderRadius: scale(10),
+                          marginBottom: scale(10),
+                          width: scale(270),
+                        }}
+                      >
+                        {Object.keys(item).map((field) => {
+                          if (field === "id") return null;
+                          return (
+                            <Input
+                              label={convertToTitleCase(field)}
+                              value={item[field]}
+                              placeholder={convertToTitleCase(field)}
+                              onChangeText={(text: string) =>
+                                handleFormChange(
+                                  text,
+                                  `education.${item.id}.${field}`
+                                )
+                              }
+                            />
+                          );
+                        })}
+                      </View>
+                    )}
+                  />
+
+                  <Seperator height={20} />
+
+                  {/*  converting education to flatlist  */}
+
+                  <Seperator height={20} />
+
+                  <Button
+                    styles={{
+                      paddingVertical: scale(13),
+                    }}
+                    onPress={() => handleSubmit()}
+                    // disabled={!isValid || isLoading}
+                  >
+                    {isLoading ? "Saving..." : "Save"}
+                  </Button>
+                </View>
+              </View>
+            )}
+          </Formik>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  uploadCVButton: {
+    paddingHorizontal: scale(5),
+    paddingVertical: scale(7),
+    borderRadius: scale(10),
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    marginRight: scale(10),
+  },
+});

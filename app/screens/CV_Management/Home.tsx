@@ -43,44 +43,38 @@ import {
 import { KeyboardAvoidingView } from "../../components/ui/customElements";
 import Loading from "../../components/ui/_helpers/Loading";
 import { retrieveAppData } from "../../helper_functions/storingAppData";
-
-interface State {
-  education: Education[];
-  workExperience: WorkExperience[];
-  certifications: Certification[];
-  references: Reference[];
-  userDetails: UserDetails;
-}
-
-type Action =
-  | { type: "SET_EDUCATION"; payload: Education[] }
-  | { type: "SET_WORK_EXPERIENCE"; payload: WorkExperience[] }
-  | { type: "SET_CERTIFICATIONS"; payload: Certification[] }
-  | { type: "SET_REFERENCES"; payload: Reference[] }
-  | { type: "SET_USER_DETAILS"; payload: UserDetails }
-  | { type: "ADD_EDUCATION" }
-  | { type: "ADD_WORK_EXPERIENCE" }
-  | { type: "ADD_CERTIFICATIONS" }
-  | { type: "ADD_REFERENCES" };
+import { State } from "./interfaces";
+import { Controller, useForm } from "react-hook-form";
+import { convertToTitleCase } from "../../helper_functions/miscs";
+import { FlatList } from "react-native-gesture-handler";
 
 const initialState: State = {
-  education: [],
-  workExperience: [],
-  certifications: [],
-  references: [],
-  userDetails: {
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone_number: "",
-    address: "",
-    city: "",
-    state: "",
-    country_of_residence: "",
-    linkdin: "",
-    twitter: "",
-    personal_statement: "",
-  },
+  education: [
+    // {
+    //   id: 1,
+    //   school_name: "",
+    //   start_year: "",
+    //   end_year: "",
+    //   course_of_study: "",
+    //   degree_type: "",
+    // },
+  ],
+  experience: [],
+  certificaton: [],
+  refrences: [],
+  first_name: "",
+  last_name: "",
+  middle_name: "",
+  email: "",
+  phone_number: "",
+  address: "",
+  city: "",
+  state: "",
+  country_of_residence: "",
+  linkdin: "",
+  twitter: "",
+  personal_statement: "",
+  skills: "",
 };
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
@@ -95,258 +89,174 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const { useApiMutation, useApiQuery } = useContext(ApiContext);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
-  const [cv, setCv] = React.useState({
-    name: "",
-    uri: "",
-    type: "",
+  const {
+    handleSubmit,
+    register,
+    getValues,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<State>({
+    defaultValues: initialState,
   });
 
-  const [profileImage, setProfileImage] = React.useState({
-    name: "",
-    uri: "",
-    type: "",
-  });
-  const { setModalVisible } = useContext(AppContext);
+  const handleFormChange = (text: string, name: any) => {
+    console.log(getValues("phone_number"));
+    setValue(name, text);
+  };
 
   const { data, error, refetch, isSuccess, isLoading } = useApiQuery({
     queryKey: "fetchUserData",
     queryFunction: fetch_user_data,
   });
 
-  const useable = data?.data?.user_extra?.job_seakers?.cvStucture;
-
-  const { mutate } = useApiMutation({
+  const uploadCv = useApiMutation({
     mutationFunction: update_job_seeker,
   });
 
-  const reducer = (state: State, action: Action): State => {
-    switch (action.type) {
-      case "SET_EDUCATION":
-        return { ...state, education: action.payload };
-      case "SET_WORK_EXPERIENCE":
-        return { ...state, workExperience: action.payload };
-      case "SET_CERTIFICATIONS":
-        return { ...state, certifications: action.payload };
-      case "SET_REFERENCES":
-        return { ...state, references: action.payload };
-      case "SET_USER_DETAILS":
-        return { ...state, userDetails: action.payload };
-      case "ADD_EDUCATION":
-        return {
-          ...state,
-          education: [
-            ...state.education,
-            {
-              id: state.education.length + 1,
-              school_name: "",
-              start_year: "",
-              end_year: "",
-              course_of_study: "",
-              degree_type: "",
-            },
-          ],
-        };
+  useEffect(() => {
+    if (isSuccess && data?.data?.user_extra?.job_seakers?.cvStucture) {
+      const { cvStucture } = data.data.user_extra.job_seakers;
 
-      case "ADD_WORK_EXPERIENCE":
-        return {
-          ...state,
-          workExperience: [
-            ...state.workExperience,
-            {
-              id: state.workExperience.length + 1,
-              company: "",
-              position: "",
-              start_year: "",
-              end_year: "",
-              role: "",
-              responsibilities: "",
-            },
-          ],
-        };
+      const newEducation = cvStucture.education.map((item: Education) => ({
+        ...item,
+        id: Math.random(),
+      }));
 
-      case "ADD_CERTIFICATIONS":
-        return {
-          ...state,
-          certifications: [
-            ...state.certifications,
-            {
-              id: state.certifications.length + 1,
-              certification: "",
-              year: "",
-              issuer: "",
-            },
-          ],
-        };
+      const newExperience = cvStucture.experience.map(
+        (item: WorkExperience) => ({
+          ...item,
+          id: Math.random(),
+        })
+      );
 
-      case "ADD_REFERENCES":
-        return {
-          ...state,
-          references: [
-            ...state.references,
-            {
-              id: state.references.length + 1,
-              full_name: "",
-              relationship: "",
-              email: "",
-              phone_number: "",
-            },
-          ],
-        };
+      const newCertification = cvStucture.certificaton.map(
+        (item: Certification) => ({
+          ...item,
+          id: Math.random(),
+        })
+      );
 
-      default:
-        return state;
+      const newReference = cvStucture.refrences.map((item: Reference) => ({
+        ...item,
+        id: Math.random(),
+      }));
+
+      const _data = {
+        ...cvStucture,
+        education: newEducation,
+        experience: newExperience,
+        certificaton: newCertification,
+        refrences: newReference,
+      };
+
+      // console.log("data", _data);
+
+      Object.keys(_data).forEach((field) => {
+        setValue(field, _data[field]);
+      });
+
+      // Object.keys(cvStucture).forEach((field) => {
+      //   setValue(field, cvStucture[field]);
+      // });
+
+      // Iterate over the fields and set their values
     }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { education, workExperience, certifications, references, userDetails } =
-    state;
-
-  const handleEducationChange = (text: string, name: string, id: number) => {
-    const newEducation = education.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          [name]: text,
-        };
-      }
-      return item;
-    });
-    dispatch({ type: "SET_EDUCATION", payload: newEducation });
-  };
-
-  const handleWorkExperienceChange = (
-    text: string,
-    name: string,
-    id: number
-  ) => {
-    const newWorkExperience = workExperience.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          [name]: text,
-        };
-      }
-      return item;
-    });
-    dispatch({ type: "SET_WORK_EXPERIENCE", payload: newWorkExperience });
-  };
-
-  const handleCertificationsChange = (
-    text: string,
-    name: string,
-    id: number
-  ) => {
-    const newCertifications = certifications.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          [name]: text,
-        };
-      }
-      return item;
-    });
-    dispatch({ type: "SET_CERTIFICATIONS", payload: newCertifications });
-  };
-
-  const handleReferencesChange = (text: string, name: string, id: number) => {
-    const newReferences = references.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          [name]: text,
-        };
-      }
-      return item;
-    });
-    dispatch({ type: "SET_REFERENCES", payload: newReferences });
-  };
-
-  const handleFormChange = (text: string, name: string) => {
-    dispatch({
-      type: "SET_USER_DETAILS",
-      payload: { ...userDetails, [name]: text },
-    });
-  };
+  }, [isSuccess, data]);
 
   const handleAddEducation = () => {
-    dispatch({ type: "ADD_EDUCATION" });
+    const education = getValues("education") || [];
+    const newEducation = [
+      ...education,
+      {
+        id: education.length + 1,
+        school_name: "",
+        start_year: "",
+        end_year: "",
+        course_of_study: "",
+        degree_type: "",
+      },
+    ];
+    setValue("education", newEducation);
     setTimeout(() => {
       educationRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
   const handleAddWorkExperience = () => {
-    dispatch({ type: "ADD_WORK_EXPERIENCE" });
+    const workExperience = getValues("experience") || [];
+    const newWorkExperience = [
+      ...workExperience,
+      {
+        id: workExperience.length + 1,
+        company: "",
+        position: "",
+        start_year: "",
+        end_year: "",
+        role: "",
+        responsibilities: "",
+      },
+    ];
+    setValue("experience", newWorkExperience);
     setTimeout(() => {
       workExperienceRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
   const handleAddCertification = () => {
-    dispatch({ type: "ADD_CERTIFICATIONS" });
+    const certifications = getValues("certificaton") || [];
+    const newCertifications = [
+      ...certifications,
+      {
+        id: certifications.length + 1,
+        certification: "",
+        year: "",
+        issuer: "",
+      },
+    ];
+    setValue("certificaton", newCertifications);
     setTimeout(() => {
       certificationRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
   const handleAddReference = () => {
-    dispatch({ type: "ADD_REFERENCES" });
+    const references = getValues("refrences") || [];
+    const newReferences = [
+      ...references,
+      {
+        id: references.length + 1,
+        full_name: "",
+        relationship: "",
+        email: "",
+        phone_number: "",
+      },
+    ];
+    setValue("refrences", newReferences);
     setTimeout(() => {
       referenceRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
-  const handleSave = async () => {
-    const __data: {
-      [key: string]: any;
-    } = {
-      ...userDetails,
-      education,
-      experience: workExperience,
-      certificaton: certifications,
-      refrences: references,
-      cv,
-      profileImage,
-    };
+  const handleSave = handleSubmit(async (formData) => {
+    // const __data = {
+    //   ...formData,
+    //   education: JSON.stringify(formData.education),
+    //   experience: JSON.stringify(formData.experience),
+    //   certificaton: JSON.stringify(formData.certificaton),
+    //   refrences: JSON.stringify(formData.refrences),
+    // };
 
-    const _data = new FormData();
+    // const _data = new FormData();
 
-    Object.keys(__data).forEach((key: string) => {
-      _data.append(key, __data[key]);
-    });
+    // Object.entries(__data).forEach(([key, value]) => {
+    //   _data.append(key, value);
+    // });
 
-    const __token = await retrieveAppData("token");
-    const _token = route_params?.first_timer
-      ? __token.access
-      : route_params?.token;
+    // uploadCv.mutate(_data);
 
-    mutate(_data, _token);
-  };
-
-  const handleDocumentSelection = useCallback(
-    async (name: string, type?: string) => {
-      let result = await DocumentPicker.getDocumentAsync({
-        type: type === "image" ? "image/*" : "application/pdf",
-      });
-      if (result.type === "success") {
-        if (name === "profile_image") {
-          setProfileImage({
-            name: result.name,
-            uri: result.uri,
-            type: result.type,
-          });
-        } else {
-          setCv({
-            name: result.name,
-            uri: result.uri,
-            type: result.type,
-          });
-        }
-      }
-    },
-    []
-  );
+    console.log("form data", formData);
+  });
 
   useFocusEffect(
     React.useCallback(() => {
@@ -356,38 +266,10 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   );
 
   useEffect(() => {
-    if (isSuccess) {
-      const fetchedData = data?.data?.user_extra?.job_seakers?.cvStucture;
-      if (fetchedData) {
-        dispatch({ type: "SET_EDUCATION", payload: fetchedData.education });
-        dispatch({
-          type: "SET_WORK_EXPERIENCE",
-          payload: fetchedData.experience,
-        });
-        dispatch({
-          type: "SET_CERTIFICATIONS",
-          payload: fetchedData.certificaton,
-        });
-        dispatch({ type: "SET_REFERENCES", payload: fetchedData.refrences });
-        dispatch({
-          type: "SET_USER_DETAILS",
-          payload: {
-            first_name: fetchedData.first_name || "",
-            last_name: fetchedData.last_name || "",
-            email: fetchedData.email || "",
-            phone_number: fetchedData.phone_number || "",
-            address: fetchedData.addresse || "",
-            city: fetchedData.city || "",
-            state: fetchedData.state || "",
-            country_of_residence: fetchedData.country_of_residence || "",
-            linkdin: fetchedData.linkdin || "",
-            twitter: fetchedData.twitter || "",
-            personal_statement: fetchedData.personal_statement || "",
-          },
-        });
-      }
+    if (uploadCv.isSuccess) {
+      navigation.goBack();
     }
-  }, [isSuccess, data]);
+  }, [uploadCv.isSuccess]);
 
   return (
     <KeyboardAvoidingView>
@@ -442,230 +324,138 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
         {/* input fields  */}
         <View>
           <View>
-            <Text>Presonal Statement</Text>
-            <TextInput
-              numberOfLines={5}
-              multiline={true}
-              value={userDetails.personal_statement}
-              style={{
-                padding: scale(7),
-                borderRadius: scale(10),
-                borderWidth: scale(1),
-                borderColor: theme.placeholder,
-                marginTop: scale(10),
-                textAlignVertical: "top",
-                fontSize: scale(14),
+            <Text>Personal Statement</Text>
+
+            <Controller
+              control={control}
+              rules={{
+                required: true,
               }}
-              onChangeText={(text: string) =>
-                handleFormChange(text, "personal_statement")
-              }
-            />
-          </View>
-          <Seperator height={scale(20)} />
-          {/* <CustomSelectInput onChange={() => {}} data={data} /> */}
-          <Input
-            label="First Name"
-            value={userDetails.first_name}
-            placeholder="First Name"
-            onChangeText={(text: string) =>
-              handleFormChange(text, "first_name")
-            }
-          />
-          <Input
-            label="Last Name"
-            value={userDetails.last_name}
-            placeholder="Last Name"
-            onChangeText={(text: string) => handleFormChange(text, "last_name")}
-          />
-          <Input
-            label="Email"
-            value={userDetails.email}
-            placeholder="Email"
-            onChangeText={(text: string) => handleFormChange(text, "email")}
-          />
-          <Input
-            label="Phone Number"
-            value={userDetails.phone_number}
-            placeholder="Phone Number"
-            onChangeText={(text: string) =>
-              handleFormChange(text, "phone_number")
-            }
-          />
-          <Input
-            label="Address"
-            value={userDetails.address}
-            placeholder="Address"
-            onChangeText={(text: string) => handleFormChange(text, "address")}
-          />
-          <Input
-            label="City"
-            value={userDetails.city}
-            placeholder="City"
-            onChangeText={(text: string) => handleFormChange(text, "city")}
-          />
-          <Input
-            label="Post Code"
-            placeholder="Post Code"
-            onChangeText={(text: string) => handleFormChange(text, "email")}
-          />
-          <Input
-            label="Country"
-            value={userDetails.country_of_residence}
-            placeholder="Country"
-            onChangeText={(text: string) =>
-              handleFormChange(text, "country_of_residence")
-            }
-          />
-
-          <Input
-            label="Linkdin"
-            value={userDetails.linkdin}
-            placeholder="Linkdin"
-            onChangeText={(text: string) => handleFormChange(text, "linkdin")}
-          />
-
-          <Input
-            label="Twitter"
-            value={userDetails.twitter}
-            placeholder="Twitter"
-            onChangeText={(text: string) => handleFormChange(text, "twitter")}
-          />
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: scale(10),
-            }}
-          >
-            <Pressable
-              onPress={() => handleDocumentSelection("profile_image", "image")}
-              style={{
-                backgroundColor:
-                  profileImage !== null ? theme.primary : theme.placeholder,
-                paddingHorizontal: scale(5),
-                paddingVertical: scale(7),
-                borderRadius: scale(10),
-                flex: 1,
-                marginLeft: scale(5),
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: scale(14),
-                  textAlign: "center",
-                }}
-              >
-                {profileImage.name ? profileImage?.name : "Profile Image"}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => handleDocumentSelection("cv", "application/pdf")}
-              style={{
-                backgroundColor:
-                  cv !== null ? theme.primary : theme.placeholder,
-                paddingHorizontal: scale(5),
-                paddingVertical: scale(7),
-                borderRadius: scale(10),
-                flex: 1,
-                marginLeft: scale(5),
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: scale(14),
-                  textAlign: "center",
-                }}
-              >
-                {cv.name ? cv?.name : "CV"}
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-        {/* // Education */}
-        <View
-          style={{
-            marginBottom: scale(20),
-          }}
-        >
-          <Seperator height={scale(20)} />
-          <Text
-            style={{
-              fontSize: scale(16),
-              fontWeight: "bold",
-              marginBottom: scale(10),
-            }}
-          >
-            Education
-          </Text>
-          <ScrollView horizontal style={{ flex: 1 }} ref={educationRef}>
-            {education?.map((item: Education) => {
-              const _id = item.id;
-
-              return (
-                <View
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  numberOfLines={5}
+                  placeholder="Personal Statement"
+                  onBlur={onBlur}
+                  onChangeText={(text) => onChange(text)}
+                  multiline={true}
+                  value={value}
                   style={{
-                    marginLeft: scale(10),
-                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
-                    borderColor: theme.placeholder,
-                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-                    padding: scale(10),
+                    padding: scale(7),
                     borderRadius: scale(10),
-                    marginBottom: scale(10),
-                    width: scale(270),
+                    borderWidth: scale(1),
+                    borderColor: theme.placeholder,
+                    marginTop: scale(10),
+                    textAlignVertical: "top",
+                    fontSize: scale(14),
                   }}
-                  key={_id}
-                >
-                  <Input
-                    label="School"
-                    value={item.school_name}
-                    placeholder="School"
-                    onChangeText={(text: string) =>
-                      handleEducationChange(text, "school_name", _id)
-                    }
-                  />
-                  <Input
-                    label="Start Year"
-                    value={item.start_year}
-                    placeholder="Start Year"
-                    onChangeText={(text: string) =>
-                      handleEducationChange(text, "start_year", _id)
-                    }
-                    keyboardType="numeric"
-                  />
+                />
+              )}
+              name="personal_statement"
+            />
+            {errors.personal_statement && <Text>This is required.</Text>}
+          </View>
 
-                  <Input
-                    label="End Year"
-                    value={item.end_year}
-                    placeholder="End Year"
-                    onChangeText={(text: string) =>
-                      handleEducationChange(text, "end_year", _id)
-                    }
-                    keyboardType="numeric"
-                  />
-
-                  <Input
-                    label="Course Of Study"
-                    value={item.course_of_study}
-                    placeholder="Course Of Study"
-                    onChangeText={(text: string) =>
-                      handleEducationChange(text, "course_of_study", _id)
-                    }
-                  />
-
-                  <Input
-                    label="Degree"
-                    value={item.degree_type}
-                    placeholder="Degree"
-                    onChangeText={(text: string) =>
-                      handleEducationChange(text, "degree_type", _id)
-                    }
-                  />
-                </View>
+          {/* map over the rest  */}
+          <View>
+            {Object.keys(initialState).map((field) => {
+              if (
+                field === "personal_statement" ||
+                field === "education" ||
+                field === "experience" ||
+                field === "certificaton" ||
+                field === "refrences"
+              )
+                return null;
+              return (
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      placeholder={convertToTitleCase(field)}
+                      label={convertToTitleCase(field)}
+                      onBlur={onBlur}
+                      onChangeText={(text) => onChange(text)}
+                      value={value}
+                      maxLength={field === "phone_number" ? 11 : undefined}
+                      keyboardType={
+                        field === "phone_number" ? "number-pad" : "default"
+                      }
+                    />
+                  )}
+                  name={field}
+                />
               );
             })}
-          </ScrollView>
+          </View>
+
+          <Seperator height={scale(20)} />
+
+          <View>
+            <Text>Education</Text>
+            <Seperator height={scale(10)} />
+            <View>
+              <FlatList
+                horizontal
+                style={{ flex: 1 }}
+                ref={educationRef}
+                data={getValues("education")}
+                keyExtractor={(item: Education) => item.id.toString()}
+                renderItem={({ item }: { item: Education }) => (
+                  <View
+                    style={{
+                      marginLeft: scale(10),
+                      backgroundColor:
+                        item.id % 2 !== 0 ? theme.placeholder : "",
+                      borderColor: theme.placeholder,
+                      borderWidth:
+                        item.id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
+                      padding: scale(10),
+                      borderRadius: scale(10),
+                      marginBottom: scale(10),
+                      width: scale(270),
+                    }}
+                  >
+                    {Object.keys(item).map((field, index) => {
+                      if (field === "id") return null;
+                      return (
+                        <Controller
+                          control={control}
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                              placeholder={convertToTitleCase(field)}
+                              label={convertToTitleCase(field)}
+                              onBlur={onBlur}
+                              onChangeText={(text) => {
+                                console.log("text", value);
+                                onChange(text);
+                              }}
+                              value={value}
+                              maxLength={
+                                field === "phone_number" ? 11 : undefined
+                              }
+                              keyboardType={
+                                field === "phone_number"
+                                  ? "number-pad"
+                                  : "default"
+                              }
+                            />
+                          )}
+                          name={`education[${item.id}].${field}`}
+                        />
+                      );
+                    })}
+                  </View>
+                )}
+              />
+            </View>
+          </View>
+
           <View
             style={{
               flexDirection: "row",
@@ -692,309 +482,11 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
           </View>
         </View>
         {/* // work experience */}
-        <View
-          style={{
-            marginBottom: scale(20),
-          }}
-        >
-          <Seperator height={scale(20)} />
-          <Text
-            style={{
-              fontSize: scale(16),
-              fontWeight: "bold",
-              marginBottom: scale(10),
-            }}
-          >
-            Work Experience
-          </Text>
-          <ScrollView horizontal style={{ flex: 1 }} ref={workExperienceRef}>
-            {workExperience?.map((item, index) => {
-              const _id = index;
-
-              return (
-                <View
-                  style={{
-                    marginLeft: scale(10),
-                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
-                    borderColor: theme.placeholder,
-                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-                    padding: scale(10),
-                    borderRadius: scale(10),
-                    marginBottom: scale(10),
-                    width: scale(270),
-                  }}
-                  key={_id}
-                >
-                  <Input
-                    label="Company"
-                    value={item.company}
-                    placeholder="Company"
-                    onChangeText={(text: string) =>
-                      handleWorkExperienceChange(text, "company", _id)
-                    }
-                  />
-                  <Input
-                    label="Start Year"
-                    value={item.start_year}
-                    placeholder="Start Year"
-                    onChangeText={(text: string) =>
-                      handleWorkExperienceChange(text, "startYear", _id)
-                    }
-                    keyboardType="numeric"
-                  />
-
-                  <Input
-                    label="End Year"
-                    value={item.end_year}
-                    placeholder="End Year"
-                    onChangeText={(text: string) =>
-                      handleWorkExperienceChange(text, "endYear", _id)
-                    }
-                    keyboardType="numeric"
-                  />
-
-                  <Input
-                    label="Role"
-                    value={item.role}
-                    placeholder="Role"
-                    onChangeText={(text: string) =>
-                      handleWorkExperienceChange(text, "role", _id)
-                    }
-                    multiline={true}
-                    numberOfLines={6}
-                    style={{
-                      textAlignVertical: "top",
-                    }}
-                  />
-
-                  <Input
-                    label="Responsibilities"
-                    value={item.responsibilities}
-                    placeholder="Responsibilities"
-                    onChangeText={(text: string) =>
-                      handleWorkExperienceChange(text, "responsibilities", _id)
-                    }
-                    multiline={true}
-                    numberOfLines={6}
-                    style={{
-                      textAlignVertical: "top",
-                    }}
-                  />
-                </View>
-              );
-            })}
-          </ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleAddWorkExperience}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: scale(10),
-              }}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={scale(20)}
-                color={theme.text}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/* // Certification */}
-        <View
-          style={{
-            marginBottom: scale(20),
-          }}
-        >
-          <Seperator height={scale(20)} />
-          <Text
-            style={{
-              fontSize: scale(16),
-              fontWeight: "bold",
-              marginBottom: scale(10),
-            }}
-          >
-            Certification
-          </Text>
-          <ScrollView horizontal style={{ flex: 1 }} ref={certificationRef}>
-            {certifications?.map((item, index) => {
-              const _id = index;
-
-              return (
-                <View
-                  style={{
-                    marginLeft: scale(10),
-                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
-                    borderColor: theme.placeholder,
-                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-                    padding: scale(10),
-                    borderRadius: scale(10),
-                    marginBottom: scale(10),
-                    width: scale(270),
-                  }}
-                  key={_id}
-                >
-                  <Input
-                    label="Certificate"
-                    value={item.certification}
-                    placeholder="Certificate"
-                    onChangeText={(text: string) =>
-                      handleCertificationsChange(text, "certificate", _id)
-                    }
-                  />
-                  <Input
-                    label="Year"
-                    value={item.year}
-                    placeholder="Year"
-                    onChangeText={(text: string) =>
-                      handleCertificationsChange(text, "year", _id)
-                    }
-                    keyboardType="numeric"
-                  />
-
-                  <Input
-                    label="Issuer"
-                    value={item.issuer}
-                    placeholder="Issuer"
-                    onChangeText={(text: string) =>
-                      handleCertificationsChange(text, "issuer", _id)
-                    }
-                  />
-                </View>
-              );
-            })}
-          </ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleAddCertification}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: scale(10),
-              }}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={scale(20)}
-                color={theme.text}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* // Certification */}
-        <View
-          style={{
-            marginBottom: scale(20),
-          }}
-        >
-          <Seperator height={scale(20)} />
-          <Text
-            style={{
-              fontSize: scale(16),
-              fontWeight: "bold",
-              marginBottom: scale(10),
-            }}
-          >
-            References
-          </Text>
-          <ScrollView horizontal style={{ flex: 1 }} ref={referenceRef}>
-            {references?.map((item, index) => {
-              const _id = index;
-
-              return (
-                <View
-                  style={{
-                    marginLeft: scale(10),
-                    backgroundColor: _id % 2 !== 0 ? theme.placeholder : "",
-                    borderColor: theme.placeholder,
-                    borderWidth: _id % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-                    padding: scale(10),
-                    borderRadius: scale(10),
-                    marginBottom: scale(10),
-                    width: scale(270),
-                  }}
-                  key={_id}
-                >
-                  <Input
-                    label="Reference Name"
-                    value={item.full_name}
-                    placeholder="Reference Name"
-                    onChangeText={(text: string) =>
-                      handleReferencesChange(text, "fullName", _id)
-                    }
-                  />
-
-                  <Input
-                    label="Relationship"
-                    value={item.relationship}
-                    placeholder="Relationship"
-                    onChangeText={(text: string) =>
-                      handleReferencesChange(text, "relationship", _id)
-                    }
-                  />
-
-                  <Input
-                    label="Reference Email"
-                    value={item.email}
-                    placeholder="Reference Email"
-                    onChangeText={(text: string) =>
-                      handleReferencesChange(text, "email", _id)
-                    }
-                  />
-
-                  <Input
-                    label="Phone Number"
-                    value={item.phone_number}
-                    placeholder="Phone Number"
-                    onChangeText={(text: string) =>
-                      handleReferencesChange(text, "phoneNumber", _id)
-                    }
-                  />
-                </View>
-              );
-            })}
-          </ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleAddReference}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: scale(10),
-              }}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={scale(20)}
-                color={theme.text}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
 
         <Button
           onPress={() => {
-            handleSave();
+            // handleSave();
+            console.log(getValues());
           }}
         >
           Save

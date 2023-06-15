@@ -12,13 +12,20 @@ const JobTestContainer: React.FC<Props> = ({ cardData, navigation }) => {
     <>
       {cardData.map((item: any) => (
         <NotifcationCard
-          company={item.job.company_name}
+          company={item.job?.company_name}
           image={item.image}
           isOpened={item.isOpened}
           role={item.job.position}
           type="test"
           key={item.job.id}
-          navigation={navigation}
+          onPress={() =>
+            navigation.navigate("Test Management", {
+              screen: "Test_Questions",
+              params: {
+                test_id: item.job.id,
+              },
+            })
+          }
         />
       ))}
     </>

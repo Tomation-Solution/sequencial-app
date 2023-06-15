@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
@@ -10,9 +10,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import ApiContext from "../../providers/context/api";
 import { getJobsFnc } from "../../providers/call-service/jobs";
 import Loading from "../../components/ui/_helpers/Loading";
+import { useNotifications } from "../../hooks/app-hooks/useNotification";
 
 const AllJobs = ({ navigation }: any) => {
   const theme = useContext(themeContext);
+  const { showNotification } = useNotifications();
 
   const { useApiQuery } = useContext(ApiContext);
 
@@ -32,6 +34,19 @@ const AllJobs = ({ navigation }: any) => {
       jobs_query.refetch();
     }, [])
   );
+
+  useEffect(() => {
+    if (jobs_query.isError) {
+      if (jobs_query.error?.response?.data?.error?.cv) {
+        navigation.navigate("CV Management");
+        showNotification({
+          title: "Error",
+          type: 0,
+          message: "You Need to upload your cv",
+        });
+      }
+    }
+  }, [jobs_query.isError]);
 
   return (
     <>
@@ -84,6 +99,6 @@ const AllJobs = ({ navigation }: any) => {
   );
 };
 
-export default AllJobs;
+export default memo(AllJobs);
 
 const styles = StyleSheet.create({});

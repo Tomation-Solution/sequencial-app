@@ -33,10 +33,7 @@ const Page3 = ({ navigation, route }: any) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigation.navigate("configure_cv", {
-        first_timer: true,
-        token: data.data.tokens.access,
-      });
+      navigation.navigate("signin");
     }
   }, [isSuccess]);
 

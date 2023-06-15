@@ -166,7 +166,7 @@ const DrawerNavigations = () => {
               <MaterialIcons name="description" size={24} color={theme.text} />
             ),
           }}
-          name="Test Managemet"
+          name="Test Management"
           component={Test_Management}
         />
         <Drawer.Screen

@@ -4,6 +4,7 @@ import { scale } from "react-native-size-matters";
 import Text from "../Typography/Text";
 import { COLORS } from "../../../config/constants/color";
 import themeContext from "../../../config/theme/themeContext";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   // notification: string;
@@ -46,59 +47,55 @@ const TestUpdateCard: React.FC<Props> = ({
           marginVertical: scale(2),
 
           backgroundColor: theme.background,
-          padding: 1,
+          // padding: 1,
+          overflow: "hidden",
         }}
       >
         <View
           style={{
-            paddingRight: scale(10),
+            // paddingRight: scale(10),
             position: "relative",
-            borderRadius: scale(8),
-            overflow: "hidden",
+            // borderRadius: scale(8),
           }}
         >
           <View
             style={{
               backgroundColor: theme.primary,
-              position: "absolute",
-              height: "100%",
-              zIndex: 10,
+              // position: "absolute",
+              height: scale(5),
+              // zIndex: 10,
               top: 0,
+              width: "100%",
               alignContent: "center",
               justifyContent: "center",
               paddingHorizontal: scale(3),
             }}
-          >
-            <View
-              style={{
-                width: scale(10),
-                height: scale(10),
-                backgroundColor: theme.background,
-                borderRadius: scale(5),
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.22,
-                shadowRadius: 2.22,
+          ></View>
 
-                elevation: 3,
-              }}
-            />
-          </View>
-
-          <Text
+          <View
             style={{
-              marginVertical: scale(8),
-              marginLeft: scale(20),
-              fontWeight: "600",
-              fontSize: scale(13),
+              flexDirection: "row",
+              alignItems: "center",
+              paddingLeft: scale(5),
+              paddingRight: scale(15),
             }}
           >
-            {org_name} has invited you to take {title} for the position of{" "}
-            {job_title}
-          </Text>
+            <View>
+              <Ionicons name="alert-circle" size={24} color={theme.primary} />
+            </View>
+            <Text
+              style={{
+                marginVertical: scale(8),
+                marginLeft: scale(5),
+
+                fontWeight: "600",
+                fontSize: scale(13),
+              }}
+            >
+              {org_name} has invited you to take {title} for the position of{" "}
+              {job_title}
+            </Text>
+          </View>
         </View>
       </View>
       <TouchableOpacity
