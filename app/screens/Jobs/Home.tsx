@@ -11,6 +11,8 @@ import ApiContext from "../../providers/context/api";
 import { getJobsFnc } from "../../providers/call-service/jobs";
 import Loading from "../../components/ui/_helpers/Loading";
 import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardContainer";
+import { HeaderContext } from "../../providers/context/header";
+import { useFocusEffect } from "@react-navigation/native";
 
 const OPTIONS = [
   { label: "Option 1", value: "option1" },
@@ -26,6 +28,7 @@ const OPTIONS = [
 const Home = ({ navigation }: any) => {
   const theme = useContext(themeContext);
 
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const { useApiQuery } = useContext(ApiContext);
 
   const { data, error, isLoading } = useApiQuery({
@@ -38,6 +41,12 @@ const Home = ({ navigation }: any) => {
   };
 
   const [activeNav, setActiveNav] = React.useState("jobs");
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Available Jobs");
+    }, [])
+  );
 
   const NavButton = ({ name }: any) => {
     const active = activeNav === name.toLowerCase();

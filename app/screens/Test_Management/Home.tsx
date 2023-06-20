@@ -28,6 +28,7 @@ const OPTIONS = [
 const Home = ({ navigation }: { navigation: any }) => {
   const { useApiQuery } = useContext(ApiContext);
   const theme = useContext(themeContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const { data, isLoading, isSuccess, refetch } = useApiQuery({
     queryKey: "fetchTests",
@@ -36,11 +37,10 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      showHeaderTextHandler("Test Management");
       refetch();
     }, [])
   );
-
-  console.log(data);
 
   return (
     <>

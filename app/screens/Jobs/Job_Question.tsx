@@ -18,6 +18,8 @@ import { Button, CustomInput, Text } from "../../components/ui";
 import { Seperator } from "../../components/ui/_helpers";
 import SingleChoice from "../../components/app/Questions/SingleChoice";
 import { useForm } from "react-hook-form";
+import { HeaderContext } from "../../providers/context/header";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface JobQuestionProps {
   navigation: any;
@@ -34,6 +36,7 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   const { job_id } = route.params;
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const [one_selected, setOneSelected] = useState<any>([]);
   const { register, handleSubmit, setValue } = useForm();
@@ -98,6 +101,12 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
       navigation.navigate("Details", { job_id });
     }
   }, [submitJobQuestionHandler.isSuccess]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Job Question");
+    }, [])
+  );
 
   return (
     <>

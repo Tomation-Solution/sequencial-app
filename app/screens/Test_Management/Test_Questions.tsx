@@ -16,6 +16,8 @@ import {
   submitTestQuestion,
   testQuestion,
 } from "../../providers/call-service/test_mangement";
+import { useFocusEffect } from "@react-navigation/native";
+import { HeaderContext } from "../../providers/context/header";
 
 interface JobQuestionProps {
   navigation: any;
@@ -32,6 +34,7 @@ const Test_Questions: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   const { test_id } = route.params;
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const [one_selected, setOneSelected] = useState<any>([]);
   const { register, handleSubmit, setValue } = useForm();
@@ -96,6 +99,12 @@ const Test_Questions: React.FC<JobQuestionProps> = ({ navigation, route }) => {
       navigation.navigate("Home");
     }
   }, [submitTestQuestionHandler.isSuccess]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Test Questions");
+    }, [])
+  );
 
   return (
     <>

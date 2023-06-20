@@ -37,6 +37,12 @@ const Home = ({ navigation }: { navigation: any }) => {
     decodeToken();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Interview Management");
+    }, [])
+  );
+
   return (
     <>
       {isLoading ? (

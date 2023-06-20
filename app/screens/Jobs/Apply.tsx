@@ -11,9 +11,12 @@ import { dateFormaterNow } from "../../helper_functions/dateFormater";
 import JobWrapper from "./JobWrapper";
 import ApiContext from "../../providers/context/api";
 import { jobApply } from "../../providers/call-service/jobs";
+import { HeaderContext } from "../../providers/context/header";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Apply = ({ navigation, route }: any) => {
   const [fileResponse, setFileResponse] = React.useState<any>(null);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
@@ -52,6 +55,12 @@ const Apply = ({ navigation, route }: any) => {
       });
     }
   }, [isSuccess]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Apply");
+    }, [])
+  );
 
   return (
     <JobWrapper>

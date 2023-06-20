@@ -6,9 +6,18 @@ import { Seperator } from "../../components/ui/_helpers";
 import { Button, Text } from "../../components/ui";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import JobWrapper from "./JobWrapper";
+import { HeaderContext } from "../../providers/context/header";
+import { useFocusEffect } from "@react-navigation/native";
 
 const BulletPoint = ({ children }: any) => {
   const theme = useContext(themeContext);
+  const { showHeaderTextHandler } = React.useContext(HeaderContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      showHeaderTextHandler("Job Details");
+    }, [])
+  );
 
   return (
     <View
