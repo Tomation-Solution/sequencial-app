@@ -2,7 +2,6 @@ import axios from "../../api/axios";
 import { retrieveAppData } from "../../../helper_functions/storingAppData";
 
 export async function update_job_seeker(data: any) {
-  console.log("k[k: ", data);
   if (!data) return;
 
   const token = await retrieveAppData("token");

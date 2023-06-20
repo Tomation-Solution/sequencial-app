@@ -3,55 +3,37 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useContext, useEffect, useRef } from "react";
-import { HeaderContext } from "../../providers/context/header";
-import {
-  Button,
-  ImageComponent,
-  CustomInput as Input,
-  Text,
-} from "../../components/ui";
+import React, { useContext, useEffect, useReducer, useRef } from "react";
 import { scale } from "react-native-size-matters";
+import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
 import { AntDesign } from "@expo/vector-icons";
-import { Seperator } from "../../components/ui/_helpers";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { State } from "./interfaces";
+import { convertToTitleCase } from "../../helper_functions/miscs";
+import { Button, Input, Text } from "../../components/ui";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Card from "./Card";
+import DateInput from "../../components/ui/Input/DateInput";
+import ApiContext from "../../providers/context/api";
 import {
   fetch_user_data,
   update_job_seeker,
 } from "../../providers/call-service/cv_";
-import ApiContext from "../../providers/context/api";
-import {
-  Certification,
-  Education,
-  Reference,
-  WorkExperience,
-} from "../../../types";
-import { KeyboardAvoidingView } from "../../components/ui/customElements";
-import Loading from "../../components/ui/_helpers/Loading";
-import { State } from "./interfaces";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { convertToTitleCase } from "../../helper_functions/miscs";
+import { useFocusEffect } from "@react-navigation/native";
+import { HeaderContext } from "../../providers/context/header";
 import { useNotifications } from "../../hooks/app-hooks/useNotification";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { CVSchema } from "./Scheama";
+import Loading from "../../components/ui/_helpers/Loading";
 
 const initialState: State = {
   education: [],
-  experience: [],
-  certificaton: [],
-  refrences: [],
   first_name: "",
-  last_name: "",
   middle_name: "",
+  last_name: "",
   email: "",
   phone_number: "",
-  address: "",
+  addresse: "",
   city: "",
   state: "",
   country_of_residence: "",
@@ -59,38 +41,331 @@ const initialState: State = {
   twitter: "",
   personal_statement: "",
   skills: "",
+  experience: [],
+  certificaton: [],
+  refrences: [],
+};
+
+// reducer functions
+
+const handleEducationChange = (
+  field: string,
+  value: string,
+  index: number,
+  dispatch: any
+) => {
+  dispatch({
+    type: "HANDLE_EDUCATION_CHANGE",
+    payload: {
+      field,
+      value,
+      index,
+    },
+  });
+};
+
+const handleWorkExperienceChange = (
+  field: string,
+  value: string,
+  index: number,
+  dispatch: any
+) => {
+  dispatch({
+    type: "HANDLE_WORK_EXPERIENCE_CHANGE",
+    payload: {
+      field,
+      value,
+      index,
+    },
+  });
+};
+
+const handleCertificationChange = (
+  field: string,
+  value: string,
+  index: number,
+  dispatch: any
+) => {
+  dispatch({
+    type: "HANDLE_CERTIFICATION_CHANGE",
+    payload: {
+      field,
+      value,
+      index,
+    },
+  });
+};
+
+const handleReferenceChange = (
+  field: string,
+  value: string,
+  index: number,
+  dispatch: any
+) => {
+  dispatch({
+    type: "HANDLE_REFERENCE_CHANGE",
+    payload: {
+      field,
+      value,
+      index,
+    },
+  });
+};
+
+const handleDetailsChange = (field: string, value: string, dispatch: any) => {
+  dispatch({
+    type: "HANDLE_DETAILS_CHANGE",
+    payload: {
+      field,
+      value,
+    },
+  });
+};
+
+const removeEducation = (index: number, dispatch: any, ref: any) => {
+  dispatch({
+    type: "REMOVE_EDUCATION",
+    payload: index,
+  });
+  setTimeout(() => {
+    ref.current?.scrollToEnd({ animated: true });
+  }, 100);
+};
+
+const removeWorkExperience = (index: number, dispatch: any, ref: any) => {
+  dispatch({
+    type: "REMOVE_WORK_EXPERIENCE",
+    payload: index,
+  });
+  setTimeout(() => {
+    ref.current?.scrollToEnd({ animated: true });
+  }, 100);
+};
+
+const removeCertification = (index: number, dispatch: any, ref: any) => {
+  dispatch({
+    type: "REMOVE_CERTIFICATION",
+    payload: index,
+  });
+  setTimeout(() => {
+    ref.current?.scrollToEnd({ animated: true });
+  }, 100);
+};
+
+const removeReference = (index: number, dispatch: any, ref: any) => {
+  dispatch({
+    type: "REMOVE_REFERENCE",
+    payload: index,
+  });
+  setTimeout(() => {
+    ref.current?.scrollToEnd({ animated: true });
+  }, 100);
+};
+
+const handleDetailsBlur = (field: string, value: string, dispatch: any) => {
+  dispatch({
+    type: "HANDLE_DETAILS_BLUR",
+    payload: {
+      field,
+      value,
+    },
+  });
 };
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
-  const route_params = route.params;
-
-  const educationRef = useRef<ScrollView>(null);
-  const workExperienceRef = useRef<ScrollView>(null);
-  const certificationRef = useRef<ScrollView>(null);
-  const referenceRef = useRef<ScrollView>(null);
-
-  const [errors, setErrors] = React.useState<any>({} as any);
-
+  // context
   const theme = useContext(themeContext);
   const { useApiMutation, useApiQuery } = useContext(ApiContext);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const { showNotification } = useNotifications();
 
-  const {
-    getValues,
-    control,
-    setValue,
-    // formState: { errors },
-  } = useForm<State>({
-    defaultValues: initialState,
-  });
+  // state hooks
+  const [errors, setErrors] = React.useState<any>({} as any);
 
-  const education = useWatch({ control, name: "education" });
-  const experience = useWatch({ control, name: "experience" });
-  const certificaton = useWatch({ control, name: "certificaton" });
-  const refrences = useWatch({ control, name: "refrences" });
+  // reducer
+  const reducer = (state: any, action: any) => {
+    switch (action.type) {
+      case "HANDLE_DETAILS_CHANGE":
+        return {
+          ...state,
+          [action.payload.field]: action.payload.value,
+        };
 
-  const { data, refetch, isSuccess, isLoading } = useApiQuery({
+      case "HANDLE_DETAILS_BLUR":
+        if (!action.payload.value) {
+          setErrors({
+            ...errors,
+            [action.payload.field]: "This is required.",
+          });
+
+          return {
+            ...state,
+            [action.payload.field]: null,
+          };
+        } else {
+          setErrors((prevErrors: any) => ({
+            ...prevErrors,
+            [action.payload.field]: null,
+          }));
+
+          return {
+            ...state,
+            [action.payload.field]: action.payload.value,
+          };
+        }
+      case "HANDLE_EDUCATION_CHANGE":
+        return {
+          ...state,
+          education: state.education.map((item: any, index: number) => {
+            if (index === action.payload.index) {
+              return {
+                ...item,
+                [action.payload.field]: action.payload.value,
+              };
+            }
+            return item;
+          }),
+        };
+
+      case "HANDLE_WORK_EXPERIENCE_CHANGE":
+        return {
+          ...state,
+          experience: state.experience.map((item: any, index: number) => {
+            if (index === action.payload.index) {
+              return {
+                ...item,
+                [action.payload.field]: action.payload.value,
+              };
+            }
+            return item;
+          }),
+        };
+
+      case "HANDLE_CERTIFICATION_CHANGE":
+        return {
+          ...state,
+          certificaton: state.certificaton.map((item: any, index: number) => {
+            if (index === action.payload.index) {
+              return {
+                ...item,
+                [action.payload.field]: action.payload.value,
+              };
+            }
+            return item;
+          }),
+        };
+
+      case "HANDLE_REFERENCE_CHANGE":
+        return {
+          ...state,
+          refrences: state.refrences.map((item: any, index: number) => {
+            if (index === action.payload.index) {
+              return {
+                ...item,
+                [action.payload.field]: action.payload.value,
+              };
+            }
+            return item;
+          }),
+        };
+
+      case "ADD_EDUCATION":
+        return {
+          ...state,
+          education: [...state.education, action.payload],
+        };
+      case "ADD_WORK_EXPERIENCE":
+        return {
+          ...state,
+          experience: [...state.experience, action.payload],
+        };
+      case "ADD_CERTIFICATION":
+        return {
+          ...state,
+          certificaton: [...state.certificaton, action.payload],
+        };
+      case "ADD_REFERENCE":
+        return {
+          ...state,
+          refrences: [...state.refrences, action.payload],
+        };
+      case "REMOVE_EDUCATION":
+        return {
+          ...state,
+          education: state.education.filter(
+            (item: any, index: number) => index !== action.payload
+          ),
+        };
+      case "REMOVE_WORK_EXPERIENCE":
+        return {
+          ...state,
+          experience: state.experience.filter(
+            (item: any, index: number) => index !== action.payload
+          ),
+        };
+      case "REMOVE_CERTIFICATION":
+        return {
+          ...state,
+          certificaton: state.certificaton.filter(
+            (item: any, index: number) => index !== action.payload
+          ),
+        };
+      case "REMOVE_REFERENCE":
+        return {
+          ...state,
+          refrences: state.refrences.filter(
+            (item: any, index: number) => index !== action.payload
+          ),
+        };
+
+        return {
+          ...state,
+          userDetails: action.payload,
+        };
+      case "SET_EDUCATION":
+        return {
+          ...state,
+          education: action.payload,
+        };
+
+      case "SET_WORK_EXPERIENCE":
+        return {
+          ...state,
+          experience: action.payload,
+        };
+      case "SET_CERTIFICATIONS":
+        return {
+          ...state,
+          certificaton: action.payload,
+        };
+      case "SET_REFERENCES":
+        return {
+          ...state,
+          refrences: action.payload,
+        };
+      case "SET_USER_DETAILS":
+        return {
+          ...state,
+          ...action.payload,
+        };
+
+      default:
+        return state;
+    }
+  };
+
+  // reducer hooks
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // refs
+  const educationRef = useRef<ScrollView>(null);
+  const workExperienceRef = useRef<ScrollView>(null);
+  const certificationRef = useRef<ScrollView>(null);
+  const referenceRef = useRef<ScrollView>(null);
+
+  // appi calls
+
+  const { data, error, refetch, isSuccess, isLoading } = useApiQuery({
     queryKey: "fetchUserData",
     queryFunction: fetch_user_data,
   });
@@ -99,263 +374,169 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
     mutationFunction: update_job_seeker,
   });
 
-  useEffect(() => {
-    if (isSuccess && data?.data?.user_extra?.job_seakers?.cvStucture) {
-      const { cvStucture } = data.data.user_extra.job_seakers;
-
-      const newEducation = cvStucture.education.map((item: Education) => ({
-        ...item,
-        id: Math.random(),
-      }));
-
-      const newExperience = cvStucture.experience.map(
-        (item: WorkExperience) => ({
-          ...item,
-          id: Math.random(),
-        })
-      );
-
-      const newCertification = cvStucture.certificaton.map(
-        (item: Certification) => ({
-          ...item,
-          id: Math.random(),
-        })
-      );
-
-      const newReference = cvStucture.refrences.map((item: Reference) => ({
-        ...item,
-        id: Math.random(),
-      }));
-
-      const _data = {
-        ...cvStucture,
-        // education: newEducation,
-        // experience: newExperience,
-        // certificaton: newCertification,
-        // refrences: newReference,
-      };
-
-      Object.keys(_data).forEach((field) => {
-        setValue(field, _data[field]);
-      });
-    }
-  }, [isSuccess, data]);
-
-  const handleAddEducation = () => {
-    const education = getValues("education") || [];
-
+  // handlers
+  const addEducation = (dispatch: any, ref: any) => {
     // Check if any previously added education fields are empty
-    const hasEmptyFields = education.some((item: Education) =>
+
+    const hasEmptyFields = state.education.some((item: any) =>
       Object.values(item).some((value) => value === "")
     );
 
     if (hasEmptyFields) {
       // Show an error message or perform any other appropriate action
       showNotification({
-        title: "Error",
-        type: 0,
+        title: "...🙂?",
+        type: 2,
         message: "Please fill all fields",
       });
       return;
     }
-
-    const newEducation = [
-      ...education,
-      {
-        id: education.length + 1,
+    dispatch({
+      type: "ADD_EDUCATION",
+      payload: {
         school_name: "",
-        start_year: "",
-        end_year: "",
-        course_of_study: "",
         degree_type: "",
+        course_of_study: "",
+        start_date: "",
+        end_date: "",
       },
-    ];
-    setValue("education", newEducation);
+    });
     setTimeout(() => {
-      educationRef.current?.scrollToEnd({ animated: true });
+      ref.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
-  const handleRemoveEducation = (index: number) => {
-    const education = getValues("education") || [];
-    const newEducation = education.filter(
-      (item: Education, _index) => _index !== index
-    );
-    setValue("education", newEducation);
-    setTimeout(() => {
-      educationRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
-  const handleAddWorkExperience = () => {
-    const workExperience = getValues("experience") || [];
+  const addWorkExperience = (dispatch: any, ref: any) => {
     // Check if any previously added education fields are empty
-    const hasEmptyFields = workExperience.some((item: WorkExperience) =>
+
+    const hasEmptyFields = state.experience.some((item: any) =>
       Object.values(item).some((value) => value === "")
     );
 
     if (hasEmptyFields) {
       // Show an error message or perform any other appropriate action
       showNotification({
-        title: "Error",
-        type: 0,
+        title: "...🙂?",
+        type: 2,
         message: "Please fill all fields",
       });
       return;
     }
-    const newWorkExperience = [
-      ...workExperience,
-      {
-        id: workExperience.length + 1,
+
+    dispatch({
+      type: "ADD_WORK_EXPERIENCE",
+      payload: {
         company: "",
-        position: "",
-        start_year: "",
         end_year: "",
-        role: "",
         responsibilities: "",
+        role: "",
+        start_year: "",
       },
-    ];
-    setValue("experience", newWorkExperience);
+    });
     setTimeout(() => {
-      workExperienceRef.current?.scrollToEnd({ animated: true });
+      ref.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
-  const handleRemoveWorkExperience = (index: number) => {
-    const workExperience = getValues("experience") || [];
-    const newWorkExperience = workExperience.filter(
-      (item: WorkExperience, _index) => _index !== index
-    );
-    setValue("experience", newWorkExperience);
-    setTimeout(() => {
-      workExperienceRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
-  const handleAddCertification = () => {
-    const certifications = getValues("certificaton") || [];
-
+  const addCertification = (dispatch: any, ref: any) => {
     // Check if any previously added education fields are empty
-    const hasEmptyFields = certifications.some((item: Certification) =>
+
+    const hasEmptyFields = state.certificaton.some((item: any) =>
       Object.values(item).some((value) => value === "")
     );
 
     if (hasEmptyFields) {
       // Show an error message or perform any other appropriate action
       showNotification({
-        title: "Error",
-        type: 0,
+        title: "...🙂?",
+        type: 2,
         message: "Please fill all fields",
       });
       return;
     }
-
-    const newCertification = {
-      id: certifications.length + 1,
-      certification: "",
-      year: "",
-      issuer: "",
-    };
-
-    const newCertifications = [...certifications, newCertification];
-    setValue("certificaton", newCertifications);
-
+    dispatch({
+      type: "ADD_CERTIFICATION",
+      payload: {
+        certification: "",
+        issuer: "",
+        start_year: "",
+      },
+    });
     setTimeout(() => {
-      certificationRef.current?.scrollToEnd({ animated: true });
+      ref.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
-  const handleRemoveCertification = (index: number) => {
-    const certifications = getValues("certificaton") || [];
-    const newCertifications = certifications.filter(
-      (item: Certification, _index) => _index !== index
-    );
-    setValue("certificaton", newCertifications);
-    setTimeout(() => {
-      certificationRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
-  const handleAddReference = () => {
-    const references = getValues("refrences") || [];
-
+  const addReference = (dispatch: any, ref: any) => {
     // Check if any previously added education fields are empty
-    const hasEmptyFields = references.some((item: Reference) =>
+
+    const hasEmptyFields = state.refrences.some((item: any) =>
       Object.values(item).some((value) => value === "")
     );
 
     if (hasEmptyFields) {
       // Show an error message or perform any other appropriate action
       showNotification({
-        title: "Error",
-        type: 0,
+        title: "...🙂?",
+        type: 2,
         message: "Please fill all fields",
       });
       return;
     }
 
-    const newReference = {
-      id: references.length + 1,
-      full_name: "",
-      relationship: "",
-      email: "",
-      phone_number: "",
-    };
-
-    const newReferences = [...references, newReference];
-    setValue("refrences", newReferences);
-
+    dispatch({
+      type: "ADD_REFERENCE",
+      payload: {
+        full_name: "",
+        email: "",
+        phone_number: "",
+        relationship: "",
+      },
+    });
     setTimeout(() => {
-      referenceRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
-  const handleRemoveReference = (index: number) => {
-    const references = getValues("refrences") || [];
-    const newReferences = references.filter(
-      (item: Reference, _index) => _index !== index
-    );
-    setValue("refrences", newReferences);
-    setTimeout(() => {
-      referenceRef.current?.scrollToEnd({ animated: true });
+      ref.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 
   const handleSave = () => {
-    const data = getValues();
+    const _data = state;
 
-    const _data = {
-      ...data,
-      education: JSON.stringify(
-        data.education.map((obj) => {
-          const { id, ...rest } = obj;
-          return rest;
-        })
-      ),
-      experience: JSON.stringify(
-        data.experience.map((obj) => {
-          const { id, ...rest } = obj;
-          return rest;
-        })
-      ),
-      certificaton: JSON.stringify(
-        data.certificaton.map((obj) => {
-          const { id, ...rest } = obj;
-          return rest;
-        })
-      ),
-      refrences: JSON.stringify(
-        data.refrences.map((obj) => {
-          const { id, ...rest } = obj;
-          return rest;
-        })
-      ),
-    };
+    // const hasErrors = Object.values(errors).some((item) => item !== null);
 
-    // console.log(__data);
+    // if (hasErrors) {
+    //   showNotification({
+    //     title: "...🙂?",
+    //     type: 2,
+    //     message: "Please fill all fields",
+    //   });
+    //   return;
+    // }
 
-    uploadCv.mutate(_data);
+    const formData = new FormData();
+
+    {
+      Object.keys(state).map((field, index) => {
+        if (
+          field === "education" ||
+          field === "experience" ||
+          field === "certificaton" ||
+          field === "refrences"
+        )
+          return null;
+        formData.append(field, state[field]);
+      });
+    }
+
+    formData.append("education", JSON.stringify(state.education));
+    formData.append("experience", JSON.stringify(state.experience));
+    formData.append("certificaton", JSON.stringify(state.certificaton));
+    formData.append("refrences", JSON.stringify(state.refrences));
+
+    // console.log("data: ", formData);
+    uploadCv.mutate(formData);
   };
+
+  // side effects
 
   useFocusEffect(
     React.useCallback(() => {
@@ -365,7 +546,41 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   );
 
   useEffect(() => {
-    console.log("dsfjds: ", uploadCv?.error?.response?.data?.errors);
+    if (isSuccess) {
+      const fetchedData = data?.data?.user_extra?.job_seakers?.cvStucture;
+      if (fetchedData) {
+        dispatch({ type: "SET_EDUCATION", payload: fetchedData.education });
+        dispatch({
+          type: "SET_WORK_EXPERIENCE",
+          payload: fetchedData.experience,
+        });
+        dispatch({
+          type: "SET_CERTIFICATIONS",
+          payload: fetchedData.certificaton,
+        });
+        dispatch({ type: "SET_REFERENCES", payload: fetchedData.refrences });
+        dispatch({
+          type: "SET_USER_DETAILS",
+          payload: {
+            first_name: fetchedData.first_name || "",
+            last_name: fetchedData.last_name || "",
+            email: fetchedData.email || "",
+            phone_number: fetchedData.phone_number || "",
+            address: fetchedData.addresse || "",
+            city: fetchedData.city || "",
+            state: fetchedData.state || "",
+            country_of_residence: fetchedData.country_of_residence || "",
+            linkdin: fetchedData.linkdin || "",
+            twitter: fetchedData.twitter || "",
+            personal_statement: fetchedData.personal_statement || "",
+          },
+        });
+      }
+    }
+  }, [isSuccess, data]);
+
+  useEffect(() => {
+    // console.log("dsfjds: ", uploadCv?.error?.response?.data?.errors);
     if (uploadCv?.error?.response?.data?.errors) {
       const { errors } = uploadCv?.error?.response?.data;
       const _errors: any = {};
@@ -387,567 +602,547 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
     return <Loading />;
   }
 
-  const Card = ({
-    children,
-    handler,
-    index,
-    header,
-  }: {
-    children: any;
-    handler: any;
-    index: number;
-    header: string;
-  }) => {
-    return (
+  return (
+    <ScrollView style={[styles.container]}>
+      <Seperator height={scale(20)} />
+      <Pressable
+        onPress={() => {
+          navigation.navigate("Upload CV");
+        }}
+        style={[
+          styles.uploadCVButton,
+          {
+            backgroundColor: theme.primary,
+          },
+        ]}
+      >
+        <AntDesign name="upload" size={scale(12)} color={theme.background} />
+        <Text
+          style={{
+            fontSize: scale(12),
+            fontWeight: "bold",
+            color: theme.background,
+            marginLeft: scale(5),
+          }}
+        >
+          Upload Instead
+        </Text>
+      </Pressable>
+
       <View
         style={{
-          marginLeft: scale(10),
-          backgroundColor: index % 2 !== 0 ? theme.light_blue : "",
-          borderColor: theme.primary,
-          borderWidth: index % 2 === 0 ? StyleSheet.hairlineWidth : 0,
-          padding: scale(10),
-          borderRadius: scale(10),
-          marginBottom: scale(10),
-          width: scale(270),
-          flex: 1,
+          paddingVertical: scale(10),
+          paddingHorizontal: scale(20),
         }}
-        key={index}
       >
-        <View
+        <Text>Personal Statement</Text>
+
+        <TextInput
+          numberOfLines={5}
+          placeholder="Personal Statement"
+          onBlur={() =>
+            handleDetailsBlur(
+              "personal_statement",
+              state.personal_statement,
+              dispatch
+            )
+          }
+          onChangeText={(text) => {
+            handleDetailsChange("personal_statement", text, dispatch);
+          }}
+          multiline={true}
+          value={state.personal_statement}
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
+            padding: scale(7),
+            borderRadius: scale(10),
+            borderWidth: scale(1),
+            borderColor: theme.placeholder,
+            marginTop: scale(10),
+            textAlignVertical: "top",
+            fontSize: scale(14),
           }}
-        >
-          <Text>
-            {header} {index + 1}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              handler(index);
-            }}
-          >
-            <Ionicons
-              name="trash-outline"
-              size={scale(20)}
-              color={theme.text}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {children}
-      </View>
-    );
-  };
-
-  return (
-    <KeyboardAvoidingView>
-      <ScrollView style={[styles.container]} contentContainerStyle={{}}>
-        <Seperator height={scale(20)} />
-        <Pressable
-          onPress={() => {
-            navigation.navigate("Upload CV");
-          }}
-          style={[
-            styles.uploadCVButton,
-            {
-              backgroundColor: theme.primary,
-            },
-          ]}
-        >
-          <AntDesign name="upload" size={scale(12)} color={theme.background} />
+        />
+        {errors.personal_statement && (
           <Text
             style={{
+              color: theme.error,
+              fontSize: scale(10),
+            }}
+          >
+            {errors.personal_statement}
+          </Text>
+        )}
+
+        <View>
+          {Object.keys(initialState).map((field, index) => {
+            if (
+              field === "personal_statement" ||
+              field === "education" ||
+              field === "experience" ||
+              field === "certificaton" ||
+              field === "refrences"
+            )
+              return null;
+            return (
+              <View key={index}>
+                <Input
+                  placeholder={convertToTitleCase(
+                    field === "addresse" ? "address" : field
+                  )}
+                  label={convertToTitleCase(
+                    field === "addresse" ? "address" : field
+                  )}
+                  onBlur={() => {
+                    handleDetailsBlur(field, state[field], dispatch);
+                  }}
+                  onChangeText={(text) => {
+                    handleDetailsChange(field, text, dispatch);
+                  }}
+                  value={state[field]}
+                  keyboardType={
+                    field === "phone_number" ? "number-pad" : "default"
+                  }
+                />
+
+                {errors[field] && (
+                  <Text
+                    style={{
+                      color: theme.error,
+                      fontSize: scale(10),
+                    }}
+                  >
+                    {errors[field]}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+        </View>
+      </View>
+
+      <Seperator height={scale(20)} />
+      <View>
+        <Text
+          style={{
+            marginLeft: scale(10),
+            fontSize: scale(16),
+            fontWeight: "bold",
+          }}
+        >
+          Education
+        </Text>
+        <Seperator height={scale(10)} />
+        <View>
+          <ScrollView horizontal ref={educationRef}>
+            {state.education.map((item: any, index: number) => {
+              return (
+                <Card
+                  header="Education"
+                  index={index}
+                  handler={() => removeEducation(index, dispatch, educationRef)}
+                  key={index}
+                >
+                  <Input
+                    placeholder="School Name"
+                    label="School Name"
+                    onChangeText={(text) => {
+                      handleEducationChange(
+                        "school_name",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.school_name}
+                  />
+                  <Input
+                    placeholder="Degree"
+                    label="Degree"
+                    onChangeText={(text) => {
+                      handleEducationChange(
+                        "degree_type",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.degree_type}
+                  />
+
+                  <Input
+                    placeholder="Course of Study"
+                    label="Course of Study"
+                    onChangeText={(text) => {
+                      handleEducationChange(
+                        "course_of_study",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.course_of_study}
+                  />
+
+                  <DateInput
+                    placeholder="Start Year"
+                    label="Start Year"
+                    onChangeText={(text: string) => {
+                      handleEducationChange(
+                        "start_year",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.start_year}
+                  />
+                  <DateInput
+                    placeholder="End Year"
+                    label="End Year"
+                    onChangeText={(text: string) => {
+                      handleEducationChange("end_year", text, index, dispatch);
+                    }}
+                    value={item.end_year}
+                  />
+                </Card>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            addEducation(dispatch, educationRef);
+          }}
+          style={{
+            alignSelf: "center",
+            padding: scale(10),
+            backgroundColor: theme.primary,
+            borderRadius: scale(10),
+            marginTop: scale(10),
+          }}
+        >
+          <Text
+            style={{
+              color: theme.background,
               fontSize: scale(12),
               fontWeight: "bold",
-              color: theme.background,
-              marginLeft: scale(5),
             }}
           >
-            Upload Instead
+            Add Education
           </Text>
-        </Pressable>
-        {/* <View
+        </TouchableOpacity>
+      </View>
+
+      <Seperator height={scale(20)} />
+      <View>
+        <Text
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
+            marginLeft: scale(10),
+            fontSize: scale(16),
+            fontWeight: "bold",
           }}
         >
-          <ImageComponent
-            imageUrl={
-              "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFuJTIwZmFjZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
-            }
-            style={{
-              width: scale(50),
-              height: scale(50),
-              borderRadius: scale(50),
-            }}
-          />
-        </View> */}
-        {/* input fields  */}
-        <Seperator height={scale(20)} />
-
-        <View
-          style={{
-            flex: 1,
-            borderRadius: scale(10),
-            borderColor: theme.placeholder,
-            borderWidth: scale(1),
-            padding: scale(14),
-            backgroundColor: theme.light_blue,
-          }}
-        >
-          <View>
-            <View
-              style={{
-                paddingVertical: scale(10),
-              }}
-            >
-              <Text>Personal Statement</Text>
-
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    numberOfLines={5}
-                    placeholder="Personal Statement"
-                    onBlur={() => {
-                      if (!value)
-                        setErrors({
-                          ...errors,
-                          personal_statement: "This is required.",
-                        });
-                      else {
-                        setErrors(
-                          Object.keys(errors).filter(
-                            (key) => key !== "personal_statement"
-                          )
-                        );
-                      }
-                    }}
+          Work Experience
+        </Text>
+        <Seperator height={scale(10)} />
+        <View>
+          <ScrollView horizontal ref={workExperienceRef}>
+            {state.experience.map((item: any, index: number) => {
+              return (
+                <Card
+                  header="Work Experience"
+                  index={index}
+                  handler={() =>
+                    removeWorkExperience(index, dispatch, workExperienceRef)
+                  }
+                  key={index}
+                >
+                  <Input
+                    placeholder="Company Name"
+                    label="Company Name"
                     onChangeText={(text) => {
-                      onChange(text);
+                      handleWorkExperienceChange(
+                        "company",
+                        text,
+                        index,
+                        dispatch
+                      );
                     }}
-                    multiline={true}
-                    value={value}
-                    style={{
-                      padding: scale(7),
-                      borderRadius: scale(10),
-                      borderWidth: scale(1),
-                      borderColor: theme.placeholder,
-                      marginTop: scale(10),
-                      textAlignVertical: "top",
-                      fontSize: scale(14),
+                    value={item.company}
+                  />
+                  <Input
+                    placeholder="Job Title"
+                    label="Job Title"
+                    onChangeText={(text) => {
+                      handleWorkExperienceChange("role", text, index, dispatch);
                     }}
+                    value={item.role}
                   />
-                )}
-                name="personal_statement"
-              />
-              {errors.personal_statement && (
-                <Text
-                  style={{
-                    color: theme.error,
-                    fontSize: scale(10),
-                  }}
-                >
-                  {errors.personal_statement}
-                </Text>
-              )}
-
-              <View>
-                {Object.keys(initialState).map((field, index) => {
-                  if (
-                    field === "personal_statement" ||
-                    field === "education" ||
-                    field === "experience" ||
-                    field === "certificaton" ||
-                    field === "refrences"
-                  )
-                    return null;
-                  return (
-                    <View>
-                      <Controller
-                        control={control}
-                        rules={{
-                          required: true,
-                        }}
-                        key={index}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                          <Input
-                            placeholder={convertToTitleCase(field)}
-                            label={convertToTitleCase(field)}
-                            onBlur={() => {
-                              if (!value) {
-                                setErrors({
-                                  ...errors,
-                                  [field]: "This is required.",
-                                });
-                              } else {
-                                setErrors((prevErrors: any) => ({
-                                  ...prevErrors,
-                                  [field]: null,
-                                }));
-                              }
-                            }}
-                            onChangeText={(text) => onChange(text)}
-                            value={value}
-                            maxLength={
-                              field === "phone_number" ? 11 : undefined
-                            }
-                            keyboardType={
-                              field === "phone_number"
-                                ? "number-pad"
-                                : "default"
-                            }
-                          />
-                        )}
-                        name={field === "address" ? "addresse" : field}
-                      />
-                      {errors[field] && (
-                        <Text
-                          style={{
-                            color: theme.error,
-                            fontSize: scale(10),
-                          }}
-                        >
-                          {errors[field]}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
-
-            <Seperator height={scale(20)} />
-
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: scale(16),
-                    fontWeight: "bold",
-                    color: theme.primary,
-                  }}
-                >
-                  Education
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleAddEducation();
-                  }}
-                  style={{
-                    marginLeft: scale(10),
-                  }}
-                >
-                  <Ionicons
-                    name="add-circle-outline"
-                    size={scale(20)}
-                    color={theme.primary}
+                  <Input
+                    placeholder="Job Responsibilities"
+                    label="Job Responsibilities"
+                    onChangeText={(text) => {
+                      handleWorkExperienceChange(
+                        "responsibilities",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.responsibilities}
                   />
-                </TouchableOpacity>
-              </View>
-              <Seperator height={scale(10)} />
-              <ScrollView horizontal style={{ flex: 1 }} ref={educationRef}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {education?.map((item: Education, index) => (
-                    <Card
-                      header="Education"
-                      handler={handleRemoveEducation}
-                      index={index}
-                    >
-                      {Object.keys(item).map((key) => {
-                        if (key === "id") return null;
-                        return (
-                          <Controller
-                            key={key}
-                            control={control}
-                            rules={{
-                              required: true,
-                            }}
-                            render={({
-                              field: { onChange, onBlur, value },
-                            }) => (
-                              <Input
-                                placeholder={key.replace(/_/g, " ")}
-                                onBlur={onBlur}
-                                onChangeText={(text) => onChange(text)}
-                                value={value}
-                              />
-                            )}
-                            name={`education[${index}].${key}`}
-                          />
-                        );
-                      })}
-                    </Card>
-                  ))}
-                </View>
-              </ScrollView>
-            </>
-            {/* // work experience */}
-
-            <Seperator height={scale(20)} />
-
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: scale(16),
-                    fontWeight: "bold",
-                    color: theme.primary,
-                  }}
-                >
-                  Work Experience
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleAddWorkExperience();
-                  }}
-                  style={{
-                    marginLeft: scale(10),
-                  }}
-                >
-                  <Ionicons
-                    name="add-circle-outline"
-                    size={scale(20)}
-                    color={theme.primary}
+                  <DateInput
+                    placeholder="Start Year"
+                    label="Start Year"
+                    onChangeText={(text: string) => {
+                      handleWorkExperienceChange(
+                        "start_year",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.start_year}
                   />
-                </TouchableOpacity>
-              </View>
-              <Seperator height={scale(10)} />
-              <ScrollView
-                horizontal
-                style={{ flex: 1 }}
-                ref={workExperienceRef}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {experience?.map((item: WorkExperience, index) => (
-                    <Card
-                      header="Work Experience"
-                      handler={handleRemoveWorkExperience}
-                      index={index}
-                    >
-                      {Object.keys(item).map((key) => {
-                        if (key === "id") return null;
-                        return (
-                          <Controller
-                            key={key}
-                            control={control}
-                            rules={{
-                              required: true,
-                            }}
-                            render={({
-                              field: { onChange, onBlur, value },
-                            }) => (
-                              <Input
-                                placeholder={key.replace(/_/g, " ")}
-                                onBlur={onBlur}
-                                onChangeText={(text) => onChange(text)}
-                                value={value}
-                              />
-                            )}
-                            name={`experience[${index}].${key}`}
-                          />
-                        );
-                      })}
-                    </Card>
-                  ))}
-                </View>
-              </ScrollView>
-            </>
-
-            {/* // certification */}
-            <Seperator height={scale(20)} />
-
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: scale(16),
-                    fontWeight: "bold",
-                    color: theme.primary,
-                  }}
-                >
-                  Certification
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleAddCertification();
-                  }}
-                  style={{
-                    marginLeft: scale(10),
-                  }}
-                >
-                  <Ionicons
-                    name="add-circle-outline"
-                    size={scale(20)}
-                    color={theme.primary}
+                  <DateInput
+                    placeholder="End Year"
+                    label="End Year"
+                    onChangeText={(text: string) => {
+                      handleWorkExperienceChange(
+                        "end_year",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.end_year}
                   />
-                </TouchableOpacity>
-              </View>
-              <Seperator height={scale(10)} />
-              <ScrollView horizontal style={{ flex: 1 }} ref={certificationRef}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {certificaton?.map((item: Certification, index) => (
-                    <Card
-                      header="Certification"
-                      handler={handleRemoveCertification}
-                      index={index}
-                    >
-                      {Object.keys(item).map((key) => {
-                        if (key === "id") return null;
-                        return (
-                          <Controller
-                            key={key}
-                            control={control}
-                            rules={{
-                              required: true,
-                            }}
-                            render={({
-                              field: { onChange, onBlur, value },
-                            }) => (
-                              <Input
-                                placeholder={key.replace(/_/g, " ")}
-                                onBlur={onBlur}
-                                onChangeText={(text) => onChange(text)}
-                                value={value}
-                              />
-                            )}
-                            name={`certificaton[${index}].${key}`}
-                          />
-                        );
-                      })}
-                    </Card>
-                  ))}
-                </View>
-              </ScrollView>
-            </>
-
-            {/* // reference */}
-            <Seperator height={scale(20)} />
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: scale(16),
-                    fontWeight: "bold",
-                    color: theme.primary,
-                  }}
-                >
-                  Reference
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleAddReference();
-                  }}
-                  style={{
-                    marginLeft: scale(10),
-                  }}
-                >
-                  <Ionicons
-                    name="add-circle-outline"
-                    size={scale(20)}
-                    color={theme.primary}
-                  />
-                </TouchableOpacity>
-              </View>
-              <Seperator height={scale(10)} />
-              <ScrollView horizontal style={{ flex: 1 }} ref={referenceRef}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {refrences?.map((item: Reference, index) => (
-                    <Card
-                      header="Reference"
-                      handler={handleRemoveReference}
-                      index={index}
-                    >
-                      {Object.keys(item).map((key) => (
-                        <Controller
-                          key={key}
-                          control={control}
-                          rules={{
-                            required: true,
-                          }}
-                          render={({ field: { onChange, onBlur, value } }) => (
-                            <Input
-                              placeholder={key.replace(/_/g, " ")}
-                              onBlur={onBlur}
-                              onChangeText={(text) => onChange(text)}
-                              value={value}
-                            />
-                          )}
-                          name={`refrences[${index}].${key}`}
-                        />
-                      ))}
-                    </Card>
-                  ))}
-                </View>
-              </ScrollView>
-            </>
-          </View>
-          <Seperator height={scale(20)} />
-          <Button
-            disabled={uploadCv.isLoading || isLoading}
-            onPress={() => {
-              handleSave();
-              console.log(getValues());
+                </Card>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            addWorkExperience(dispatch, workExperienceRef);
+          }}
+          style={{
+            alignSelf: "center",
+            padding: scale(10),
+            backgroundColor: theme.primary,
+            borderRadius: scale(10),
+            marginTop: scale(10),
+          }}
+        >
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: scale(12),
+              fontWeight: "bold",
             }}
           >
-            Save
-          </Button>
+            Add Work Experience
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Seperator height={scale(20)} />
+      <View>
+        <Text
+          style={{
+            marginLeft: scale(10),
+            fontSize: scale(16),
+            fontWeight: "bold",
+          }}
+        >
+          Certification
+        </Text>
+        <Seperator height={scale(10)} />
+        <View>
+          <ScrollView horizontal ref={certificationRef}>
+            {state.certificaton.map((item: any, index: number) => {
+              return (
+                <Card
+                  header="Certification"
+                  index={index}
+                  handler={() =>
+                    removeCertification(index, dispatch, certificationRef)
+                  }
+                  key={index}
+                >
+                  <Input
+                    placeholder="Certification"
+                    label="Certification"
+                    onChangeText={(text) => {
+                      handleCertificationChange(
+                        "certification",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.certification}
+                  />
+                  <Input
+                    placeholder="Issuer"
+                    label="Issuer"
+                    onChangeText={(text) => {
+                      handleCertificationChange(
+                        "issuer",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.issuer}
+                  />
+                  <DateInput
+                    placeholder="Start Year"
+                    label="Start Year"
+                    onChangeText={(text: string) => {
+                      handleCertificationChange(
+                        "start_year",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.start_year}
+                  />
+                </Card>
+              );
+            })}
+          </ScrollView>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            addCertification(dispatch, certificationRef);
+          }}
+          style={{
+            alignSelf: "center",
+            padding: scale(10),
+            backgroundColor: theme.primary,
+            borderRadius: scale(10),
+            marginTop: scale(10),
+          }}
+        >
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: scale(12),
+              fontWeight: "bold",
+            }}
+          >
+            Add Certification
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Seperator height={scale(20)} />
+      <View>
+        <Text
+          style={{
+            marginLeft: scale(10),
+            fontSize: scale(16),
+            fontWeight: "bold",
+          }}
+        >
+          Reference
+        </Text>
+        <Seperator height={scale(10)} />
+        <View>
+          <ScrollView horizontal ref={referenceRef}>
+            {state.refrences.map((item: any, index: number) => {
+              return (
+                <Card
+                  header="Reference"
+                  index={index}
+                  handler={() => removeReference(index, dispatch, referenceRef)}
+                  key={index}
+                >
+                  <Input
+                    placeholder="Full Name"
+                    label="Full Name"
+                    onChangeText={(text) => {
+                      handleReferenceChange("full_name", text, index, dispatch);
+                    }}
+                    value={item.full_name}
+                  />
+                  <Input
+                    placeholder="Email"
+                    label="Email"
+                    onChangeText={(text) => {
+                      handleReferenceChange("email", text, index, dispatch);
+                    }}
+                    value={item.email}
+                  />
+                  <Input
+                    placeholder="Phone Number"
+                    label="Phone Number"
+                    onChangeText={(text) => {
+                      handleReferenceChange(
+                        "phone_number",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.phone_number}
+                  />
+                  <Input
+                    placeholder="Relationship"
+                    label="Relationship"
+                    onChangeText={(text) => {
+                      handleReferenceChange(
+                        "relationship",
+                        text,
+                        index,
+                        dispatch
+                      );
+                    }}
+                    value={item.relationship}
+                  />
+                </Card>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            addReference(dispatch, referenceRef);
+          }}
+          style={{
+            alignSelf: "center",
+            padding: scale(10),
+            backgroundColor: theme.primary,
+            borderRadius: scale(10),
+            marginTop: scale(10),
+          }}
+        >
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: scale(12),
+              fontWeight: "bold",
+            }}
+          >
+            Add Reference
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={{
+          paddingHorizontal: scale(20),
+        }}
+      >
         <Seperator height={scale(20)} />
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <Button onPress={handleSave}>Save</Button>
+        <Seperator height={scale(20)} />
+      </View>
+
+      <Seperator height={scale(20)} />
+    </ScrollView>
   );
 };
 
@@ -957,6 +1152,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // padding: 16,
+    position: "relative",
   },
   uploadCVButton: {
     paddingHorizontal: scale(10),

@@ -34,12 +34,12 @@ const Loading = () => {
 
   return (
     <Modal animationType="fade" transparent={true}>
-      <StatusBar hidden />
+      {/* <StatusBar hidden /> */}
       <View
         style={{
           // flex: 1,
           // padding: 20,
-          // backgroundColor: "rgba(0, 0 , 0, 0.2)",
+          backgroundColor: "rgba(0, 0 , 0, 0.2)",
           alignItems: "center",
           justifyContent: "center",
           position: "absolute",

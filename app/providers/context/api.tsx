@@ -8,7 +8,10 @@ import {
 } from "react-query";
 import { login, register_job_seeker } from "../call-service/auth";
 import { Alert } from "react-native";
-import { storeAppData } from "../../helper_functions/storingAppData";
+import {
+  clearAppData,
+  storeAppData,
+} from "../../helper_functions/storingAppData";
 import { LoginData, RegisterData } from "../../../types";
 
 interface ApiMutationOptions<TData, TError, TVariables> {
@@ -126,6 +129,13 @@ export const ApiProvider = (props: {
       },
       onError: (error) => {
         console.log("error", error);
+        if (
+          error?.response?.status === "401" ||
+          error?.response?.status === 401
+        ) {
+          Alert.alert("Error", "You are not authorized to perform this action");
+          clearAppData();
+        }
 
         showNotification({
           title: "Error",
@@ -148,6 +158,13 @@ export const ApiProvider = (props: {
       },
       onError: (error) => {
         console.log("error", error);
+        if (
+          error?.response?.status === "401" ||
+          error?.response?.status === 401
+        ) {
+          Alert.alert("Error", "You are not authorized to perform this action");
+          clearAppData();
+        }
       },
     });
 

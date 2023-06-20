@@ -31,11 +31,11 @@ const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <View style={{ marginTop: scale(18) }}>
+    <View style={{ marginTop: scale(10) }}>
       {label && (
         <Text
           style={{
-            fontSize: scale(16),
+            fontSize: scale(14),
           }}
         >
           {label}
@@ -46,10 +46,11 @@ const Input: React.FC<InputProps> = ({
           position: "relative",
           flexDirection: "row",
           alignItems: "center",
-          borderWidth: 1,
-          borderColor: theme.text,
-          borderRadius: scale(5),
-          marginTop: scale(8),
+
+          borderRadius: scale(10),
+          borderWidth: scale(1),
+          borderColor: theme.placeholder,
+          marginTop: scale(4),
         }}
       >
         <TextInput
@@ -57,7 +58,7 @@ const Input: React.FC<InputProps> = ({
           style={{
             flex: 1,
             paddingHorizontal: scale(10),
-            paddingVertical: scale(10),
+            paddingVertical: scale(4),
             fontSize: scale(16),
             color: "#000",
           }}

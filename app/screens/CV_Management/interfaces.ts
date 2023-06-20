@@ -55,7 +55,7 @@ interface State {
   middle_name: string;
   email: string;
   phone_number: string;
-  address: string;
+  addresse: string;
   city: string;
   state: string;
   country_of_residence: string;
@@ -83,3 +83,14 @@ export {
   UserDetails,
   State,
 };
+
+export type Action =
+  | { type: "SET_EDUCATION"; payload: Education[] }
+  | { type: "SET_WORK_EXPERIENCE"; payload: WorkExperience[] }
+  | { type: "SET_CERTIFICATIONS"; payload: Certification[] }
+  | { type: "SET_REFERENCES"; payload: Reference[] }
+  | { type: "SET_USER_DETAILS"; payload: UserDetails }
+  | { type: "ADD_EDUCATION" }
+  | { type: "ADD_WORK_EXPERIENCE" }
+  | { type: "ADD_CERTIFICATIONS" }
+  | { type: "ADD_REFERENCES" };
