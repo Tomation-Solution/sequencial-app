@@ -8,8 +8,9 @@ import { Image } from "react-native";
 import { placeholders } from "../../../../assets/placeholders";
 import themeContext from "../../../../config/theme/themeContext";
 import ImageComponent from "../../../ui/Image/ImageComponent";
-import { useNavigation } from "@react-navigation/native";
 import { limitTextLength } from "../../../../helper_functions/miscs";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type Props = {
   job_title: string;
@@ -38,11 +39,13 @@ const JobDetailsCard: React.FC<Props> = ({
   isHiringMultiple,
   whenPosted,
   image,
-  navigation,
+  // navigation,
   id,
   job_variant,
 }) => {
   const theme = useContext(themeContext);
+
+  const navigation = useNavigation<any>();
 
   return (
     <View

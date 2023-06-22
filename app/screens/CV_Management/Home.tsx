@@ -1153,6 +1153,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // padding: 16,
     position: "relative",
+    backgroundColor: "white",
   },
   uploadCVButton: {
     paddingHorizontal: scale(10),

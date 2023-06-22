@@ -62,20 +62,20 @@ export default function App() {
     return () => clearTimeout(timeout);
   }, []);
 
-  if (showLoadingScreen) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "blue",
-        }}
-      >
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  // if (showLoadingScreen) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         backgroundColor: "blue",
+  //       }}
+  //     >
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <>

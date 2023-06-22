@@ -103,6 +103,11 @@ const DrawerNavigations = () => {
 
           drawerLabelStyle: {
             color: theme.text,
+            fontSize: scale(14),
+          },
+
+          drawerItemStyle: {
+            marginVertical: scale(10),
           },
 
           drawerActiveBackgroundColor: theme.primary,
@@ -203,7 +208,7 @@ const DrawerNavigations = () => {
           name="Documentation Management"
           component={Documentation_Management}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           options={{
             drawerLabel: "Calender",
             drawerLabelStyle: {
@@ -217,8 +222,8 @@ const DrawerNavigations = () => {
           }}
           name="Calendar"
           component={Calender}
-        />
-        <Drawer.Screen
+        /> */}
+        {/* <Drawer.Screen
           options={{
             drawerLabel: "Settings",
             drawerLabelStyle: {
@@ -233,7 +238,7 @@ const DrawerNavigations = () => {
           }}
           name="Settings"
           component={Settings}
-        />
+        /> */}
       </Drawer.Navigator>
     </View>
   );
