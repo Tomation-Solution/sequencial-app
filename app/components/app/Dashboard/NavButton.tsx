@@ -5,6 +5,7 @@ import themeContext from "../../../config/theme/themeContext";
 import { scale } from "react-native-size-matters";
 
 import { SimpleLineIcons } from "@expo/vector-icons";
+import { convertToTitleCase } from "../../../helper_functions/miscs";
 
 type Props = {
   id: string;
@@ -26,7 +27,7 @@ const NavButton: React.FC<Props> = ({
   const theme = useContext(themeContext);
 
   const handlePress = () => {
-    changeActiveId(id);
+    changeActiveId(id, convertToTitleCase(title));
     onPress;
   };
 

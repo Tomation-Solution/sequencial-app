@@ -41,6 +41,7 @@ const Input: React.FC<InputProps> = ({
           {label}
         </Text>
       )}
+
       <View
         style={{
           position: "relative",

@@ -28,8 +28,8 @@ const Page3 = ({ navigation, route }: any) => {
 
   const { mutate, isLoading, isError, data, isSuccess } = useRegister();
 
-  const { newValues } = route.params;
-  const previousValues = newValues;
+  const { values } = route.params;
+  const previousValues = values;
 
   useEffect(() => {
     if (isSuccess) {

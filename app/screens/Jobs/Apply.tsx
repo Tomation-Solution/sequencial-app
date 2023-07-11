@@ -19,7 +19,7 @@ const Apply = ({ navigation, route }: any) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const theme = useContext(themeContext);
-  const { useApiMutation } = useContext(ApiContext);
+  const { useApiMutation } = useContext<any>(ApiContext);
   const { job_id, job_variant } = route.params;
 
   console.log("job_variant", job_variant);

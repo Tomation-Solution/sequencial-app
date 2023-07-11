@@ -30,6 +30,7 @@ const BottomNavigations = ({ navigation }: any) => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: theme.background,

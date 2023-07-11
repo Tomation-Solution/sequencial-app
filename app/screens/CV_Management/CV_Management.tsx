@@ -16,6 +16,7 @@ const CV_Management = () => {
       }}
       initialRouteName="Home"
     >
+      {/* <Stack.Screen name="Home">{(props) => <Test />}</Stack.Screen> */}
       <Stack.Screen name="Home">{(props) => <Home {...props} />}</Stack.Screen>
       <Stack.Screen name="Upload CV">
         {(props) => <UploadCV {...props} />}

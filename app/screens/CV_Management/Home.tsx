@@ -5,7 +5,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useReducer, useRef } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { scale } from "react-native-size-matters";
 import { Seperator } from "../../components/ui/_helpers";
 import themeContext from "../../config/theme/themeContext";
@@ -25,6 +31,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { HeaderContext } from "../../providers/context/header";
 import { useNotifications } from "../../hooks/app-hooks/useNotification";
 import Loading from "../../components/ui/_helpers/Loading";
+import CountryInput from "../../components/ui/Input/CountryInput";
 
 const initialState: State = {
   education: [],
@@ -178,6 +185,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const { useApiMutation, useApiQuery } = useContext(ApiContext);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const { showNotification } = useNotifications();
+  const [country, setCountry] = useState<any>(null);
 
   // state hooks
   const [errors, setErrors] = React.useState<any>({} as any);
@@ -521,9 +529,11 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
           field === "experience" ||
           field === "certificaton" ||
           field === "refrences"
-        )
+        ) {
           return null;
-        formData.append(field, state[field]);
+        } else if (field === "phone_number") {
+          formData.append(field, country?.callingCode + "-" + state[field]);
+        } else formData.append(field, state[field]);
       });
     }
 
@@ -564,8 +574,9 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
           payload: {
             first_name: fetchedData.first_name || "",
             last_name: fetchedData.last_name || "",
+            middle_name: fetchedData.middle_name || "",
             email: fetchedData.email || "",
-            phone_number: fetchedData.phone_number || "",
+            phone_number: fetchedData.phone_number.split("-")[1] || "",
             address: fetchedData.addresse || "",
             city: fetchedData.city || "",
             state: fetchedData.state || "",
@@ -575,6 +586,12 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
             personal_statement: fetchedData.personal_statement || "",
           },
         });
+
+        setCountry({
+          callingCode: fetchedData.phone_number.split("-")[0],
+        });
+
+        console.log("phone number", fetchedData.phone_number);
       }
     }
   }, [isSuccess, data]);
@@ -685,24 +702,53 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
               return null;
             return (
               <View key={index}>
-                <Input
-                  placeholder={convertToTitleCase(
-                    field === "addresse" ? "address" : field
-                  )}
-                  label={convertToTitleCase(
-                    field === "addresse" ? "address" : field
-                  )}
-                  onBlur={() => {
-                    handleDetailsBlur(field, state[field], dispatch);
-                  }}
-                  onChangeText={(text) => {
-                    handleDetailsChange(field, text, dispatch);
-                  }}
-                  value={state[field]}
-                  keyboardType={
-                    field === "phone_number" ? "number-pad" : "default"
-                  }
-                />
+                {field !== "phone_number" ? (
+                  <Input
+                    placeholder={convertToTitleCase(
+                      field === "addresse"
+                        ? "address"
+                        : field === "linkdin"
+                        ? "linkedin"
+                        : field
+                    )}
+                    label={convertToTitleCase(
+                      field === "addresse"
+                        ? "address"
+                        : field === "linkdin"
+                        ? "linkedin"
+                        : field
+                    )}
+                    onBlur={() => {
+                      if (
+                        field !== "linkdin" &&
+                        field !== "twitter" &&
+                        field !== "middle_name"
+                      )
+                        handleDetailsBlur(field, state[field], dispatch);
+                    }}
+                    onChangeText={(text) => {
+                      handleDetailsChange(field, text, dispatch);
+                    }}
+                    value={state[field]}
+                  />
+                ) : (
+                  <CountryInput
+                    country={country}
+                    setCountry={setCountry}
+                    onChangeText={(text) => {
+                      handleDetailsChange(field, text, dispatch);
+                    }}
+                    placeholder={convertToTitleCase(field)}
+                    label={convertToTitleCase(field)}
+                    onBlur={() => {
+                      handleDetailsBlur(field, state[field], dispatch);
+                    }}
+                    keyboardType={
+                      field === "phone_number" ? "number-pad" : "default"
+                    }
+                    value={state[field]}
+                  />
+                )}
 
                 {errors[field] && (
                   <Text

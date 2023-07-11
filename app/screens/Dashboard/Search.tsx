@@ -12,14 +12,14 @@ import { getJobsFnc } from "../../providers/call-service/jobs";
 import Loading from "../../components/ui/_helpers/Loading";
 import { useNotifications } from "../../hooks/app-hooks/useNotification";
 
-const AllJobs = ({ navigation, setSearchState }: any) => {
+const Search = ({ navigation, searchData, isLoading }: any) => {
   const theme = useContext(themeContext);
   const { showNotification } = useNotifications();
 
   const { useApiQuery } = useContext(ApiContext);
 
   const jobs_query = useApiQuery({
-    queryKey: "fetchAllJobs",
+    queryKey: "searchJobs",
     queryFunction: getJobsFnc,
   });
 
@@ -29,29 +29,28 @@ const AllJobs = ({ navigation, setSearchState }: any) => {
   //   }
   // };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      jobs_query.refetch();
-      setSearchState(false);
-    }, [])
-  );
+  //   useFocusEffect(
+  //     React.useCallback(() => {
+  //       jobs_query.refetch();
+  //     }, [])
+  //   );
 
-  useEffect(() => {
-    if (jobs_query.isError) {
-      if (jobs_query.error?.response?.data?.error?.cv) {
-        navigation.navigate("CV Management");
-        showNotification({
-          title: "Error",
-          type: 0,
-          message: "You Need to upload your cv",
-        });
-      }
-    }
-  }, [jobs_query.isError]);
+  //   useEffect(() => {
+  //     if (jobs_query.isError) {
+  //       if (jobs_query.error?.response?.data?.error?.cv) {
+  //         navigation.navigate("CV Management");
+  //         showNotification({
+  //           title: "Error",
+  //           type: 0,
+  //           message: "You Need to upload your cv",
+  //         });
+  //       }
+  //     }
+  //   }, [jobs_query.isError]);
 
   return (
     <>
-      {jobs_query.isLoading ? (
+      {isLoading ? (
         <Loading />
       ) : (
         <View
@@ -76,7 +75,7 @@ const AllJobs = ({ navigation, setSearchState }: any) => {
                   color: theme.text,
                 }}
               >
-                All Jobs
+                Search Jobs
               </Text>
             </View>
             <View
@@ -87,10 +86,14 @@ const AllJobs = ({ navigation, setSearchState }: any) => {
                 paddingBottom: scale(65),
               }}
             >
-              <JobsCardContainer
-                cardData={jobs_query.data?.data}
-                navigation={navigation}
-              />
+              {searchData ? (
+                <JobsCardContainer
+                  cardData={searchData}
+                  navigation={navigation}
+                />
+              ) : (
+                <Text>Search Jobs</Text>
+              )}
               {/* <JobOfferContainer cardData={test} navigation={navigation} /> */}
             </View>
           </ScrollView>
@@ -100,6 +103,6 @@ const AllJobs = ({ navigation, setSearchState }: any) => {
   );
 };
 
-export default memo(AllJobs);
+export default memo(Search);
 
 const styles = StyleSheet.create({});

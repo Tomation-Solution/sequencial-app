@@ -56,7 +56,7 @@ const Page1 = ({ navigation, route }: any) => {
               email: "",
               phone_number: "",
             }}
-            onSubmit={(values) => navigation.navigate("page2", { values })}
+            onSubmit={(values) => navigation.navigate("page3", { values })}
             validationSchema={personal_details_scheama}
           >
             {({

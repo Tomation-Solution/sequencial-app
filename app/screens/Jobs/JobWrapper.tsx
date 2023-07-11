@@ -7,7 +7,15 @@ import { scale } from "react-native-size-matters";
 import { Seperator } from "../../components/ui/_helpers";
 import { ScrollView } from "react-native";
 
-const JobWrapper = ({ navigation, children }: any) => {
+const JobWrapper = ({
+  navigation,
+  children,
+  company,
+  location,
+  org_logo,
+  job_title,
+  posted_on,
+}: any) => {
   // const { showBackButtonHandler } = React.useContext(HeaderContext);
   // const { useApiMutation } = useContext(ApiContext);
 
@@ -57,7 +65,7 @@ const JobWrapper = ({ navigation, children }: any) => {
               }}
             >
               <ImageComponent
-                imageUrl={placeholders.company}
+                imageUrl={org_logo ? org_logo : placeholders.company}
                 onDevice
                 style={{
                   width: scale(60),
@@ -72,7 +80,7 @@ const JobWrapper = ({ navigation, children }: any) => {
                 fontWeight: "bold",
               }}
             >
-              Business Developer
+              {job_title ? job_title : "Job Title"}
             </Text>
           </View>
         </View>
@@ -85,7 +93,7 @@ const JobWrapper = ({ navigation, children }: any) => {
             justifyContent: "space-around",
           }}
         >
-          <Text>Google</Text>
+          <Text>{company ? company : "Company"}</Text>
           <View
             style={{
               height: scale(8),
@@ -94,7 +102,7 @@ const JobWrapper = ({ navigation, children }: any) => {
               backgroundColor: theme.placeholder,
             }}
           />
-          <Text>California</Text>
+          <Text>{location ? location : "Location"}</Text>
           <View
             style={{
               height: scale(8),
@@ -103,7 +111,7 @@ const JobWrapper = ({ navigation, children }: any) => {
               backgroundColor: theme.placeholder,
             }}
           />
-          <Text>1 day(s)</Text>
+          <Text>{posted_on} day(s)</Text>
         </View>
 
         <Seperator height={scale(30)} />

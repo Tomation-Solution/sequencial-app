@@ -118,7 +118,7 @@ const NotifcationCard: React.FC<Props> = ({
       activeOpacity={0.5}
       style={{
         paddingVertical: scale(10),
-        borderBottomColor: theme.disabled,
+        borderBottomColor: theme.placeholder,
         borderBottomWidth: 1,
         position: "relative",
         paddingRight: scale(40),

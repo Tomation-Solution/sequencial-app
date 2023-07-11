@@ -14,7 +14,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale } from "react-native-size-matters";
 import { TextInput } from "react-native-gesture-handler";
 
-const SearchBar = ({ outlineType }: { outlineType?: "outline" | "filled" }) => {
+const SearchBar = ({
+  outlineType,
+  onFocusFnc,
+  onBlurFnc,
+  onSearchFnc,
+  onChangeText,
+}: {
+  outlineType?: "outline" | "filled";
+  onFocusFnc?: any;
+  onBlurFnc?: any;
+  onSearchFnc?: any;
+  onChangeText?: any;
+}) => {
   const theme = useContext(themeContext);
   const searchAnim = useRef(new Animated.Value(0)).current;
 
@@ -24,10 +36,12 @@ const SearchBar = ({ outlineType }: { outlineType?: "outline" | "filled" }) => {
 
   const handleFocus = () => {
     setIsFocused(true);
+    if (onFocusFnc) onFocusFnc();
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    if (onBlurFnc) onBlurFnc();
   };
 
   return (
@@ -73,11 +87,14 @@ const SearchBar = ({ outlineType }: { outlineType?: "outline" | "filled" }) => {
           placeholder="Search"
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onChangeText={onChangeText}
         />
 
         {isFocused && (
           <TouchableOpacity
-            onPress={() => console.log("pressed")}
+            onPress={() => {
+              if (onSearchFnc) onSearchFnc();
+            }}
             // style={{ pointerEvents: "auto" } as ViewStyle}
           >
             <Ionicons

@@ -39,7 +39,13 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
 
   const [one_selected, setOneSelected] = useState<any>([]);
-  const { register, handleSubmit, setValue } = useForm();
+  // const { register, handleSubmit, setValue } = useForm();
+
+  const [formState, setFormState] = useState<FormState>({
+    filter_quetion_option: [],
+    filter_quetion_multi_choice_quetion: [],
+    fill_in_the_gap: [],
+  });
 
   const getQuestions = useApiMutation({
     mutationFunction: jobQuestion,
@@ -56,17 +62,41 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   }, []);
 
   const handleFillInTheGap = (value: string, id: number, index: number) => {
-    setValue(`fill_in_the_gap[${index}]`, {
-      id,
-      answer: value,
-    });
+    // setValue(`fill_in_the_gap[${index}]`, {
+    //   id,
+    //   answer: value,
+    // });
+    setFormState((prevState) => ({
+      ...prevState,
+      fill_in_the_gap: [...prevState.fill_in_the_gap, { id, answer: value }],
+    }));
   };
 
   const handleSelectOne = (value: string, question_id: number, id: number) => {
-    setValue(`filter_quetion_option[${id}]`, {
-      id: question_id,
-      answer: value,
-    });
+    // setValue(`filter_quetion_option[${question_id}]`, {
+    //   id: question_id,
+    //   answer: value,
+    // });
+
+    if (
+      formState.filter_quetion_option.filter((item) => item.id === question_id)
+        .length > 0
+    ) {
+      setFormState((prevState) => ({
+        ...prevState,
+        filter_quetion_option: prevState.filter_quetion_option.map((item) =>
+          item.id === question_id ? { id: question_id, answer: value } : item
+        ),
+      }));
+    } else {
+      setFormState((prevState) => ({
+        ...prevState,
+        filter_quetion_option: [
+          ...prevState.filter_quetion_option,
+          { id: question_id, answer: value },
+        ],
+      }));
+    }
 
     const isSelected = one_selected.some(
       (item: any) => item.question_id === question_id
@@ -83,15 +113,15 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
     }
   };
 
-  const onSubmit = (data: FormState) => {
+  const onSubmit = () => {
     const formattedData = {
       job_id,
-      filter_quetion_option: data.filter_quetion_option || [],
+      filter_quetion_option: formState.filter_quetion_option || [],
       filter_quetion_multi_choice_quetion: [],
-      fill_in_the_gap: data.fill_in_the_gap || [],
+      fill_in_the_gap: formState.fill_in_the_gap || [],
     };
 
-    console.log("formattedData", formattedData);
+    // console.log("formattedData", formState);
 
     submitJobQuestionHandler.mutate(formattedData);
   };
@@ -170,9 +200,7 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
           </View>
           <Seperator height={20} />
 
-          <Button onPress={handleSubmit((data: any) => onSubmit(data))}>
-            Submit
-          </Button>
+          <Button onPress={onSubmit}>Submit</Button>
           <Seperator height={80} />
         </ScrollView>
       )}

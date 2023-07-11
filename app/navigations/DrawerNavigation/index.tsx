@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import {
   Image,
+  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
@@ -83,7 +84,7 @@ const DrawerNavigations = () => {
   }
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
       }}
@@ -240,7 +241,7 @@ const DrawerNavigations = () => {
           component={Settings}
         /> */}
       </Drawer.Navigator>
-    </View>
+    </SafeAreaView>
   );
 };
 

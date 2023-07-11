@@ -17,7 +17,7 @@ import { AppContext } from "../../providers/context/app";
 import Loading from "../../components/ui/_helpers/Loading";
 import JobDetailsCard from "../../components/app/Jobs/JobDetails/JobDetailsCard";
 
-const JobsApplied = ({ navigation }: any) => {
+const JobsApplied = ({ navigation, setSearchState }: any) => {
   const theme = useContext(themeContext);
   const { setModalVisible } = useContext(AppContext);
 
@@ -33,6 +33,7 @@ const JobsApplied = ({ navigation }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       jobs_query.refetch();
+      setSearchState(false);
     }, [])
   );
 

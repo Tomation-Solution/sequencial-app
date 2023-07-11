@@ -24,3 +24,16 @@ export const dateFormaterNowLong = () => {
 export const dateFormaterNowShortLong = () => {
   return formatter.format(now).split(",");
 };
+
+export function calculateDaysToToday(input: string) {
+  const targetDate = new Date(input);
+  const today = new Date();
+
+  // Calculate the difference in milliseconds between the two dates
+  const difference = targetDate.getTime() - today.getTime();
+
+  // Convert the difference to days
+  const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+
+  return days;
+}

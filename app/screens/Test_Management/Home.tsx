@@ -25,7 +25,13 @@ const OPTIONS = [
   { label: "Option 3", value: "option3" },
 ];
 
-const Home = ({ navigation }: { navigation: any }) => {
+const Home = ({
+  navigation,
+  setSearchState,
+}: {
+  navigation: any;
+  setSearchState: any;
+}) => {
   const { useApiQuery } = useContext(ApiContext);
   const theme = useContext(themeContext);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
@@ -39,6 +45,7 @@ const Home = ({ navigation }: { navigation: any }) => {
     React.useCallback(() => {
       showHeaderTextHandler("Test Management");
       refetch();
+      setSearchState(false);
     }, [])
   );
 

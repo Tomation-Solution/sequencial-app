@@ -13,7 +13,7 @@ import JobTestContainer from "../../components/app/Jobs/containers/JobTestContai
 import Loading from "../../components/ui/_helpers/Loading";
 import { isLoading } from "expo-font";
 
-const JobsTestScheduled = ({ navigation }: any) => {
+const JobsTestScheduled = ({ navigation, setSearchState }: any) => {
   const theme = useContext(themeContext);
   const { setModalVisible } = useContext(AppContext);
 
@@ -27,6 +27,7 @@ const JobsTestScheduled = ({ navigation }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       jobs_query.refetch();
+      setSearchState(false);
     }, [])
   );
 
