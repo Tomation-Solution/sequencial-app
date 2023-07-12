@@ -7,7 +7,10 @@ import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import themeContext from "../../config/theme/themeContext";
 import { images } from "../../assets";
-import { dateFormaterNow } from "../../helper_functions/dateFormater";
+import {
+  calculateDaysToToday,
+  dateFormaterNow,
+} from "../../helper_functions/dateFormater";
 import JobWrapper from "./JobWrapper";
 import ApiContext from "../../providers/context/api";
 import { jobApply } from "../../providers/call-service/jobs";
@@ -17,10 +20,12 @@ import { useFocusEffect } from "@react-navigation/native";
 const Apply = ({ navigation, route }: any) => {
   const [fileResponse, setFileResponse] = React.useState<any>(null);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
+  const [applyWithCv, setApplyWithCv] = React.useState<boolean>(false);
 
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext<any>(ApiContext);
-  const { job_id, job_variant } = route.params;
+  const { job_id, job_variant, extraData } = route.params;
+  const { location, org_name, job_title, org_logo, created_on } = extraData;
 
   console.log("job_variant", job_variant);
 
@@ -29,9 +34,8 @@ const Apply = ({ navigation, route }: any) => {
   });
 
   const handleApply = () => {
-    mutate({
+    navigation.navigate("Job_Question", {
       job_id,
-      file: fileResponse,
     });
   };
 
@@ -63,137 +67,149 @@ const Apply = ({ navigation, route }: any) => {
   );
 
   return (
-    <JobWrapper>
+    <JobWrapper
+      navigation={navigation}
+      company={org_name}
+      location={location}
+      org_logo={org_logo}
+      job_title={job_title}
+      posted_on={calculateDaysToToday(created_on)}
+    >
       <View
         style={{
           padding: scale(10),
         }}
       >
-        <Text
-          style={{
-            fontWeight: "bold",
-            fontSize: scale(18),
-          }}
-        >
-          Upload CV
-        </Text>
-        <Seperator height={scale(10)} />
-        <Text
-          style={{
-            fontSize: scale(14),
-          }}
-        >
-          Add your CV/Resume to apply for a job
-        </Text>
-
-        <Seperator height={scale(20)} />
-        {fileResponse === null ? (
-          <TouchableOpacity
-            onPress={handleDocumentSelection}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: theme.placeholder,
-              borderWidth: scale(3),
-              borderRadius: scale(18),
-              borderStyle: "dashed",
-              padding: scale(15),
-            }}
-          >
-            <View
+        {applyWithCv && (
+          <View>
+            <Text
               style={{
-                flexDirection: "row",
+                fontWeight: "bold",
+                fontSize: scale(18),
               }}
             >
-              <AntDesign
-                name="clouduploado"
-                size={24}
-                color={theme.placeholder}
-              />
-              <Text
+              Upload CV
+            </Text>
+            <Seperator height={scale(10)} />
+            <Text
+              style={{
+                fontSize: scale(14),
+              }}
+            >
+              Add your CV/Resume to apply for a job
+            </Text>
+
+            <Seperator height={scale(20)} />
+            {fileResponse === null ? (
+              <TouchableOpacity
+                onPress={handleDocumentSelection}
                 style={{
-                  marginLeft: scale(10),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderColor: theme.placeholder,
+                  borderWidth: scale(3),
+                  borderRadius: scale(18),
+                  borderStyle: "dashed",
+                  padding: scale(15),
                 }}
               >
-                Upload CV/Resume
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <View
-            style={{
-              borderColor: theme.placeholder,
-              borderWidth: scale(2),
-              borderRadius: scale(18),
-              borderStyle: "dashed",
-              padding: scale(15),
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-start",
-              }}
-            >
-              <Image
-                source={images.pdf}
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  <AntDesign
+                    name="clouduploado"
+                    size={24}
+                    color={theme.placeholder}
+                  />
+                  <Text
+                    style={{
+                      marginLeft: scale(10),
+                    }}
+                  >
+                    Upload CV/Resume
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <View
                 style={{
-                  width: scale(50),
-                  height: scale(50),
-                  resizeMode: "contain",
-                  marginRight: scale(10),
+                  borderColor: theme.placeholder,
+                  borderWidth: scale(2),
+                  borderRadius: scale(18),
+                  borderStyle: "dashed",
+                  padding: scale(15),
                 }}
-              />
-              <View>
-                <Text
+              >
+                <View
                   style={{
-                    color: theme.text,
-                    fontSize: scale(14),
+                    flexDirection: "row",
+                    alignItems: "flex-start",
                   }}
                 >
-                  {fileResponse?.name}
-                </Text>
-                <Text
+                  <Image
+                    source={images.pdf}
+                    style={{
+                      width: scale(50),
+                      height: scale(50),
+                      resizeMode: "contain",
+                      marginRight: scale(10),
+                    }}
+                  />
+                  <View>
+                    <Text
+                      style={{
+                        color: theme.text,
+                        fontSize: scale(14),
+                      }}
+                    >
+                      {fileResponse?.name}
+                    </Text>
+                    <Text
+                      style={{
+                        color: theme.placeholder,
+                        fontSize: scale(12),
+                      }}
+                    >
+                      {fileResponse?.size} Kb {dateFormaterNow()}
+                    </Text>
+                  </View>
+                </View>
+
+                <Seperator height={scale(15)} />
+
+                <TouchableOpacity
+                  onPress={handleRemoveFile}
                   style={{
-                    color: theme.placeholder,
-                    fontSize: scale(12),
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
-                  {fileResponse?.size} Kb {dateFormaterNow()}
-                </Text>
+                  <FontAwesome5
+                    name="trash-alt"
+                    size={scale(20)}
+                    color={theme.error}
+                  />
+                  <Text
+                    style={{
+                      color: theme.error,
+                      fontSize: scale(14),
+                      marginLeft: scale(10),
+                    }}
+                  >
+                    Remove file
+                  </Text>
+                </TouchableOpacity>
               </View>
-            </View>
-
-            <Seperator height={scale(15)} />
-
-            <TouchableOpacity
-              onPress={handleRemoveFile}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <FontAwesome5
-                name="trash-alt"
-                size={scale(20)}
-                color={theme.error}
-              />
-              <Text
-                style={{
-                  color: theme.error,
-                  fontSize: scale(14),
-                  marginLeft: scale(10),
-                }}
-              >
-                Remove file
-              </Text>
-            </TouchableOpacity>
+            )}
           </View>
         )}
 
         <Seperator height={scale(20)} />
-        <View
+        <TouchableOpacity
+          onPress={() => setApplyWithCv(!applyWithCv)}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -202,7 +218,8 @@ const Apply = ({ navigation, route }: any) => {
         >
           <View
             style={{
-              borderColor: theme.placeholder,
+              borderColor: applyWithCv ? theme.primary : theme.placeholder,
+              backgroundColor: applyWithCv ? theme.primary : theme.background,
               borderWidth: scale(2),
               borderRadius: scale(3),
               width: scale(15),
@@ -213,20 +230,21 @@ const Apply = ({ navigation, route }: any) => {
             style={{
               marginLeft: scale(8),
               fontSize: scale(12),
+              color: applyWithCv ? theme.primary : theme.text,
             }}
           >
-            Apply with existing CV
+            Apply with new CV
           </Text>
-        </View>
+        </TouchableOpacity>
 
         <Seperator height={scale(20)} />
 
         <Button
           onPress={handleApply}
-          disabled={fileResponse === null || isLoading}
+          disabled={(applyWithCv && fileResponse === null) || isLoading}
           styles={{
             backgroundColor:
-              fileResponse === null || isLoading
+              (applyWithCv && fileResponse === null) || isLoading
                 ? theme.placeholder
                 : theme.primary,
           }}

@@ -11,6 +11,8 @@ import ImageComponent from "../../../ui/Image/ImageComponent";
 import { limitTextLength } from "../../../../helper_functions/miscs";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import ApiContext from "../../../../providers/context/api";
+import { likeJob } from "../../../../providers/call-service/jobs";
 
 type Props = {
   job_title: string;
@@ -44,8 +46,22 @@ const JobDetailsCard: React.FC<Props> = ({
   job_variant,
 }) => {
   const theme = useContext(themeContext);
+  const [liked, setLiked] = React.useState(false);
 
   const navigation = useNavigation<any>();
+
+  const { useApiMutation } = useContext(ApiContext);
+
+  const likeAJob = useApiMutation({
+    mutationFunction: likeJob,
+  });
+
+  const handleLikeJob = () => {
+    setLiked(!liked);
+    likeAJob.mutate({
+      job_id: id,
+    });
+  };
 
   return (
     <View
@@ -67,9 +83,10 @@ const JobDetailsCard: React.FC<Props> = ({
         overflow: "hidden",
       }}
     >
-      <Pressable
+      <TouchableOpacity
         onPress={() => {
-          console.log("heart");
+          console.warn("heart");
+          setLiked(!liked);
         }}
         style={{
           position: "absolute",
@@ -77,8 +94,12 @@ const JobDetailsCard: React.FC<Props> = ({
           right: scale(5),
         }}
       >
-        <Ionicons name="heart-outline" size={24} color={theme.text} />
-      </Pressable>
+        <Ionicons
+          name={liked ? "heart" : "heart-outline"}
+          size={24}
+          color={theme[liked ? "primary" : "text"]}
+        />
+      </TouchableOpacity>
       <View>
         <Text
           style={{
@@ -263,7 +284,7 @@ const JobDetailsCard: React.FC<Props> = ({
         activeOpacity={0.6}
         onPress={() =>
           navigation.navigate("Jobs", {
-            screen: "Details",
+            screen: "Job_Details",
             params: {
               job_id: id,
               job_variant,

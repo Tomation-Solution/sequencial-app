@@ -65,6 +65,14 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const { job_id, job_variant } = route.params;
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!job_id) {
+        navigation.navigate("Jobs");
+      }
+    }, [])
+  );
+
   const job_query = useApiQuery({
     queryKey: "fetchAllJobs",
     queryFunction: getSingleJobFnc(job_id),
@@ -73,7 +81,15 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const { location, org_name, job_title, org_logo, created_on } =
     job_query.data.data[0];
 
-  console.log(calculateDaysToToday(created_on));
+  console.log("job query", job_query);
+
+  const extraData = {
+    location,
+    org_name,
+    job_title,
+    org_logo,
+    created_on,
+  };
 
   let text =
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voluptatibus consequuntur voluptate quod quae doloribus fugit...";
@@ -117,7 +133,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           </Pressable>
           <Button
             onPress={() =>
-              navigation.navigate("Apply", { job_id, job_variant })
+              navigation.navigate("Apply", { job_id, job_variant, extraData })
             }
             styles={{
               flex: 1,

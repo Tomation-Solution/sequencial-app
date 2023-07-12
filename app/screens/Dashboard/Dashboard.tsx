@@ -58,8 +58,6 @@ const Dashboard = ({ navigation }: { navigation: any }) => {
     jobs_query.refetch();
   };
 
-  console.log("jobs_query", jobs_query);
-
   useFocusEffect(
     React.useCallback(() => {
       showLogoHandler();

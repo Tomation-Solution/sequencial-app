@@ -128,7 +128,7 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (submitJobQuestionHandler.isSuccess) {
-      navigation.navigate("Details", { job_id });
+      navigation.navigate("Job_Details", { job_id });
     }
   }, [submitJobQuestionHandler.isSuccess]);
 
