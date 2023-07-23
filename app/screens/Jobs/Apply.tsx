@@ -17,7 +17,7 @@ import { jobApply } from "../../providers/call-service/jobs";
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect } from "@react-navigation/native";
 
-const Apply = ({ navigation, route }: any) => {
+const Apply = ({ navigation, route, setShowHeader }: any) => {
   const [fileResponse, setFileResponse] = React.useState<any>(null);
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
   const [applyWithCv, setApplyWithCv] = React.useState<boolean>(false);
@@ -63,6 +63,7 @@ const Apply = ({ navigation, route }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       showHeaderTextHandler("Apply");
+      setShowHeader(false);
     }, [])
   );
 

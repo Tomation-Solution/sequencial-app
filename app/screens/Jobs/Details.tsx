@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useContext } from "react";
 import { scale } from "react-native-size-matters";
 import themeContext from "../../config/theme/themeContext";
@@ -11,7 +11,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useWindowDimensions } from "react-native";
 import RenderHtml from "react-native-render-html";
 import ApiContext from "../../providers/context/api";
-import { getSingleJobFnc } from "../../providers/call-service/jobs";
+import { getSingleJobFnc, likeJob } from "../../providers/call-service/jobs";
 import { calculateDaysToToday } from "../../helper_functions/dateFormater";
 
 const BulletPoint = ({ children, params }: any) => {
@@ -56,21 +56,42 @@ const BulletPoint = ({ children, params }: any) => {
   );
 };
 
-const Details = ({ navigation, route }: { navigation: any; route: any }) => {
-  const [showMore, setShowMore] = React.useState(false);
+const Details = ({
+  navigation,
+  route,
+  setShowHeader,
+}: {
+  navigation: any;
+  route: any;
+  setShowHeader: any;
+}) => {
   const theme = useContext(themeContext);
   const { width } = useWindowDimensions();
 
+  const { useApiMutation } = useContext(ApiContext);
   const { useApiQuery } = useContext(ApiContext);
 
-  const { job_id, job_variant } = route.params;
+  const { job_id, job_variant, is_like } = route.params;
+  const [liked, setLiked] = React.useState<any>(is_like);
+
+  const likeAJob = useApiMutation({
+    mutationFunction: likeJob,
+  });
+
+  const handleLikeJob = () => {
+    setLiked(!liked);
+    likeAJob.mutate({
+      job_id: job_id,
+    });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
+      navigation.navigate("Jobs");
       if (!job_id) {
-        navigation.navigate("Jobs");
       }
-    }, [])
+      setShowHeader(false);
+    }, [navigation])
   );
 
   const job_query = useApiQuery({
@@ -90,9 +111,6 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     org_logo,
     created_on,
   };
-
-  let text =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voLorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatum, quibusdam, quia, quos voluptates voluptatibus consequuntur voluptate quod quae doloribus fugit...";
 
   const source = {
     html: job_query.data.data[0]?.description_content,
@@ -124,13 +142,13 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             alignItems: "center",
           }}
         >
-          <Pressable>
+          <TouchableOpacity onPress={handleLikeJob}>
             <Ionicons
-              name="heart-outline"
-              size={scale(28)}
-              color={theme.text}
+              name={liked ? "heart" : "heart-outline"}
+              size={28}
+              color={theme[liked ? "primary" : "text"]}
             />
-          </Pressable>
+          </TouchableOpacity>
           <Button
             onPress={() =>
               navigation.navigate("Apply", { job_id, job_variant, extraData })

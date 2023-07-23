@@ -40,9 +40,10 @@ const Jobs = ({ navigation }: any) => {
 
   const theme = useContext(themeContext);
   const [activeNav, setActiveNav] = React.useState("jobs");
-  const [searchState, setSearchState] = useState<string>("intial");
+  const [searchState, setSearchState] = useState<string>("initial");
   const [job_title, setJob_title] = useState<any>(null);
   const [job_type, setJob_type] = useState<any>(null);
+  const [showHeader, setShowHeader] = useState<boolean>(false);
 
   const search_jobs_query = useApiQuery({
     queryKey: "searchJobs",
@@ -65,13 +66,14 @@ const Jobs = ({ navigation }: any) => {
 
   const handleSelect = (option: string) => {
     setJob_type(option);
+    setActiveNav("jobs");
     search_jobs_query.refetch();
   };
 
   const fectJobsHandler = () => {
     showHeaderTextHandler("Available Jobs");
     search_jobs_query.refetch();
-    setSearchState("intial");
+    setSearchState("initial");
   };
 
   const likedJobsHandler = () => {
@@ -90,10 +92,22 @@ const Jobs = ({ navigation }: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setSearchState("intial");
+      setSearchState("initial");
       setActiveNav("jobs");
     }, [])
   );
+
+  const whichJobDataToRender = () => {
+    if (searchState === "initial") {
+      return data?.data;
+    } else if (searchState === "search") {
+      return search_jobs_query.data?.data;
+    } else if (searchState === "liked") {
+      return liked_jobs_query.data?.data;
+    }
+  };
+
+  const jobs = whichJobDataToRender();
 
   const NavButton = ({ name, handler }: any) => {
     const active = activeNav === name.toLowerCase();
@@ -132,35 +146,37 @@ const Jobs = ({ navigation }: any) => {
         flex: 1,
       }}
     >
-      <View
-        style={{
-          marginHorizontal: scale(10),
-        }}
-      >
+      {showHeader && (
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            alignItems: "center",
-            paddingVertical: scale(10),
-            paddingHorizontal: scale(10),
+            marginHorizontal: scale(10),
           }}
         >
-          <NavButton name="Jobs" handler={fectJobsHandler} />
-          <NavButton name="Liked" handler={likedJobsHandler} />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+              paddingVertical: scale(10),
+              paddingHorizontal: scale(10),
+            }}
+          >
+            <NavButton name="Jobs" handler={fectJobsHandler} />
+            <NavButton name="Liked" handler={likedJobsHandler} />
+          </View>
+
+          <SearchBar
+            onFocusFnc={onFocusFnc}
+            onSearchFnc={onSearchFnc}
+            onChangeText={(text: string) => setJob_title(text)}
+            outlineType="outline"
+          />
+
+          {/* <Seperator height={7} /> */}
+
+          <Filter onSelect={handleSelect} options={OPTIONS} />
         </View>
-
-        <SearchBar
-          onFocusFnc={onFocusFnc}
-          onSearchFnc={onSearchFnc}
-          onChangeText={(text: string) => setJob_title(text)}
-          outlineType="outline"
-        />
-
-        {/* <Seperator height={7} /> */}
-
-        <Filter onSelect={handleSelect} options={OPTIONS} />
-      </View>
+      )}
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -172,6 +188,7 @@ const Jobs = ({ navigation }: any) => {
             <Home
               {...props}
               searchState={searchState}
+              setShowHeader={setShowHeader}
               jobs={
                 searchState === "initial"
                   ? data?.data
@@ -179,20 +196,18 @@ const Jobs = ({ navigation }: any) => {
                   ? search_jobs_query.data?.data
                   : liked_jobs_query.data?.data
               }
+              // jobs={data?.data}
             />
           )}
         </Stack.Screen>
         <Stack.Screen name="Apply">
-          {(props) => <Apply {...props} />}
+          {(props) => <Apply {...props} setShowHeader={setShowHeader} />}
         </Stack.Screen>
         <Stack.Screen name="Job_Details">
-          {(props) => <Details {...props} />}
+          {(props) => <Details {...props} setShowHeader={setShowHeader} />}
         </Stack.Screen>
         <Stack.Screen name="Job_Question">
-          {(props) => <Job_Question {...props} />}
-        </Stack.Screen>
-        <Stack.Screen name="Job_search">
-          {(props) => <Job_Question {...props} />}
+          {(props) => <Job_Question {...props} setShowHeader={setShowHeader} />}
         </Stack.Screen>
       </Stack.Navigator>
     </View>

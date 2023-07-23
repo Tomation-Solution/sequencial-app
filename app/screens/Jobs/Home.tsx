@@ -14,7 +14,7 @@ import JobsCardContainer from "../../components/app/Jobs/containers/JobsCardCont
 import { HeaderContext } from "../../providers/context/header";
 import { useFocusEffect } from "@react-navigation/native";
 
-const Home = ({ navigation, jobs, searchState }: any) => {
+const Home = ({ navigation, jobs, searchState, setShowHeader }: any) => {
   const theme = useContext(themeContext);
 
   const { showHeaderTextHandler } = React.useContext(HeaderContext);
@@ -22,8 +22,10 @@ const Home = ({ navigation, jobs, searchState }: any) => {
   useFocusEffect(
     React.useCallback(() => {
       showHeaderTextHandler("Available Jobs");
+      setShowHeader(true);
     }, [])
   );
+  console.log("home focus effect", searchState);
 
   return (
     <View

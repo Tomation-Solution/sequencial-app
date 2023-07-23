@@ -27,6 +27,7 @@ const JobsCardContainer: React.FC<Props> = ({ cardData, navigation }) => {
           id={item.id}
           navigation={navigation}
           job_variant={item.job_variant}
+          is_like={item.is_like}
         />
       ))}
     </>

@@ -28,6 +28,7 @@ type Props = {
   navigation: any;
   id: number | string;
   job_variant?: string;
+  is_like?: boolean;
 };
 
 const JobDetailsCard: React.FC<Props> = ({
@@ -44,9 +45,10 @@ const JobDetailsCard: React.FC<Props> = ({
   // navigation,
   id,
   job_variant,
+  is_like,
 }) => {
   const theme = useContext(themeContext);
-  const [liked, setLiked] = React.useState(false);
+  const [liked, setLiked] = React.useState<any>(is_like);
 
   const navigation = useNavigation<any>();
 
@@ -62,6 +64,8 @@ const JobDetailsCard: React.FC<Props> = ({
       job_id: id,
     });
   };
+
+  // const _liked = liked[id] || is_like;
 
   return (
     <View
@@ -85,13 +89,16 @@ const JobDetailsCard: React.FC<Props> = ({
     >
       <TouchableOpacity
         onPress={() => {
-          console.warn("heart");
-          setLiked(!liked);
+          handleLikeJob();
         }}
         style={{
           position: "absolute",
-          top: scale(5),
-          right: scale(5),
+          top: scale(7),
+          right: scale(7),
+          padding: scale(5),
+          zIndex: 100,
+          borderRadius: scale(20),
+          backgroundColor: theme.placeholder,
         }}
       >
         <Ionicons
@@ -286,6 +293,7 @@ const JobDetailsCard: React.FC<Props> = ({
           navigation.navigate("Jobs", {
             screen: "Job_Details",
             params: {
+              is_like: is_like,
               job_id: id,
               job_variant,
             },

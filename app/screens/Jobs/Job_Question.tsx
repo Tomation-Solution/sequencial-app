@@ -24,6 +24,7 @@ import { useFocusEffect } from "@react-navigation/native";
 interface JobQuestionProps {
   navigation: any;
   route: any;
+  setShowHeader: any;
 }
 
 interface FormState {
@@ -32,7 +33,11 @@ interface FormState {
   fill_in_the_gap: any[];
 }
 
-const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
+const Job_Question: React.FC<JobQuestionProps> = ({
+  navigation,
+  route,
+  setShowHeader,
+}) => {
   const { job_id } = route.params;
   const theme = useContext(themeContext);
   const { useApiMutation } = useContext(ApiContext);
@@ -135,6 +140,7 @@ const Job_Question: React.FC<JobQuestionProps> = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       showHeaderTextHandler("Job Question");
+      setShowHeader(false);
     }, [])
   );
 

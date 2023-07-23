@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sequential-job",
+    "name": "Sequential Job",
     "slug": "sequential-job",
     "version": "2.0.0",
     "orientation": "portrait",
@@ -18,8 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 4,
-
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

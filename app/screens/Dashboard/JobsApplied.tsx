@@ -83,6 +83,7 @@ const JobsApplied = ({ navigation, setSearchState }: any) => {
                   job_title={item?.job?.more_on_job?.job_title}
                   job_type={item?.job?.more_on_job?.job_type}
                   location={item?.job?.more_on_job?.location}
+                  is_like={item?.job?.more_on_job?.is_like}
                   salary={item?.job?.more_on_job?.salary}
                   currency={item?.job?.more_on_job?.currency}
                   whenPosted={item?.job?.more_on_job?.whenPosted}
