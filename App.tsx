@@ -13,7 +13,7 @@ import theme from "./app/config/theme/color_theme";
 import Onboarding from "./app/screens/Onboarding/Onboarding";
 import AuthNavigations from "./app/navigations/AuthNavigation";
 import DrawerNavigations from "./app/navigations/DrawerNavigation";
-import { StatusBar, Text, View, useColorScheme } from "react-native";
+import { Alert, StatusBar, Text, View, useColorScheme } from "react-native";
 import { AppProvider } from "./app/providers/context/app";
 import { NotificationProvider } from "./app/providers/context/notification";
 import { HeaderProvider } from "./app/providers/context/header";
@@ -21,6 +21,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ApiProvider } from "./app/providers/context/api";
 import { retrieveAppData } from "./app/helper_functions/storingAppData";
 import { COLORS } from "./app/config/constants/color";
+import messaging from "@react-native-firebase/messaging";
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<string>("light");
@@ -53,27 +54,92 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowLoadingScreen(false);
-    }, 2000);
-    return () => clearTimeout(timeout);
-  }, []);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setShowLoadingScreen(false);
+  //   }, 2000);
+  //   return () => clearTimeout(timeout);
+  // }, []);
 
-  if (showLoadingScreen) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "blue",
-        }}
-      >
-        <Text>Loading...</Text>
-      </View>
-    );
+  // if (showLoadingScreen) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         backgroundColor: "blue",
+  //       }}
+  //     >
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log("Authorization status:", authStatus);
+    }
   }
+
+  useEffect(() => {
+    const initializeMessaging = async () => {
+      await requestUserPermission();
+
+      messaging()
+        .getToken()
+        .then((token) => {
+          console.log("FCM token:", token);
+        })
+        .catch((error) => {
+          console.log("Failed to get FCM token:", error);
+        });
+
+      messaging().onMessage(async (remoteMessage) => {
+        console.log("FCM message received:", remoteMessage);
+      });
+    };
+    initializeMessaging();
+
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            "Notification caused app to open from quit state:",
+            remoteMessage.notification
+          );
+          //  setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+        }
+        //  setLoading(false);
+      });
+
+    // Assume a message-notification contains a "type" property in the data payload of the screen to open
+
+    messaging().onNotificationOpenedApp(async (remoteMessage) => {
+      console.log(
+        "Notification caused app to open from background state:",
+        remoteMessage.notification
+      );
+      // navigation.navigate(remoteMessage.data.type);
+    });
+
+    // Register background handler
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+    });
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <>
