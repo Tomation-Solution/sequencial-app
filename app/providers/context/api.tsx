@@ -6,7 +6,7 @@ import {
   useMutation,
   useQuery,
 } from "react-query";
-import { login, register_job_seeker } from "../call-service/auth";
+import {login, register_job_seeker, requestPasswordReset} from "../call-service/auth";
 import { Alert } from "react-native";
 import {
   clearAppData,
@@ -24,11 +24,13 @@ interface ApiMutationOptions<TData, TError, TVariables> {
 const ApiContext = createContext<{
   useLogin: any;
   useRegister: any;
+  usePasswordResetRequest: any;
   useApiMutation: any;
   useApiQuery: any;
 }>({
   useLogin: () => {},
   useRegister: () => {},
+  usePasswordResetRequest: () => {},
   useApiMutation: () => {},
   useApiQuery: () => {},
 });
@@ -171,9 +173,35 @@ export const ApiProvider = (props: {
     return queryResult;
   }
 
+  function usePasswordResetRequest(): UseMutationResult<any, unknown, Pick<LoginData, "email">> {
+    return useMutation<any, unknown, Pick<LoginData, "email">>(
+        ["login"],
+        (data: Pick<LoginData, "email">) => requestPasswordReset(data.email),
+        {
+          onSuccess: (res) => {
+            showNotification({
+              title: "Success",
+              type: 1,
+              message: res.message,
+            });
+          },
+          onError: (error: any) => {
+            console.log("error", error);
+            showNotification({
+              title: "Error",
+              type: 0,
+              message: error.data.message,
+            });
+            console.error(error);
+          },
+        }
+    );
+  }
+
   const callActions = {
     useLogin,
     useRegister,
+    usePasswordResetRequest,
     useApiMutation,
     useApiQuery,
   };

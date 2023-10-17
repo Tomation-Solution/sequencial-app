@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "68339435006",
+    "project_id": "sequentialjob",
+    "storage_bucket": "sequentialjob.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68339435006:android:15b1691a0c2b2be337acaf",
+        "android_client_info": {
+          "package_name": "com.emetricsuite.sequentialjob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68339435006-9ocmvnt4gc9usspo8a9rdp1sa17dc78a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emetricsuite.sequentialjob",
+            "certificate_hash": "cd8a3abecde66688c37e2339fe443cac5eb9c614"
+          }
+        },
+        {
+          "client_id": "68339435006-bkk1n4mjr7tquo8ub10thdf6aip4fc2i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.emetricsuite.sequentialjob",
+            "certificate_hash": "e08a739f11312e317f817bc18358282f2202e5ea"
+          }
+        },
+        {
+          "client_id": "68339435006-83634fjitvtmfitfikvnsga46vqvvalk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNYKT7X9YtG92BwgCYjW9UIkXSf6QNUp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68339435006-83634fjitvtmfitfikvnsga46vqvvalk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

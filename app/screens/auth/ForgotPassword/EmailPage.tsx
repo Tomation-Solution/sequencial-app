@@ -11,13 +11,20 @@ import { auth_assets } from "../assets";
 import { Button, Input, Text } from "../../../components/ui";
 import { Seperator } from "../../../components/ui/_helpers";
 import AuthHeader from "../../../components/app/Header/AuthHeader";
+import ApiContext from "../../../providers/context/api";
 
-const email_page_sheama = Yup.object().shape({
+const email_page_schema = Yup.object().shape({
   email: Yup.string().required("Email is required").email("Invalid email"),
 });
 
 const SignIn = ({ navigation }: { navigation: any }) => {
   const theme = useContext(themeContext);
+  const {usePasswordResetRequest} = useContext(ApiContext);
+  const {mutate, isLoading} = usePasswordResetRequest();
+
+  function onSubmit({email}: {email: string}) {
+      mutate({email});
+  }
 
   return (
     <View>
@@ -37,8 +44,8 @@ const SignIn = ({ navigation }: { navigation: any }) => {
 
           <Formik
             initialValues={{ email: "" }}
-            onSubmit={(values) => navigation.navigate("resetPage", { values })}
-            validationSchema={email_page_sheama}
+            onSubmit={onSubmit}
+            validationSchema={email_page_schema}
           >
             {({
               handleChange,
@@ -84,7 +91,7 @@ const SignIn = ({ navigation }: { navigation: any }) => {
                       paddingVertical: scale(13),
                     }}
                     onPress={() => handleSubmit()}
-                    disabled={!isValid}
+                    disabled={!isValid || isLoading}
                   >
                     Continue
                   </Button>
