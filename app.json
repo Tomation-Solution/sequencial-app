@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "owner": "emetricsuite",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,8 +19,8 @@
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile" : "./google-services.json",
-      "versionCode": 5,
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -33,6 +34,12 @@
       "eas": {
         "projectId": "34f6c3f2-6037-4819-96b7-f6e0a8380039"
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/34f6c3f2-6037-4819-96b7-f6e0a8380039"
     }
   }
 }
