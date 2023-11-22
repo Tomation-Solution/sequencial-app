@@ -36,3 +36,15 @@ export async function register_job_seeker(
 
   return response.data;
 }
+
+export async function requestPasswordReset(email: string) {
+  if (!email) return;
+
+  const response = await axios.post(`auth/forgot-password/request_password_change/`, {
+    email,
+  });
+
+  console.log("response", response.data);
+
+  return response.data;
+}
